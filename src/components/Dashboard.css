@@ -1,0 +1,14 @@
+.dashboard {
+  background-color: #f8f9fa;
+}
+
+.dashboard__title {
+  color: #333;
+  font-size: 64px;
+  margin-bottom: 10px;
+}
+
+.dashboard__description {
+  color: #555;
+  font-size: 36px;
+}

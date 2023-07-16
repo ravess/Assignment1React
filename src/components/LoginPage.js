@@ -1,33 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+axios.defaults.baseURL = process.env.BACKENDURL;
+axios.defaults.withCredentials = true;
 
-const Login = () => {
+import './LoginPage.css';
+
+export default function HomePage() {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(true); // Set initial loading state to true
+  const [userpassword, setUserpassword] = useState('');
+  const [isloggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false); // Update loading state to false after 2000 milliseconds
-    }, 2000);
-  }, []);
+  useEffect(() => {}, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Perform login logic here
-    // You can use the username and password state values
-    console.log('Logging in...');
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        '/login',
+        { username, userpassword },
+        { withCredentials: true }
+      );
+      setIsLoading(false);
+      console.log(response.data);
+      console.log('Logging in...');
+    } catch (error) {
+      console.log('Login Failed', error);
+    }
   };
 
   return (
-    <div
-      className='container d-flex justify-content-center align-items-center'
-      style={{ minHeight: '100vh' }}
-    >
-      {isLoading ? ( // Check if loading state is true
-        <LoadingSpinner /> // Display the loading spinner component
+    <div className='container'>
+      {isLoading ? (
+        <LoadingSpinner />
       ) : (
-        <div className='card' style={{ width: '40%' }}>
+        <div className='card'>
           <div className='card-body'>
             <h5 className='card-title'>Login</h5>
             <form onSubmit={handleLogin}>
@@ -43,25 +55,21 @@ const Login = () => {
                 />
               </div>
               <div className='form-group'>
-                <label htmlFor='password'>Password</label>
+                <label htmlFor='userpassword'>userpassword</label>
                 <input
                   type='password'
                   className='form-control'
-                  id='password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id='userpassword'
+                  value={userpassword}
+                  onChange={(e) => setUserpassword(e.target.value)}
                   required
                 />
               </div>
-              <button type='submit' className='btn btn-primary'>
-                Login
-              </button>
+              <button type='submit'>Login</button>
             </form>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default Login;
+}
