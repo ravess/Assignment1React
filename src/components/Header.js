@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 export default function Header() {
   const username = 'John Doe';
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
-    console.log('Signing out...');
+  const handleSignOut = async () => {
+    await axios.post('/logout');
     navigate('/');
   };
 

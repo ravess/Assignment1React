@@ -9,27 +9,51 @@ import './LoginPage.css';
 
 export default function HomePage() {
   const [username, setUsername] = useState('');
+  const [userGroup, setUsergroup] = useState('');
   const [userpassword, setUserpassword] = useState('');
   const [isloggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const ourRequest = axios.CancelToken.source();
+    async function fetchResults() {
+      try {
+        // setIsLoading(true);
+        console.log(`useeffect fired`);
+        const response = await axios.get('/user/profile');
+        console.log(response.data);
+        if (response.data) {
+          setIsLoading(false);
+          console.log(`it came here`);
+          // setUsername(response.data.username);
+          // setUsergroup(response.data.usergroup);
+          navigate('/user/dashboard');
+        }
+      } catch (error) {
+        console.log('There was a problem or the request was cancelled');
+      }
+    }
+    if (isloggedIn) {
+      fetchResults();
+    }
+
+    // This cleanup function helps to cancel the request.
+    return () => ourRequest.cancel();
+  }, [isloggedIn]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      const response = await axios.post(
-        '/login',
-        { username, userpassword },
-        { withCredentials: true }
-      );
-      setIsLoading(false);
-      console.log(response.data);
-      console.log('Logging in...');
+      const response = await axios.post('/login', { username, userpassword });
+      if (response.data.success === true) {
+        console.log(`it came through with the token`);
+        setIsLoading(false);
+        setIsLoggedIn(true);
+      }
     } catch (error) {
+      setIsLoading(false);
       console.log('Login Failed', error);
     }
   };
