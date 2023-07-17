@@ -16,6 +16,7 @@ export default function CreateUserForm() {
         const response = await axios.get('/admin/groups');
         if (response.data) {
           setUsergroups(response.data.data);
+          console.log(usergroups);
         }
       } catch (error) {
         console.error('Error fetching usergroups:', error);
@@ -51,9 +52,9 @@ export default function CreateUserForm() {
   return (
     <div>
       <Header />
-      <div className='container'>
+      <div className='container d-flex flex-column mt-3 border border-dark rounded w-50'>
         <h2>Create User</h2>
-        <form onSubmit={handleSubmit}>
+        <form className='form-group' onSubmit={handleSubmit}>
           <div className='mb-3'>
             <label htmlFor='username' className='form-label'>
               Username
@@ -105,7 +106,7 @@ export default function CreateUserForm() {
               Active
             </label>
           </div>
-          <div className='mb-3'>
+          <div className='mb-3 d-flex flex-column'>
             <label htmlFor='usergroups' className='form-label'>
               Usergroups
             </label>

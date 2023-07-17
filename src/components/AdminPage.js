@@ -32,11 +32,18 @@ export default function UserList() {
     console.log(`Disabling user with ID: ${userId}`);
   };
 
+  const handleCreateUser = async () => {
+    navigate(`/admin/users/create`);
+  };
+
   return (
     <div>
       <Header />
       <div className='user-list-container'>
         <h2>User List</h2>
+        <button className='create-user-button' onClick={handleCreateUser}>
+          + Create User
+        </button>
         <div className='table-container'>
           <div className='table-header'>
             <div>Name</div>
