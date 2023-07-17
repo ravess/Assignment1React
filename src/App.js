@@ -81,7 +81,7 @@ export default function App() {
             <Route path="/" element={<LoginPage />} />
             <Route path="/user/dashboard" element={<Dashboard />} />
             <Route path="/user/profile" element={<ProfilePage />} />
-            {/* <Route path="/admin/users" element={<AdminPage />} /> */}
+            <Route path="/admin/users" element={<AdminPage />} />
             <Route path="/admin/users/create" element={<CreateUserPage />} />
           </Routes>
         </BrowserRouter>

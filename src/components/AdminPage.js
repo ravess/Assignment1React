@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Header from "./Header";
 import "./AdminPage.css";
 
 export default function UserList() {
@@ -8,8 +9,10 @@ export default function UserList() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("/api/users");
-        setUsers(response.data.users);
+        const response = await axios.get("/admin/users");
+        if (response.data.data) {
+          setUsers(response.data.data);
+        }
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -18,9 +21,9 @@ export default function UserList() {
     fetchUsers();
   }, []);
 
-  const handleEdit = (userId) => {
+  const handleEdit = async (userId) => {
     // Handle edit functionality for the user
-    console.log(`Editing user with ID: ${userId}`);
+    const response = await axios.put("/admin/users/:userid/edit");
   };
 
   const handleDisable = (userId) => {
@@ -35,19 +38,27 @@ export default function UserList() {
         <h2>User List</h2>
         <div className="table-container">
           <div className="table-header">
-            <div>ID</div>
             <div>Name</div>
             <div>Email</div>
             <div>Actions</div>
           </div>
-          {users.map((user) => (
-            <div key={user.id} className="table-row">
-              <div>{user.id}</div>
-              <div>{user.name}</div>
-              <div>{user.email}</div>
+          {users.map((user, idx) => (
+            <div key={idx} className="table-row">
+              <div>{user.username}</div>
+              <div>{user.useremail}</div>
               <div>
-                <button onClick={() => handleEdit(user.id)}>Edit</button>
-                <button onClick={() => handleDisable(user.id)}>Disable</button>
+                <button
+                  className="edit-button"
+                  onClick={() => handleEdit(user.userid)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="disable-button"
+                  onClick={() => handleDisable(user.id)}
+                >
+                  Disable
+                </button>
               </div>
             </div>
           ))}
