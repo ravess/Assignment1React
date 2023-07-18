@@ -27,11 +27,6 @@ export default function UserList() {
     navigate(`/admin/users/${userid}/edit`);
   };
 
-  const handleDisable = (userId) => {
-    // Handle disable functionality for the user
-    console.log(`Disabling user with ID: ${userId}`);
-  };
-
   const handleCreateUser = async () => {
     navigate(`/admin/users/create`);
   };
@@ -39,37 +34,45 @@ export default function UserList() {
   return (
     <div>
       <Header />
-      <div className='user-list-container'>
+      <div className='container user-list-container'>
         <h2>User List</h2>
-        <button className='create-user-button' onClick={handleCreateUser}>
+
+        <button
+          className='btn btn-primary create-user-button mt-2'
+          onClick={handleCreateUser}
+        >
           + Create User
         </button>
-        <div className='table-container'>
-          <div className='table-header'>
-            <div>Name</div>
-            <div>Email</div>
-            <div>Actions</div>
-          </div>
-          {users.map((user, idx) => (
-            <div key={idx} className='table-row'>
-              <div>{user.username}</div>
-              <div>{user.useremail}</div>
-              <div>
-                <button
-                  className='edit-button'
-                  onClick={() => handleEdit(user.userid)}
+
+        <div className='table-responsive mt-5'>
+          <table className='table table-bordered table-shadow'>
+            <thead>
+              <tr>
+                <th className='bg-dark text-white'>Name</th>
+                <th className='bg-dark text-white'>Email</th>
+                <th className='bg-dark text-white'>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user, idx) => (
+                <tr
+                  key={idx}
+                  className={idx % 2 === 0 ? 'even-row' : 'odd-row'}
                 >
-                  Edit
-                </button>
-                <button
-                  className='disable-button'
-                  onClick={() => handleDisable(user.id)}
-                >
-                  Disable
-                </button>
-              </div>
-            </div>
-          ))}
+                  <td>{user.username}</td>
+                  <td>{user.useremail}</td>
+                  <td className='d-flex justify-content-center'>
+                    <button
+                      className='btn btn-secondary edit-button'
+                      onClick={() => handleEdit(user.userid)}
+                    >
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

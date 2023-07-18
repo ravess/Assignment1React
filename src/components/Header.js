@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Header.css';
+// import './Header.css';
 import axios from 'axios';
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
@@ -34,32 +34,45 @@ export default function Header() {
   };
 
   return (
-    <nav className='navbar'>
-      <div className='navbar-content'>
-        <Link to='/user/dashboard' className='brand'>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
+      <div className='container'>
+        <Link to='/user/dashboard' className='navbar-brand'>
           TMS
         </Link>
-        <div className='navbar-items'>
-          <span className='welcome-message'>
-            Welcome, {appState.user.username}
-          </span>
-          <div className='button-container'>
-            {usergroupArr.includes('admin') ? (
-              <button className='users-button' onClick={getAllUser}>
-                <i className='fas fa-users'></i> Users
-              </button>
-            ) : (
-              ''
+        <div className='navbar-collapse'>
+          <ul className='navbar-nav ml-auto'>
+            <li className='nav-item'>
+              <span className='navbar-text mr-3'>
+                Welcome, {appState.user.username}
+              </span>
+            </li>
+            {usergroupArr.includes('admin') && (
+              <li className='nav-item'>
+                <button
+                  className='btn btn-link text-white text-decoration-none'
+                  onClick={getAllUser}
+                >
+                  <i className='fas fa-users'></i> Users
+                </button>
+              </li>
             )}
-
-            <button className='view-account' onClick={viewAccount}>
-              <i className='fas fa-user'></i> My Profile
-            </button>
-
-            <button className='sign-out-button' onClick={handleSignOut}>
-              <i className='fas fa-sign-out-alt'></i> Sign Out
-            </button>
-          </div>
+            <li className='nav-item'>
+              <button
+                className='btn btn-link text-white text-decoration-none'
+                onClick={viewAccount}
+              >
+                <i className='fas fa-user'></i> My Profile
+              </button>
+            </li>
+            <li className='nav-item'>
+              <button
+                className='btn btn-link text-white text-decoration-none'
+                onClick={handleSignOut}
+              >
+                <i className='fas fa-sign-out-alt'></i> Sign Out
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>

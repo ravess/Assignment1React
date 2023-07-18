@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Header from './Header';
-import './ProfilePage.css';
 
 export default function ProfilePage() {
   const [email, setEmail] = useState('');
@@ -39,9 +38,9 @@ export default function ProfilePage() {
   return (
     <div>
       <Header />
-      <div className='container'>
-        <div className='profile-card'>
-          <h1>Profile</h1>
+      <div className='container justify-content-center w-50 mt-5'>
+        <div className='profile-card card p-3 border border-dark .bg-light'>
+          <h1 className='card-title'>Profile</h1>
           <form onSubmit={handleSubmit}>
             <div className='form-group'>
               <label htmlFor='email'>Email:</label>
@@ -63,7 +62,10 @@ export default function ProfilePage() {
                 onChange={handlePasswordChange}
               />
             </div>
-            <button type='submit' className='btn-primary'>
+            <button
+              type='submit'
+              className='btn btn-outline-primary btn-block ml-0 mt-3'
+            >
               Update Profile
             </button>
           </form>
