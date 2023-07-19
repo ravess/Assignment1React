@@ -50,6 +50,8 @@ export default function UserList() {
               <tr>
                 <th className='bg-dark text-white'>Name</th>
                 <th className='bg-dark text-white'>Email</th>
+                <th className='bg-dark text-white'>Groups</th>
+                <th className='bg-dark text-white'>Status</th>
                 <th className='bg-dark text-white'>Actions</th>
               </tr>
             </thead>
@@ -61,6 +63,8 @@ export default function UserList() {
                 >
                   <td>{user.username}</td>
                   <td>{user.useremail}</td>
+                  <td>{user.usergroup}</td>
+                  <td>{user.userisActive ? '🟢' : '🔴'}</td>
                   <td className='d-flex justify-content-center'>
                     <button
                       className='btn btn-secondary edit-button'

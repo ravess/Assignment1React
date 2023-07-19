@@ -1,15 +1,18 @@
-import React, { useContext, useState } from "react";
-import axios from "axios";
-import Header from "./Header";
-import StateContext from "../StateContext";
+import React, { useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+import Header from './Header';
+import StateContext from '../StateContext';
+import DispatchContext from '../DispatchContext';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function ProfilePage() {
   const appState = useContext(StateContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [passwordMessage, setPasswordMessage] = useState("");
-  const [error, setError] = useState(false);
+  const appDispatch = useContext(DispatchContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const isFormDisabled = email === '' && password === '';
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -19,74 +22,109 @@ export default function ProfilePage() {
     setPassword(e.target.value);
   };
 
+  const handlePasswordOnBlur = (e) => {
+    try {
+      const rePassword = new RegExp(
+        '^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$'
+      );
+      if (
+        e.target.value.length < 0 ||
+        (!rePassword.test(e.target.value) && e.target.value)
+      ) {
+        setPasswordError(true);
+        setPasswordMessage(
+          'You need to provide min8 and max10 length with special char'
+        );
+      } else {
+        setPasswordError(false);
+        setPasswordMessage('');
+      }
+    } catch (error) {
+      console.log(error.response.data.errMessage);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
+      appDispatch({ type: 'loadingSpinning' });
       // Make a POST request to your backend API to update the email and password
-      const response = await axios.put("/user/profile/edit", {
+      const response = await axios.put('/user/profile/edit', {
         useremail: email,
         userpassword: password,
       });
-      if (response.status === 200) {
-        console.log(response.data);
-        setMessage("Profile updated successfully.");
-      } else {
-        setMessage(response.data.message);
+      if (response.data) {
+        appDispatch({ type: 'loadingSpinning' });
+        if (email !== '') {
+          appDispatch({ type: 'updateProfilePage', email });
+        }
+
+        setEmail('');
+        setPassword('');
       }
     } catch (error) {
-      console.log(error.response.data);
-      setMessage("An error occurred while updating the profile.");
+      appDispatch({ type: 'loadingSpinning' });
+      console.log(error.response.data.errMessage);
     }
   };
 
   return (
     <div>
       <Header />
-      <div className="container justify-content-center w-50 mt-5">
-        <div className="profile-card card p-3 border border-dark .bg-light">
-          <h1 className="card-title">Profile</h1>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="username">Username:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="username"
-                value={appState.user.username}
-                disabled
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                value={password}
-                onChange={handlePasswordChange}
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-outline-primary btn-block ml-0 mt-3"
-            >
-              Update Profile
-            </button>
-          </form>
-          {message && <p>{message}</p>}
+      {appState.isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className='container justify-content-center w-50 mt-5'>
+          <div className='profile-card card p-3 border border-dark .bg-light'>
+            <h1 className='card-title'>Profile</h1>
+            <form onSubmit={handleSubmit}>
+              <div className='form-group'>
+                <label htmlFor='username'>Username:</label>
+                <input
+                  type='text'
+                  className='form-control'
+                  id='username'
+                  value={appState.user.username}
+                  disabled
+                />
+              </div>
+              <div className='form-group'>
+                <label htmlFor='email'>Email:</label>
+                <input
+                  type='email'
+                  className='form-control'
+                  id='email'
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+              </div>
+              <div className='form-group'>
+                <label htmlFor='password'>Password:</label>
+                <input
+                  type='password'
+                  className='form-control'
+                  id='password'
+                  value={password}
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordOnBlur}
+                />
+                {passwordError && (
+                  <div className='alert alert-danger small liveValidateMessage'>
+                    {passwordMessage}
+                  </div>
+                )}
+              </div>
+              <button
+                type='submit'
+                className='btn btn-primary btn-block ml-0 mt-3'
+                disabled={isFormDisabled}
+              >
+                Update Profile
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
