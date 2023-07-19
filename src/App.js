@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard";
 import AdminPage from "./components/AdminPage";
 import AdminUpdateUserPage from "./components/AdminUpdateUserPage";
 import CreateUserPage from "./components/CreateUserPage";
+import NotFound from "./components/NotFound";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 import axios from "axios";
@@ -22,6 +23,7 @@ export default function App() {
       username: "",
       usergroup: "",
       token: "",
+      isAdmin: false,
     },
     isLoading: true,
   };
