@@ -111,7 +111,6 @@ export default function CreateUserForm() {
         console.error('Error fetching usergroups:', error);
       }
     };
-
     fetchUsergroups();
   }, []);
 

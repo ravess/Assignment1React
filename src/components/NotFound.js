@@ -1,10 +1,10 @@
-import React from "react";
-import Header from "./Header";
+import React from 'react';
+import Header from './Header';
 
 export default function NotFound() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <h1>not found!</h1>
     </>
   );

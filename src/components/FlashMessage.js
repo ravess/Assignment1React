@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
+import './FlashMessage.css';
 
 export default function FlashMessages({ messages }) {
   return (
-    <div className='floating-alerts'>
+    <div className='floating-alerts bottom-right'>
       {messages.map((msg, index) => {
         return (
           <div
