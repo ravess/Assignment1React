@@ -111,6 +111,7 @@ export default function CreateUserForm() {
         console.error('Error fetching usergroups:', error);
       }
     };
+
     fetchUsergroups();
   }, []);
 
@@ -154,7 +155,6 @@ export default function CreateUserForm() {
 
   return (
     <div>
-      <Header />
       {appState.isLoading ? (
         <LoadingSpinner />
       ) : (
@@ -260,7 +260,7 @@ export default function CreateUserForm() {
             <div className='d-flex justify-content-center'>
               <button
                 type='submit'
-                className='btn btn-primary d-flex ml-0 justify-content-center'
+                className='btn btn-dark d-flex ml-0 justify-content-center'
                 disabled={
                   state.username.hasErrors ||
                   state.userpassword.hasErrors ||

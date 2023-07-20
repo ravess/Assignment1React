@@ -25,6 +25,10 @@ export default function HomePage() {
         if (response.data.data[0]) {
           appDispatch({ type: 'loadingSpinning' });
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
+          appDispatch({
+            type: 'flashMessage',
+            value: "You've logged in successfully!",
+          });
           navigate('/user/dashboard');
         }
       } catch (error) {
@@ -90,7 +94,7 @@ export default function HomePage() {
                 </div>
                 <button
                   type='submit'
-                  className='btn btn-primary btn-block ml-0'
+                  className='btn btn-outline-dark btn-block ml-0'
                 >
                   Login
                 </button>

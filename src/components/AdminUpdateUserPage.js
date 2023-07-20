@@ -160,7 +160,6 @@ export default function EditUserForm() {
 
   return (
     <div>
-      <Header />
       {appState.isLoading ? (
         <LoadingSpinner />
       ) : (
@@ -253,7 +252,7 @@ export default function EditUserForm() {
                   </select>
                 </div>
               </div>
-              <button type='submit' className='btn btn-primary'>
+              <button type='submit' className='btn btn-dark'>
                 Update
               </button>
             </form>

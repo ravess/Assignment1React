@@ -69,8 +69,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div>
-      <Header />
+    <div className='container '>
       {appState.isLoading ? (
         <LoadingSpinner />
       ) : (
@@ -116,7 +115,7 @@ export default function ProfilePage() {
               </div>
               <button
                 type='submit'
-                className='btn btn-primary btn-block ml-0 mt-3'
+                className='btn btn-dark btn-block ml-0 mt-3'
                 disabled={isFormDisabled}
               >
                 Update Profile

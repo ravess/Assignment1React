@@ -9,6 +9,7 @@ import AdminPage from './components/AdminPage';
 import AdminUpdateUserPage from './components/AdminUpdateUserPage';
 import CreateUserPage from './components/CreateUserPage';
 import NotFound from './components/NotFound';
+import Header from './components/Header';
 import StateContext from './StateContext';
 import DispatchContext from './DispatchContext';
 import axios from 'axios';
@@ -89,6 +90,7 @@ export default function App() {
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
         <BrowserRouter>
+          {state.loggedIn ? <Header /> : ''}
           <Routes>
             <Route path='/' element={<LoginPage />} />
             <Route path='/user/dashboard' element={<Dashboard />} />
@@ -101,8 +103,8 @@ export default function App() {
             <Route path='/admin/users/create' element={<CreateUserPage />} />
             <Route path='/notfound' element={<NotFound />} />
           </Routes>
+          <FlashMessages messages={state.flashMessages} />
         </BrowserRouter>
-        <FlashMessages messages={state.flashMessages} />
       </DispatchContext.Provider>
     </StateContext.Provider>
   );

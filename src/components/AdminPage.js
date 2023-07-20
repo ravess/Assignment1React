@@ -41,7 +41,6 @@ export default function UserList() {
 
   return (
     <div className='bg-light'>
-      <Header />
       <div className='container user-list-container'>
         <h2 className='text-center mt-5'>User List</h2>
         <div className='container d-flex justify-content-center'>

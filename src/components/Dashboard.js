@@ -29,7 +29,6 @@ export default function Dashboard() {
   return (
     <>
       <div>
-        <Header />
         <div className='dashboard'>
           <div className='container'>
             <h5 className='dashboard__title text-center mt-5'>
