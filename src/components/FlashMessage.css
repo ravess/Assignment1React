@@ -1,33 +1,70 @@
-/* Flash messages container at the bottom right */
-.floating-alerts.bottom-right {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999; /* Adjust the z-index as needed */
-}
-
-/* Base styles for the flash message */
 .floating-alert {
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 14px;
-  color: #fff;
-  font-weight: bold;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  display: none;
+  position: absolute;
+  z-index: 999;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  -moz-animation: floatingAlert ease-in 5s forwards;
+  -webkit-animation: floatingAlert ease-in 5s forwards;
+  -o-animation: floatingAlert ease-in 5s forwards;
+  animation: floatingAlert ease-in 5s forwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
 }
 
-/* Styles for a success flash message */
-.floating-alert.alert-success {
-  background-color: #4caf50; /* Green color - adjust as needed */
+.floating-alerts .floating-alert:last-of-type {
+  display: block;
 }
 
-/* Styles for an error flash message */
-.floating-alert.alert-error {
-  background-color: #f44336; /* Red color - adjust as needed */
+@keyframes floatingAlert {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
+
+  9% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  91% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
 }
 
-/* Show the flash message */
-.floating-alert.show {
-  opacity: 1;
+@-webkit-keyframes floatingAlert {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
+
+  9% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  91% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(1.2);
+  }
 }

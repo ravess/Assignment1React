@@ -25,10 +25,7 @@ export default function HomePage() {
         if (response.data.data[0]) {
           appDispatch({ type: "loadingSpinning" });
           appDispatch({ type: "isAuth", data: response.data.data[0] });
-          appDispatch({
-            type: "flashMessage",
-            value: "You've logged in successfully!",
-          });
+
           navigate("/user/dashboard");
         }
       } catch (error) {
@@ -56,12 +53,26 @@ export default function HomePage() {
       if (response.data.success === true) {
         appDispatch({ type: "login" });
         appDispatch({ type: "loadingSpinning" });
-        appDispatch({ type: "flashMessage", value: "Successfully logged in!" });
+        appDispatch({
+          type: "flashMessage",
+          value: "You've logged in Succssfully!",
+        });
       }
     } catch (error) {
       appDispatch({ type: "loadingSpinning" });
       if (error.response.data.error.statusCode === 401) {
         console.log(error.response.data.errMessage);
+        appDispatch({
+          type: "flashMessage",
+          value: error.response.data.errMessage,
+        });
+      }
+      if (error.response.data.error.statusCode === 403) {
+        console.log(error.response.data.errMessage);
+        appDispatch({
+          type: "flashMessage",
+          value: error.response.data.errMessage,
+        });
       }
     }
   };

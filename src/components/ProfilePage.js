@@ -42,7 +42,8 @@ export default function ProfilePage() {
         setPasswordMessage("");
       }
     } catch (error) {
-      console.log(error.response.data.errMessage);
+      if (error.response.data.errMessage) {
+      }
     }
   };
 
@@ -55,7 +56,7 @@ export default function ProfilePage() {
       const response = await axios.put("/user/profile/edit", user);
       if (response.data) {
         appDispatch({ type: "loadingSpinning" });
-        console.log("User details updated");
+        appDispatch({ type: "flashMessage", value: "User updated!" });
         if (email !== "") {
           appDispatch({ type: "updateProfilePage", email });
           navigate("/");
@@ -65,7 +66,9 @@ export default function ProfilePage() {
       }
     } catch (error) {
       appDispatch({ type: "loadingSpinning" });
-      console.log(error);
+      if (error.response.data.statusCode === 404) {
+        console.log();
+      }
     }
   };
 

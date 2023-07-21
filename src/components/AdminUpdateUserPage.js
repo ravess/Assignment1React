@@ -118,7 +118,10 @@ export default function EditUserForm() {
         appDispatch({ type: "loadingSpinning" });
         appDispatch({ type: "userisActive" });
         appDispatch({ type: "" });
-        console.log("User updated successfully");
+        appDispatch({
+          type: "flashMessage",
+          value: "User succesfully Updated.",
+        });
         navigate("/admin/users");
       }
     } catch (error) {

@@ -62,12 +62,10 @@ export default function App() {
         return;
       case "flashMessage":
         draft.flashMessages.push(action.value);
-        console.log(action.value);
         return;
     }
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialState);
-
   // Check if cookie is present previously when you refresh the component renders on mount
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();

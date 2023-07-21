@@ -17,7 +17,7 @@ export default function Header() {
       const response = await axios.get("/logout");
       if (response.data.success) {
         appDispatch({ type: "logout" });
-        console.log("You signed out successfully");
+        appDispatch({ type: "flashMessage", value: "Successfully logged Out" });
         navigate("/");
       }
     } catch (error) {

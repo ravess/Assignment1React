@@ -152,7 +152,10 @@ export default function CreateUserForm() {
       if (response.data) {
         dispatch({ type: "submitRequest" });
         appDispatch({ type: "loadingSpinning" });
-        console.log("User is created");
+        appDispatch({
+          type: "flashMessage",
+          value: "User succesfully created",
+        });
       }
     } catch (error) {
       appDispatch({ type: "loadingSpinning" });
