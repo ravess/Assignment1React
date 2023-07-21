@@ -109,27 +109,17 @@ export default function CreateUserForm() {
           dispatch({ type: "fetchUserGroup", data: response.data.data });
         }
       } catch (error) {
-        console.error("Error fetching usergroups:", error);
+        if (error.response.data.error.statusCode === 401) {
+          console.log(error.response.data.errMessage);
+        }
+        if (error.response.data.error.statusCode === 404) {
+          Navigate("/");
+        }
       }
     };
 
     fetchUsergroups();
   }, []);
-
-  // useEffect(() => {
-  //   const fetchUsergroups = async () => {
-  //     try {
-  //       const response = await axios.get("/admin/groups");
-  //       if (response.data) {
-  //         dispatch({ type: "fetchUserGroup", data: response.data.data });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching usergroups:", error);
-  //     }
-  //   };
-
-  //   fetchUsergroups();
-  // }, [state.submitCount]);
 
   const handleCheckboxChange = (e) => {
     dispatch({ type: "userisActive", value: e.target.checked });

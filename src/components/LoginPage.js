@@ -33,7 +33,11 @@ export default function HomePage() {
         }
       } catch (error) {
         appDispatch({ type: "loadingSpinning" });
-        console.log("There was a problem or the request was cancelled", error);
+        if (error.response.data)
+          console.log(
+            "There was a problem or the request was cancelled",
+            error
+          );
       }
     }
     if (appState.loggedIn) {
