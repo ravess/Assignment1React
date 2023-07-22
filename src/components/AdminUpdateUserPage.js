@@ -1,92 +1,91 @@
-import React, { useEffect, useContext, useState } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import DispatchContext from "../DispatchContext";
-import StateContext from "../StateContext";
-import { useImmerReducer } from "use-immer";
-import LoadingSpinner from "./LoadingSpinner";
+import React, { useEffect, useContext, useState } from 'react';
+import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
+import DispatchContext from '../DispatchContext';
+import StateContext from '../StateContext';
+import { useImmerReducer } from 'use-immer';
 
 export default function EditUserForm() {
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
   const navigate = useNavigate();
-  const [userh1, setUserh1] = useState("");
+  const [userh1, setUserh1] = useState('');
   const { userid } = useParams();
   const originalState = {
     username: {
-      value: "",
+      value: '',
       hasErrors: false,
-      message: "",
+      message: '',
     },
     userpassword: {
-      value: "",
+      value: '',
       hasErrors: false,
-      message: "",
+      message: '',
     },
     useremail: {
-      value: "",
+      value: '',
     },
     userisActive: {
       value: true,
       hasErrors: false,
-      message: "",
+      message: '',
     },
     usergroups: {
       data: [],
     },
     selectedUsergroups: {
-      value: "",
+      value: '',
     },
   };
 
   function ourReducer(draft, action) {
     switch (action.type) {
-      case "fetchUserGroupData":
+      case 'fetchUserGroupData':
         draft.usergroups.data = action.data;
         return;
-      case "fetchUserData":
+      case 'fetchUserData':
         draft.useremail.value = action.data.useremail;
         draft.userisActive.value = action.data.userisActive;
         draft.selectedUsergroups.value = action.data.usergroup;
         setUserh1(action.data.username);
         return;
-      case "userpasswordChange":
+      case 'userpasswordChange':
         draft.userpassword.hasErrors = false;
         draft.userpassword.value = action.value;
         return;
 
-      case "useremailChange":
+      case 'useremailChange':
         draft.useremail.value = action.value;
         return;
 
-      case "userisActive":
+      case 'userisActive':
         draft.userisActive.hasErrors = false;
         draft.userisActive.value = action.value;
         return;
-      case "selectedUsergroups":
+      case 'selectedUsergroups':
         draft.selectedUsergroups.hasErrors = false;
         draft.selectedUsergroups.value = action.value;
 
         return;
-      case "userpasswordRules":
+      case 'userpasswordRules':
         const rePassword = new RegExp(
-          "^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$"
+          '^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$'
         );
         if (!rePassword.test(action.value) && action.value) {
           console.log(`it is in password rules`);
           draft.userpassword.hasErrors = true;
           draft.userpassword.message =
-            "Your Password is required and alphanumeric min8 chars, max10chars with special chars.";
+            'Your Password is required and alphanumeric min8 chars, max10chars with special chars.';
         } else {
           draft.userpassword.hasErrors = false;
         }
         return;
 
-      case "submitRequest":
+      case 'submitRequest':
         if (!draft.userpassword.hasErrors) {
-          (draft.userpassword.value = ""),
-            (draft.selectedUsergroups.value = ""),
-            (draft.useremail.value = ""),
+          (draft.userpassword.value = ''),
+            (draft.selectedUsergroups.value = ''),
+            (draft.useremail.value = ''),
             (draft.userisActive.value = true);
         }
         return;
@@ -100,13 +99,12 @@ export default function EditUserForm() {
       e.target.selectedOptions,
       (option) => option.value
     );
-    const joinedSelectedOptions = "." + selectedOptions.join(".") + ".";
-    dispatch({ type: "selectedUsergroups", value: joinedSelectedOptions });
+    const joinedSelectedOptions = '.' + selectedOptions.join('.') + '.';
+    dispatch({ type: 'selectedUsergroups', value: joinedSelectedOptions });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      appDispatch({ type: "loadingSpinning" });
       const user = {
         userpassword: state.userpassword.value,
         useremail: state.useremail.value,
@@ -115,27 +113,25 @@ export default function EditUserForm() {
       };
       const response = await axios.put(`/admin/users/${userid}/edit`, user);
       if (response.data.success) {
-        appDispatch({ type: "loadingSpinning" });
-        appDispatch({ type: "userisActive" });
-        appDispatch({ type: "" });
+        appDispatch({ type: 'userisActive' });
+        appDispatch({ type: '' });
         appDispatch({
-          type: "flashMessage",
-          value: "User succesfully Updated.",
+          type: 'flashMessage',
+          value: 'User succesfully Updated.',
         });
-        navigate("/admin/users");
+        navigate('/admin/users');
       }
     } catch (error) {
-      appDispatch({ type: "loadingSpinning" });
       if (error.response.status === 403) {
-        navigate("/");
+        navigate('/');
       } else if (error.response.status === 404) {
-        navigate("/notfound");
+        navigate('/notfound');
       }
-      console.log("Error updating user:", error);
+      console.log('Error updating user:', error);
     }
   };
   const handleCheckboxChange = (e) => {
-    dispatch({ type: "userisActive", value: e.target.checked });
+    dispatch({ type: 'userisActive', value: e.target.checked });
   };
 
   useEffect(() => {
@@ -148,13 +144,13 @@ export default function EditUserForm() {
         const [response1, response2] = await axios.all(requests);
 
         if (response1.data.data) {
-          dispatch({ type: "fetchUserData", data: response1.data.data[0] });
+          dispatch({ type: 'fetchUserData', data: response1.data.data[0] });
         }
         if (response2.data.data) {
-          dispatch({ type: "fetchUserGroupData", data: response2.data.data });
+          dispatch({ type: 'fetchUserGroupData', data: response2.data.data });
         }
       } catch (error) {
-        console.error("Error fetching users:", error.response);
+        console.error('Error fetching users:', error.response);
       }
     };
     fetchUsers();
@@ -162,105 +158,101 @@ export default function EditUserForm() {
 
   return (
     <div>
-      {appState.isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <div>
-          <h2>
-            <i className="fa-solid fa-angles-left fa-2xl"></i> You are amending
-            user:
-            {userh1} details.
-          </h2>
-          <div className="container mt-4 p-3 border rounded border-secondary w-75">
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  onBlur={(e) => {
-                    dispatch({
-                      type: "userpasswordRules",
-                      value: e.target.value,
-                    });
-                  }}
-                  onChange={(e) => {
-                    dispatch({
-                      type: "userpasswordChange",
-                      value: e.target.value,
-                    });
-                  }}
-                  placeholder="*********"
-                />
-                {state.userpassword.hasErrors && (
-                  <div className="alert alert-danger small liveValidateMessage">
-                    {state.userpassword.message}
-                  </div>
-                )}
-              </div>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  name="email"
-                  // value={user.email}
-                  onChange={(e) =>
-                    dispatch({ type: "useremailChange", value: e.target.value })
-                  }
-                />
-              </div>
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="isActive"
-                  name="isActive"
-                  checked={Boolean(state.userisActive.value)}
-                  onChange={handleCheckboxChange}
-                />
-                <label className="form-check-label" htmlFor="isActive">
-                  Active
-                </label>
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Usergroup Roles</label>
-                <div className="dual-listbox d-flex justify-content-space-between">
-                  <select
-                    className="form-select"
-                    multiple
-                    value={
-                      state.selectedUsergroups.value &&
-                      state.selectedUsergroups.value.includes(".")
-                        ? state.selectedUsergroups.value.split(".")
-                        : state.selectedUsergroups.value
-                        ? [state.selectedUsergroups.value]
-                        : []
-                    }
-                    onChange={handleCurrentRoleChange}
-                  >
-                    {state.usergroups.data.map((group) => (
-                      <option key={group.groupid} value={group.groupname}>
-                        {group.groupname}
-                      </option>
-                    ))}
-                  </select>
+      <div>
+        <h2>
+          <i className='fa-solid fa-angles-left fa-2xl'></i> You are amending
+          user:
+          {userh1} details.
+        </h2>
+        <div className='container mt-4 p-3 border rounded border-secondary w-75'>
+          <form onSubmit={handleSubmit}>
+            <div className='mb-3'>
+              <label htmlFor='password' className='form-label'>
+                Password
+              </label>
+              <input
+                type='password'
+                className='form-control'
+                id='password'
+                name='password'
+                onBlur={(e) => {
+                  dispatch({
+                    type: 'userpasswordRules',
+                    value: e.target.value,
+                  });
+                }}
+                onChange={(e) => {
+                  dispatch({
+                    type: 'userpasswordChange',
+                    value: e.target.value,
+                  });
+                }}
+                placeholder='*********'
+              />
+              {state.userpassword.hasErrors && (
+                <div className='alert alert-danger small liveValidateMessage'>
+                  {state.userpassword.message}
                 </div>
+              )}
+            </div>
+            <div className='mb-3'>
+              <label htmlFor='email' className='form-label'>
+                Email
+              </label>
+              <input
+                type='email'
+                className='form-control'
+                id='email'
+                name='email'
+                // value={user.email}
+                onChange={(e) =>
+                  dispatch({ type: 'useremailChange', value: e.target.value })
+                }
+              />
+            </div>
+            <div className='form-check mb-3'>
+              <input
+                className='form-check-input'
+                type='checkbox'
+                id='isActive'
+                name='isActive'
+                checked={Boolean(state.userisActive.value)}
+                onChange={handleCheckboxChange}
+              />
+              <label className='form-check-label' htmlFor='isActive'>
+                Active
+              </label>
+            </div>
+            <div className='mb-3'>
+              <label className='form-label'>Usergroup Roles</label>
+              <div className='dual-listbox d-flex justify-content-space-between'>
+                <select
+                  className='form-select'
+                  multiple
+                  value={
+                    state.selectedUsergroups.value &&
+                    state.selectedUsergroups.value.includes('.')
+                      ? state.selectedUsergroups.value.split('.')
+                      : state.selectedUsergroups.value
+                      ? [state.selectedUsergroups.value]
+                      : []
+                  }
+                  onChange={handleCurrentRoleChange}
+                >
+                  {state.usergroups.data.map((group) => (
+                    <option key={group.groupid} value={group.groupname}>
+                      {group.groupname}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <button type="submit" className="btn btn-primary">
-                Update
-              </button>
-            </form>
-          </div>
+            </div>
+            <button type='submit' className='btn btn-primary'>
+              Update
+            </button>
+          </form>
         </div>
-      )}
+      </div>
     </div>
   );
 }

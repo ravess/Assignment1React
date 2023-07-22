@@ -51,9 +51,10 @@ module.exports = {
       directory: path.resolve(__dirname, 'dist'),
     },
     port: 3000,
-    historyApiFallback: { index: 'index.html' },
+    historyApiFallback: true,
     hot: true,
     // liveReload: true,
   },
   cache: false,
+  devtool: 'source-map',
 };
