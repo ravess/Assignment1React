@@ -30,6 +30,17 @@ export default function UserList() {
         }
       }
     };
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get('/user/profile');
+        if (response.data.data[0]) {
+          appDispatch({ type: 'isAuth', data: response.data.data[0] });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProfile();
     fetchUsers();
     return () => ourRequest.cancel();
   }, []);
@@ -50,18 +61,18 @@ export default function UserList() {
     <>
       {appState.user.userisAdmin ? (
         <div className='bg-light'>
-          <div className='container user-list-container'>
+          <div className='container'>
             <h2 className='text-center mt-5'>User List</h2>
             <div className='container d-flex justify-content-center'>
               <button
-                className='btn btn-outline-dark create-user-button mt-2 mr-2'
+                className='btn btn-outline-dark mt-2 mr-2'
                 onClick={handleCreateUser}
               >
                 <i class='fas fa-plus'></i> Create User
               </button>
 
               <button
-                className='btn btn-outline-dark create-user-button mt-2 ml-2'
+                className='btn btn-outline-dark mt-2 ml-2'
                 onClick={handleCreateGroup}
               >
                 <i class='fas fa-plus'></i> Create Group
@@ -91,7 +102,7 @@ export default function UserList() {
                       <td>{user.userisActive ? '🟢' : '🔴'}</td>
                       <td className='d-flex justify-content-center'>
                         <button
-                          className='btn btn-secondary edit-button'
+                          className='btn btn-secondary'
                           onClick={() => handleEdit(user.userid)}
                         >
                           Edit
@@ -103,6 +114,7 @@ export default function UserList() {
               </table>
             </div>
           </div>
+          <div></div>
         </div>
       ) : (
         ''

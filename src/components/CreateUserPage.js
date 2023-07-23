@@ -3,10 +3,12 @@ import { useImmerReducer } from 'use-immer';
 import axios from 'axios';
 import DispatchContext from '../DispatchContext';
 import StateContext from '../StateContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateUserForm() {
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
+  const navigate = useNavigate();
   const originalState = {
     username: {
       value: '',
@@ -101,6 +103,7 @@ export default function CreateUserForm() {
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
 
   useEffect(() => {
+    const ourRequest = axios.CancelToken.source();
     const fetchUsergroups = async () => {
       try {
         const response = await axios.get('/admin/groups');
@@ -108,16 +111,29 @@ export default function CreateUserForm() {
           dispatch({ type: 'fetchUserGroup', data: response.data.data });
         }
       } catch (error) {
-        if (error.response.data.error.statusCode === 401) {
-          console.log(error.response.data.errMessage);
-        }
-        if (error.response.data.error.statusCode === 404) {
-          Navigate('/');
+        if (error.response.data) {
+          console.log(error);
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
         }
       }
     };
-
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get('/user/profile');
+        if (response.data.data[0]) {
+          appDispatch({ type: 'isAuth', data: response.data.data[0] });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProfile();
     fetchUsergroups();
+    return () => ourRequest.cancel();
   }, []);
 
   const handleCheckboxChange = (e) => {
@@ -166,121 +182,130 @@ export default function CreateUserForm() {
   };
 
   return (
-    <div>
-      <div className='container d-flex flex-column mt-3 border border-dark rounded w-50'>
-        <h2>Create User</h2>
-        <form className='form-group' onSubmit={handleSubmit}>
-          <div className='mb-3'>
-            <label htmlFor='username' className='form-label'>
-              Username
-            </label>
-            <input
-              type='text'
-              className='form-control'
-              id='username'
-              value={state.username.value}
-              onChange={(e) =>
-                dispatch({ type: 'usernameChange', value: e.target.value })
-              }
-              required
-              autoFocus
-              onBlur={(e) =>
-                dispatch({ type: 'usernameRules', value: e.target.value })
-              }
-            />
-            {state.username.hasErrors && (
-              <div className='alert alert-danger small liveValidateMessage'>
-                {state.username.message}
+    <>
+      {appState.user.userisAdmin ? (
+        <div>
+          <div className='container d-flex flex-column mt-3 border border-dark rounded w-50'>
+            <h2>Create User</h2>
+            <form className='form-group' onSubmit={handleSubmit}>
+              <div className='mb-3'>
+                <label htmlFor='username' className='form-label'>
+                  Username
+                </label>
+                <input
+                  type='text'
+                  className='form-control'
+                  id='username'
+                  value={state.username.value}
+                  onChange={(e) =>
+                    dispatch({ type: 'usernameChange', value: e.target.value })
+                  }
+                  required
+                  autoFocus
+                  onBlur={(e) =>
+                    dispatch({ type: 'usernameRules', value: e.target.value })
+                  }
+                />
+                {state.username.hasErrors && (
+                  <div className='alert alert-danger small liveValidateMessage'>
+                    {state.username.message}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <div className='mb-3'>
-            <label htmlFor='password' className='form-label'>
-              Password
-            </label>
-            <input
-              type='password'
-              className='form-control'
-              id='password'
-              value={state.userpassword.value}
-              onChange={(e) =>
-                dispatch({
-                  type: 'userpasswordChange',
-                  value: e.target.value,
-                })
-              }
-              onBlur={(e) =>
-                dispatch({ type: 'userpasswordRules', value: e.target.value })
-              }
-              required
-            />
-            {state.userpassword.hasErrors && (
-              <div className='alert alert-danger small liveValidateMessage'>
-                {state.userpassword.message}
+              <div className='mb-3'>
+                <label htmlFor='password' className='form-label'>
+                  Password
+                </label>
+                <input
+                  type='password'
+                  className='form-control'
+                  id='password'
+                  value={state.userpassword.value}
+                  onChange={(e) =>
+                    dispatch({
+                      type: 'userpasswordChange',
+                      value: e.target.value,
+                    })
+                  }
+                  onBlur={(e) =>
+                    dispatch({
+                      type: 'userpasswordRules',
+                      value: e.target.value,
+                    })
+                  }
+                  required
+                />
+                {state.userpassword.hasErrors && (
+                  <div className='alert alert-danger small liveValidateMessage'>
+                    {state.userpassword.message}
+                  </div>
+                )}
               </div>
-            )}
+              <div className='mb-3'>
+                <label htmlFor='useremail' className='form-label'>
+                  Useremail
+                </label>
+                <input
+                  type='email'
+                  className='form-control'
+                  id='useremail'
+                  value={state.useremail.value}
+                  onChange={(e) =>
+                    dispatch({ type: 'useremailChange', value: e.target.value })
+                  }
+                />
+              </div>
+              <div className='mb-3 form-check'>
+                <input
+                  className='form-check-input'
+                  type='checkbox'
+                  id='isActive'
+                  checked={state.userisActive.value}
+                  onChange={handleCheckboxChange}
+                />
+                <label className='form-check-label' htmlFor='isActive'>
+                  Active
+                </label>
+              </div>
+              <div className='mb-3 d-flex flex-column'>
+                <label htmlFor='usergroups' className='form-label'>
+                  Usergroups
+                </label>
+                <select
+                  multiple
+                  className='form-select'
+                  id='usergroups'
+                  onChange={handleSelectChange}
+                >
+                  {state.usergroups.data.map((group) => {
+                    return (
+                      <option key={group.groupid} value={group.groupname}>
+                        {group.groupname}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <div className='d-flex justify-content-center'>
+                <button
+                  type='submit'
+                  className='btn btn-dark d-flex ml-0 justify-content-center'
+                  disabled={
+                    state.username.hasErrors ||
+                    state.userpassword.hasErrors ||
+                    !state.username.value.trim() ||
+                    !state.userpassword.value.trim()
+                  }
+                >
+                  Create User
+                </button>
+              </div>
+            </form>
           </div>
-          <div className='mb-3'>
-            <label htmlFor='useremail' className='form-label'>
-              Useremail
-            </label>
-            <input
-              type='email'
-              className='form-control'
-              id='useremail'
-              value={state.useremail.value}
-              onChange={(e) =>
-                dispatch({ type: 'useremailChange', value: e.target.value })
-              }
-            />
-          </div>
-          <div className='mb-3 form-check'>
-            <input
-              className='form-check-input'
-              type='checkbox'
-              id='isActive'
-              checked={state.userisActive.value}
-              onChange={handleCheckboxChange}
-            />
-            <label className='form-check-label' htmlFor='isActive'>
-              Active
-            </label>
-          </div>
-          <div className='mb-3 d-flex flex-column'>
-            <label htmlFor='usergroups' className='form-label'>
-              Usergroups
-            </label>
-            <select
-              multiple
-              className='form-select'
-              id='usergroups'
-              onChange={handleSelectChange}
-            >
-              {state.usergroups.data.map((group) => {
-                return (
-                  <option key={group.groupid} value={group.groupname}>
-                    {group.groupname}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className='d-flex justify-content-center'>
-            <button
-              type='submit'
-              className='btn btn-dark d-flex ml-0 justify-content-center'
-              disabled={
-                state.username.hasErrors ||
-                state.userpassword.hasErrors ||
-                !state.username.value.trim() ||
-                !state.userpassword.value.trim()
-              }
-            >
-              Create User
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      ) : (
+        ''
+      )}
+    </>
   );
 }

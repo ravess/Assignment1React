@@ -5,10 +5,8 @@ import StateContext from '../StateContext';
 
 export default function CreateUserForm() {
   const appDispatch = useContext(DispatchContext);
-  const appState = useContext(StateContext);
   const [createGroup, setCreateGroup] = useState('');
   const [hasError, setHasError] = useState(false);
-  const [count, setCount] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +16,11 @@ export default function CreateUserForm() {
       });
       if (response.data)
         appDispatch({ type: 'flashMessage', value: 'Group created' });
+      setCreateGroup('');
     } catch (error) {
       if (error.response.data)
         appDispatch({
-          type: 'flashMessage',
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
     }
@@ -45,7 +44,7 @@ export default function CreateUserForm() {
                 if (e.target.value.length < 0) {
                   setHasError(true);
                 } else {
-                  setCreateGroup(e.target.value);
+                  setCreateGroup(e.target.value.trim());
                   setHasError(false);
                 }
               }}

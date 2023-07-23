@@ -10,7 +10,6 @@ export default function Header() {
   const appState = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
@@ -26,14 +25,12 @@ export default function Header() {
       }
     }
     checkAdmin();
-    localStorage.setItem('pageRefreshed', 'true');
     return () => {
       ourRequest.cancel();
-      localStorage.removeItem('pageRefreshed');
     };
   }, [appState.loggedIn, appState.user]);
 
-  const handleSignOut = async () => {
+  const handleLogOut = async () => {
     try {
       const response = await axios.get('/logout');
       if (response.data.success) {
@@ -88,7 +85,7 @@ export default function Header() {
             <li className='nav-item'>
               <button
                 className='btn btn-link text-white text-decoration-none'
-                onClick={handleSignOut}
+                onClick={handleLogOut}
               >
                 <i className='fas fa-sign-out-alt'></i> Sign Out
               </button>

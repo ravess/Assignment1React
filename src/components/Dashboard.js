@@ -3,10 +3,12 @@ import './Dashboard.css'; // Import your custom CSS file
 import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const appState = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
@@ -55,7 +57,7 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        ''
+        navigate('/')
       )}
     </>
   );

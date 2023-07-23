@@ -56,8 +56,7 @@ export default function ProfilePage() {
         setPasswordMessage('');
       }
     } catch (error) {
-      if (error.response.data.errMessage) {
-      }
+      console.log(error);
     }
   };
 
@@ -74,7 +73,7 @@ export default function ProfilePage() {
     } catch (error) {
       if (error.response.data) {
         appDispatch({
-          type: 'flashMessage',
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
       }
