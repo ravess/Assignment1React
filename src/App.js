@@ -71,7 +71,6 @@ export default function App() {
               element={<AdminUpdateUserPage />}
             />
             <Route path='/admin/users/create' element={<CreateUserPage />} />
-            <Route path='/admin/groups/create' element={<CreateGroupPage />} />
           </Routes>
           <FlashMessages messages={state.flashMessages} />
           <FlashMessagesErr messages={state.flashMessagesErr} />

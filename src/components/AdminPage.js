@@ -58,68 +58,68 @@ export default function UserList() {
     navigate(`/admin/users/create`);
   };
 
-  const handleCreateGroup = () => {
-    navigate(`/admin/groups/create`);
-  };
-
   return (
     <>
       {appState.user.userisAdmin ? (
         <div className='bg-light'>
-          <div className='container'>
-            <h2 className='text-center mt-5'>User List</h2>
-            <div className='container d-flex justify-content-center'>
-              <button
-                className='btn btn-outline-dark mt-2 mr-2'
-                onClick={handleCreateUser}
-              >
-                <i class='fas fa-plus'></i> Create User
-              </button>
+          <div className='d-inline-flex w-100 justify-content-center align-items-center'>
+            <div className='container'>
+              <h2 className='text-center mt-5'>User List</h2>
+              <div className='container d-flex justify-content-center'>
+                <button
+                  className='btn btn-outline-dark mt-2 mr-2'
+                  onClick={handleCreateUser}
+                >
+                  <i class='fas fa-plus'></i> Create User
+                </button>
 
-              <button
-                className='btn btn-outline-dark mt-2 ml-2'
-                onClick={handleCreateGroup}
-              >
-                <i class='fas fa-plus'></i> Create Group
-              </button>
-            </div>
+                {/* <button
+                  className='btn btn-outline-dark mt-2 ml-2'
+                  onClick={handleCreateGroup}
+                >
+                  <i class='fas fa-plus'></i> Create Group
+                </button> */}
+              </div>
 
-            <div className='table-responsive mt-5'>
-              <table className='table table-bordered table-shadow'>
-                <thead>
-                  <tr>
-                    <th className='bg-dark text-white'>Name</th>
-                    <th className='bg-dark text-white'>Email</th>
-                    <th className='bg-dark text-white'>Groups</th>
-                    <th className='bg-dark text-white'>Status</th>
-                    <th className='bg-dark text-white'>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user, idx) => (
-                    <tr
-                      key={idx}
-                      className={idx % 2 === 0 ? 'even-row' : 'odd-row'}
-                    >
-                      <td>{user.username}</td>
-                      <td>{user.useremail}</td>
-                      <td>{user.usergroup}</td>
-                      <td>{user.userisActive ? '🟢' : '🔴'}</td>
-                      <td className='d-flex justify-content-center'>
-                        <button
-                          className='btn btn-secondary'
-                          onClick={() => handleEdit(user.userid)}
-                        >
-                          Edit
-                        </button>
-                      </td>
+              <div className='table-responsive mt-5'>
+                <table className='table table-bordered table-shadow'>
+                  <thead>
+                    <tr>
+                      <th className='bg-dark text-white'>Name</th>
+                      <th className='bg-dark text-white'>Email</th>
+                      <th className='bg-dark text-white'>Groups</th>
+                      <th className='bg-dark text-white'>Status</th>
+                      <th className='bg-dark text-white'>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {users.map((user, idx) => (
+                      <tr
+                        key={idx}
+                        className={idx % 2 === 0 ? 'even-row' : 'odd-row'}
+                      >
+                        <td>{user.username}</td>
+                        <td>{user.useremail}</td>
+                        <td>{user.usergroup}</td>
+                        <td>{user.userisActive ? '🟢' : '🔴'}</td>
+                        <td className='d-flex justify-content-center'>
+                          <button
+                            className='btn btn-secondary'
+                            onClick={() => handleEdit(user.userid)}
+                          >
+                            Edit
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className='w-50'>
+              <CreateGroupForm />
             </div>
           </div>
-          <div className='container'>{/* <CreateGroupForm /> */}</div>
         </div>
       ) : (
         ''
