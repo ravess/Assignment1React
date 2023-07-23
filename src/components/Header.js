@@ -39,7 +39,18 @@ export default function Header() {
         navigate('/');
       }
     } catch (error) {
-      console.log(error);
+      if (error.response.data.error.statusCode === 403) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        navigate('/user/dashboard');
+      }
+      if (error.response.data)
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
     }
   };
 

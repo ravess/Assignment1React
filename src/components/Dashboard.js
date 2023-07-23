@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
-    async function fetchResults() {
+    const fetchResults = async () => {
       try {
         const response = await axios.get('/user/profile');
         if (response.data.data[0]) {
@@ -21,7 +21,7 @@ export default function Dashboard() {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     fetchResults();
     return () => ourRequest.cancel();
   }, []);

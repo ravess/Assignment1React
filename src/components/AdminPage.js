@@ -4,6 +4,7 @@ import axios from 'axios';
 import './AdminPage.css';
 import DispatchContext from '../DispatchContext';
 import StateContext from '../StateContext';
+import CreateGroupForm from './CreateGroupPage';
 
 export default function UserList() {
   const appDispatch = useContext(DispatchContext);
@@ -20,14 +21,18 @@ export default function UserList() {
           setUsers(response.data.data);
         }
       } catch (error) {
-        if (error.response.data) {
-          console.log(error);
+        if (error.response.data.error.statusCode === 403) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/user/dashboard');
         }
+        if (error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     const fetchProfile = async () => {
@@ -114,7 +119,7 @@ export default function UserList() {
               </table>
             </div>
           </div>
-          <div></div>
+          <div className='container'>{/* <CreateGroupForm /> */}</div>
         </div>
       ) : (
         ''

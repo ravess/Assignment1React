@@ -111,14 +111,18 @@ export default function CreateUserForm() {
           dispatch({ type: 'fetchUserGroup', data: response.data.data });
         }
       } catch (error) {
-        if (error.response.data) {
-          console.log(error);
+        if (error.response.data.error.statusCode === 403) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/user/dashboard');
         }
+        if (error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     const fetchProfile = async () => {
@@ -136,12 +140,12 @@ export default function CreateUserForm() {
     return () => ourRequest.cancel();
   }, []);
 
-  const handleCheckboxChange = (e) => {
+  const handleUserIsActiveChange = (e) => {
     dispatch({ type: 'userisActive', value: e.target.checked });
   };
 
+  //This portions help to create an array when you select the option.value in the select so that we can use join method to become a string like
   const handleSelectChange = (e) => {
-    //This portions help to create an array when you select the option.value in the select so that we can use join method to become a string like
     const selectedOptions = Array.from(
       e.target.selectedOptions,
       (option) => option.value
@@ -152,6 +156,27 @@ export default function CreateUserForm() {
     console.log(joinedSelectedOptions);
     dispatch({ type: 'selectedUsergroups', value: joinedSelectedOptions });
   };
+
+  // const handleSelectChange = (e) => {
+  //   const selectedOption = e.target.value;
+  //   const isChecked = e.target.checked;
+  //   const currentSelectedOptions = state.selectedUsergroups.value;
+
+  //   let updatedSelectedOptions;
+
+  //   if (isChecked) {
+  //     // Add the selected option to the current selected options
+  //     updatedSelectedOptions = [...currentSelectedOptions, selectedOption];
+  //   } else {
+  //     // Remove the selected option from the current selected options
+  //     updatedSelectedOptions = currentSelectedOptions.filter(
+  //       (option) => option !== selectedOption
+  //     );
+  //   }
+  //   const joinedCheckedOptions = '.' + updatedSelectedOptions.join('.') + '.';
+  //   console.log(joinedCheckedOptions);
+  //   dispatch({ type: 'selectedUsergroups', value: joinedCheckedOptions });
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -172,12 +197,18 @@ export default function CreateUserForm() {
         });
       }
     } catch (error) {
+      if (error.response.data.error.statusCode === 403) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        navigate('/user/dashboard');
+      }
       if (error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-      console.log(error.response.data);
     }
   };
 
@@ -261,7 +292,7 @@ export default function CreateUserForm() {
                   type='checkbox'
                   id='isActive'
                   checked={state.userisActive.value}
-                  onChange={handleCheckboxChange}
+                  onChange={handleUserIsActiveChange}
                 />
                 <label className='form-check-label' htmlFor='isActive'>
                   Active
@@ -271,6 +302,31 @@ export default function CreateUserForm() {
                 <label htmlFor='usergroups' className='form-label'>
                   Usergroups
                 </label>
+
+                {/* {state.usergroups.data.map((group) => (
+                  <div
+                    key={group.groupid}
+                    className='form-check usergroup-form'
+                  >
+                    <input
+                      className='form-check-input'
+                      type='checkbox'
+                      id={group.groupid}
+                      value={group.groupname}
+                      checked={
+                        state.selectedUsergroups.value &&
+                        state.selectedUsergroups.value.includes(
+                          `${group.groupname}`
+                        )
+                      }
+                      onChange={handleSelectChange}
+                    />
+                    <label className='form-check-label' htmlFor={group.groupid}>
+                      {group.groupname}
+                    </label>
+                  </div>
+                ))} */}
+
                 <select
                   multiple
                   className='form-select'

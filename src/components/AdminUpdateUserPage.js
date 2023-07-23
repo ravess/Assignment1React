@@ -122,14 +122,18 @@ export default function EditUserForm() {
         navigate('/admin/users');
       }
     } catch (error) {
-      if (error.response.data) {
-        console.log(error);
+      if (error.response.data.error.statusCode === 403) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         navigate('/user/dashboard');
       }
+      if (error.response.data)
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
     }
   };
   const handleCheckboxChange = (e) => {
@@ -152,11 +156,21 @@ export default function EditUserForm() {
           dispatch({ type: 'fetchUserGroupData', data: response2.data.data });
         }
       } catch (error) {
-        appDispatch({
-          type: 'flashMessageErr',
-          value: error.response.data.errMessage,
-        });
-        navigate('/user/dashboard');
+        if (error.response.data.error.statusCode === 403) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
+        }
+        if (error.response.data) {
+          console.log(error.response.data.error.statusCode);
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
+        }
       }
     };
     fetchUsers();
@@ -273,7 +287,7 @@ export default function EditUserForm() {
                     </select>
                   </div>
                 </div>
-                <button type='submit' className='btn btn-primary'>
+                <button type='submit' className='btn btn-dark'>
                   Update
                 </button>
               </form>
