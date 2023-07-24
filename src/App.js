@@ -1,19 +1,18 @@
-import React from 'react';
-import LoginPage from './components/LoginPage';
-import ProfilePage from './components/ProfilePage';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import { useImmerReducer } from 'use-immer';
-import FlashMessages from './components/FlashMessage';
-import FlashMessagesErr from './components/FlashMessageErr';
-import Dashboard from './components/Dashboard';
-import AdminPage from './components/AdminPage';
-import AdminUpdateUserPage from './components/AdminUpdateUserPage';
-import CreateUserPage from './components/CreateUserPage';
-import CreateGroupPage from './components/CreateGroupPage';
-import Header from './components/Header';
-import StateContext from './StateContext';
-import DispatchContext from './DispatchContext';
-import axios from 'axios';
+import React from "react";
+import LoginPage from "./components/LoginPage";
+import ProfilePage from "./components/ProfilePage";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { useImmerReducer } from "use-immer";
+import FlashMessages from "./components/FlashMessage";
+import FlashMessagesErr from "./components/FlashMessageErr";
+import Dashboard from "./components/Dashboard";
+import AdminPage from "./components/AdminPage";
+import AdminUpdateUserPage from "./components/AdminUpdateUserPage";
+import CreateUserPage from "./components/CreateUserPage";
+import Header from "./components/Header";
+import StateContext from "./StateContext";
+import DispatchContext from "./DispatchContext";
+import axios from "axios";
 axios.defaults.baseURL = process.env.BACKENDURL;
 axios.defaults.withCredentials = true;
 
@@ -23,33 +22,33 @@ export default function App() {
     flashMessages: [],
     flashMessagesErr: [],
     user: {
-      username: '',
-      usergroup: '',
-      userisActive: '',
-      useremail: '',
+      username: "",
+      usergroup: "",
+      userisActive: "",
+      useremail: "",
       userisAdmin: false,
     },
   };
   function ourReducer(draft, action) {
     switch (action.type) {
-      case 'login':
+      case "login":
         draft.loggedIn = true;
         return;
-      case 'isAuth':
+      case "isAuth":
         draft.loggedIn = true;
         draft.user = action.data;
         return;
-      case 'logout':
+      case "logout":
         draft.loggedIn = false;
         draft.user = { ...initialState.user };
         return;
-      case 'isAdmin':
+      case "isAdmin":
         draft.user.userisAdmin = action.value;
         return;
-      case 'flashMessage':
+      case "flashMessage":
         draft.flashMessages.push(action.value);
         return;
-      case 'flashMessageErr':
+      case "flashMessageErr":
         draft.flashMessagesErr.push(action.value);
         return;
     }
@@ -60,17 +59,18 @@ export default function App() {
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
         <BrowserRouter>
-          {state.loggedIn ? <Header /> : ''}
+          {state.loggedIn ? <Header /> : ""}
           <Routes>
-            <Route path='/' element={<LoginPage />} />
-            <Route path='/user/dashboard' element={<Dashboard />} />
-            <Route path='/user/profile' element={<ProfilePage />} />
-            <Route path='/admin/users' element={<AdminPage />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/user/dashboard" element={<Dashboard />} />
+            <Route path="/user/profile" element={<ProfilePage />} />
+            <Route path="/admin/users" element={<AdminPage />} />
             <Route
-              path='/admin/users/:userid/edit'
+              path="/admin/users/:userid/edit"
               element={<AdminUpdateUserPage />}
             />
-            <Route path='/admin/users/create' element={<CreateUserPage />} />
+            <Route path="/admin/users/create" element={<CreateUserPage />} />
+            <Route path="*" element={<Dashboard />} />
           </Routes>
           <FlashMessages messages={state.flashMessages} />
           <FlashMessagesErr messages={state.flashMessagesErr} />
