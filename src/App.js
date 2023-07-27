@@ -9,10 +9,14 @@ import Dashboard from "./components/Dashboard";
 import AdminPage from "./components/AdminPage";
 import AdminUpdateUserPage from "./components/AdminUpdateUserPage";
 import CreateUserPage from "./components/CreateUserPage";
+import CreateAppPage from "./components/CreateAppPage";
+import CreatePlanPage from "./components/CreatePlanPage";
 import Header from "./components/Header";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 import axios from "axios";
+import AppPage from "./components/AppPage";
+import KanbanBoard from "./components/KanbanBoard";
 axios.defaults.baseURL = process.env.BACKENDURL;
 axios.defaults.withCredentials = true;
 
@@ -70,6 +74,10 @@ export default function App() {
               element={<AdminUpdateUserPage />}
             />
             <Route path="/admin/users/create" element={<CreateUserPage />} />
+            <Route path="/apps" element={<AppPage />} />
+            <Route path="/apps/:appacronym" element={<KanbanBoard />} />
+            <Route path="/apps/create" element={<CreateAppPage />} />
+            <Route path="/plans/create" element={<CreatePlanPage />} />
             <Route path="*" element={<Dashboard />} />
           </Routes>
           <FlashMessages messages={state.flashMessages} />

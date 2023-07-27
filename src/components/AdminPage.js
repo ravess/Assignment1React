@@ -68,9 +68,9 @@ export default function UserList() {
     <>
       {appState.user.userisAdmin ? (
         <div className="bg-light">
-          <div className="d-inline-flex w-100 justify-content-center align-items-center">
+          <div className="d-lg-inline-flex w-100 justify-content-center align-items-end">
             <div className="container">
-              <h2 className="text-center mt-5">User List</h2>
+              <h2 className="text-center">User List</h2>
               <div className="container d-flex justify-content-center">
                 <button
                   className="btn btn-outline-dark mt-2 mr-2"
@@ -88,7 +88,7 @@ export default function UserList() {
               </div>
 
               <div className="table-responsive mt-5">
-                <table className="table table-bordered table-shadow">
+                <table className="table table-bordered table-shadow mb-0">
                   <thead>
                     <tr>
                       <th className="bg-dark text-white">Name</th>

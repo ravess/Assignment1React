@@ -69,7 +69,7 @@ export default function CreateGroupForm() {
   return (
     <>
       {appState.user.userisAdmin ? (
-        <div className="d-flex flex-column">
+        <div className="d-flex flex-column align-items-center">
           <h2>Current Groups:</h2>
           <div className="mt-3 border border-dark rounded w-50">
             <div className="container mt-3">

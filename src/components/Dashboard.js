@@ -3,9 +3,13 @@ import "./Dashboard.css"; // Import your custom CSS file
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Dashboard() {
+  const linkStyle = {
+    textDecoration: "none",
+    color: "inherit",
+  };
   const appState = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
   const navigate = useNavigate();
@@ -46,20 +50,39 @@ export default function Dashboard() {
               </p>
             </div>
           </div>
-          <div className="container d-flex justify-content-center mt-5"></div>
-          <div className="card w-25 d-flex m-auto">
-            <div className="card-body bg-dark">
-              <h5 className="card-title text-white text-center">Profile:</h5>
-              <h4 className="card-title text-white">
-                Username: {appState.user.username}
-              </h4>
-              <h4 className="card-title text-white">
-                Email: {appState.user.useremail}
-              </h4>
-              <h4 className="card-title text-white">
-                Status:{appState.user.userisActive ? "🟢" : "🔴"}
-              </h4>
-            </div>
+          <div className="container-fluid row justify-content-center d-inline-flex mt-5 mx-auto">
+            <Link
+              to={"/user/profile"}
+              className="col-md-4 mb-4"
+              style={linkStyle}
+            >
+              <div className="card m-auto h-100">
+                <div className="card-body bg-dark">
+                  <h5 className="card-title text-white text-center">
+                    Profile:
+                  </h5>
+                  <p className="card-title text-white">
+                    Username: {appState.user.username}
+                  </p>
+                  <p className="card-title text-white">
+                    Email: {appState.user.useremail}
+                  </p>
+                  <p className="card-title text-white">
+                    Status:{appState.user.userisActive ? "🟢" : "🔴"}
+                  </p>
+                </div>
+              </div>
+            </Link>
+            <Link to={"/apps"} className="col-md-4 mb-4" style={linkStyle}>
+              <div className="card m-auto h-100">
+                <div className="card-body bg-dark">
+                  <h5 className="card-title text-white text-center">
+                    View All Apps
+                  </h5>
+                  <p className="card-title text-white">Number of Apps: </p>
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       ) : (
