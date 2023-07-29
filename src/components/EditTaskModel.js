@@ -1,11 +1,53 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-export default function EditTaskModel() {
+export default function EditTaskModel({ selectedTaskId, key }) {
+  const [task, setTask] = useState([]);
+
+  const params = useParams();
+
+  useEffect(() => {
+    if (!selectedTaskId) return;
+    if (selectedTaskId === null) {
+      // If selectedTaskId is null, reset the task data to an empty array
+      setTask([]);
+      return;
+    }
+
+    const ourRequest = axios.CancelToken.source();
+    const fetchData = async () => {
+      try {
+        const getTasksResponse = await axios.get(
+          `/apps/${params.appacronym}/tasks/${selectedTaskId}`
+        );
+        if (getTasksResponse.data.data) {
+          console.log(getTasksResponse.data.data);
+          setTask(getTasksResponse.data.data);
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          console.log(`either navigate away or do other things`);
+        }
+      }
+    };
+    if (selectedTaskId) {
+      fetchData();
+    }
+
+    return () => ourRequest.cancel();
+  }, [selectedTaskId]);
+
   return (
     <>
       <div
         className='modal fade'
         id='editTaskModal'
+        key={key}
         tabindex='-1'
         role='dialog'
         aria-labelledby='editTaskModalTitle'

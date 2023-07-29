@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useImmerReducer, useImmer } from 'use-immer';
 import axios from 'axios';
 import DispatchContext from '../DispatchContext';
@@ -19,6 +19,9 @@ export default function KanbanBoard() {
     tasks: {
       data: [],
     },
+    plans: {
+      data: [],
+    },
     usergroups: {
       data: [],
     },
@@ -32,7 +35,9 @@ export default function KanbanBoard() {
         return;
       case 'fetchAllTasks':
         draft.tasks.data = action.data;
-        console.log(action.data);
+        return;
+      case 'fetchAllPlans':
+        draft.plans.data = action.data;
         return;
       case 'fetchUserGroup':
         draft.usergroups.data = action.data;
@@ -45,7 +50,8 @@ export default function KanbanBoard() {
     }
   }
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
-
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [key, setKey] = useState(0);
   const handleMoveLeft = (taskId) => {
     // Move the task with the given taskId to the left column
     // Implement your state transition logic here
@@ -54,6 +60,11 @@ export default function KanbanBoard() {
   const handleMoveRight = (taskId) => {
     // Move the task with the given taskId to the right column
     // Implement your state transition logic here
+  };
+
+  const handleTaskCardClick = (taskid) => {
+    setSelectedTaskId(taskid);
+    setKey((prevKey) => prevKey + 1); // Update the key to trigger a re-render
   };
 
   useEffect(() => {
@@ -75,6 +86,16 @@ export default function KanbanBoard() {
           dispatch({
             type: 'fetchAllTasks',
             data: getAllTasksResponse.data.data,
+          });
+        }
+        const getAllPlansResponse = await axios.get(
+          `/apps/${params.appacronym}/plans`
+        );
+        if (getAllPlansResponse.data.data) {
+          console.log(getAllPlansResponse.data.data);
+          dispatch({
+            type: 'fetchAllPlans',
+            data: getAllPlansResponse.data.data,
           });
         }
       } catch (error) {
@@ -150,6 +171,7 @@ export default function KanbanBoard() {
                     task={task}
                     handleMoveLeft={handleMoveLeft}
                     handleMoveRight={handleMoveRight}
+                    onTaskCardClick={handleTaskCardClick}
                   />
                 ))}
             </div>
@@ -163,6 +185,7 @@ export default function KanbanBoard() {
                     task={task}
                     handleMoveLeft={handleMoveLeft}
                     handleMoveRight={handleMoveRight}
+                    onTaskCardClick={handleTaskCardClick}
                   />
                 ))}
             </div>
@@ -176,9 +199,11 @@ export default function KanbanBoard() {
                     task={task}
                     handleMoveLeft={handleMoveLeft}
                     handleMoveRight={handleMoveRight}
+                    onTaskCardClick={handleTaskCardClick}
                   />
                 ))}
             </div>
+
             <div className='col border'>
               <h3>Done</h3>
               {state.tasks.data
@@ -189,6 +214,7 @@ export default function KanbanBoard() {
                     task={task}
                     handleMoveLeft={handleMoveLeft}
                     handleMoveRight={handleMoveRight}
+                    onTaskCardClick={handleTaskCardClick}
                   />
                 ))}
             </div>
@@ -202,6 +228,7 @@ export default function KanbanBoard() {
                     task={task}
                     handleMoveLeft={handleMoveLeft}
                     handleMoveRight={handleMoveRight}
+                    onTaskCardClick={handleTaskCardClick}
                   />
                 ))}
             </div>
@@ -210,7 +237,7 @@ export default function KanbanBoard() {
         <div>
           <CreateTaskModel />
           <CreatePlanModel />
-          <EditTaskModel />
+          <EditTaskModel selectedTaskId={selectedTaskId} key={key} />
         </div>
       </div>
     </div>
