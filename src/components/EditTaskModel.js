@@ -176,9 +176,7 @@ export default function EditTaskModel({
                   <strong>
                     <span>Task Owner: </span>
                   </strong>
-                  {task.length > 0 && (
-                    <span>{task[0].Task_notes[0].username}</span>
-                  )}
+                  {task.length > 0 && <span>{task[0].Task_owner}</span>}
                 </div>
                 <div class='form-group text-left'>
                   <label for='Task_plan'>
