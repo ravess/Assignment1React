@@ -25,7 +25,6 @@ export default function CreateTaskModel({ plans, onFormSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData, `checking form details in body`);
       const response = await axios.post(
         `/apps/${params.appacronym}/tasks/create`,
         formData

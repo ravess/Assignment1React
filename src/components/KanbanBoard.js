@@ -214,7 +214,7 @@ export default function KanbanBoard() {
         </div>
         <div className='container-fluid mt-5'>
           <div className='row'>
-            <div className='col border'>
+            <div className='col border mx-4 p-2'>
               <h3>Open State</h3>
               {state.tasks.data
                 .filter((task) => task.Task_state === 'open')
@@ -228,7 +228,7 @@ export default function KanbanBoard() {
                   />
                 ))}
             </div>
-            <div className='col border'>
+            <div className='col border mx-4 p-2'>
               <h3>To Do</h3>
               {state.tasks.data
                 .filter((task) => task.Task_state === 'todo')
@@ -242,7 +242,7 @@ export default function KanbanBoard() {
                   />
                 ))}
             </div>
-            <div className='col border'>
+            <div className='col border mx-4 p-2'>
               <h3>Doing</h3>
               {state.tasks.data
                 .filter((task) => task.Task_state === 'doing')
@@ -257,7 +257,7 @@ export default function KanbanBoard() {
                 ))}
             </div>
 
-            <div className='col border'>
+            <div className='col border mx-4 p-2'>
               <h3>Done</h3>
               {state.tasks.data
                 .filter((task) => task.Task_state === 'done')
@@ -271,7 +271,7 @@ export default function KanbanBoard() {
                   />
                 ))}
             </div>
-            <div className='col border'>
+            <div className='col border mx-4 p-2'>
               <h3>Closed</h3>
               {state.tasks.data
                 .filter((task) => task.Task_state === 'closed')

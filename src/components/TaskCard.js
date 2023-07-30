@@ -17,7 +17,7 @@ export default function TaskCard({
   return (
     <>
       <div
-        className='card'
+        className='card my-3'
         data-toggle='modal'
         data-target='#editTaskModal'
         onClick={() => onTaskCardClick(task.Task_id)}
