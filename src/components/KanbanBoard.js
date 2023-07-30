@@ -140,10 +140,6 @@ export default function KanbanBoard() {
             `/apps/${params.appacronym}/plans`
           );
           if (getAllPlansResponse.data.data) {
-            console.log(
-              getAllPlansResponse.data.data,
-              `it ran to fetch latest data`
-            );
             dispatch({
               type: 'fetchAllPlans',
               data: getAllPlansResponse.data.data,
@@ -293,7 +289,11 @@ export default function KanbanBoard() {
             onFormSubmit={() => setIsTaskFormSubmitted(true)}
           />
           <CreatePlanModel onFormSubmit={() => setIsPlanFormSubmitted(true)} />
-          <EditTaskModel selectedTaskId={selectedTaskId} key={key} />
+          <EditTaskModel
+            selectedTaskId={selectedTaskId}
+            key={key}
+            plans={state.plans.data}
+          />
         </div>
       </div>
     </div>

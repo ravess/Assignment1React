@@ -92,11 +92,12 @@ export default function CreateTaskModel({ plans, onFormSubmit }) {
             <form onSubmit={handleSubmit} className='p-3'>
               <div className='modal-body'>
                 <div className='form-group text-left'>
-                  <label htmlFor='taskname' className='form-label' re>
-                    Task Name:
+                  <label htmlFor='Task_name' className='form-label' re>
+                    <strong>Task Name:</strong>
                   </label>
                   <input
                     type='text'
+                    id='Task_name'
                     className='form-control'
                     value={formData.Task_name}
                     name='Task_name'
@@ -105,12 +106,13 @@ export default function CreateTaskModel({ plans, onFormSubmit }) {
                   />
                 </div>
                 <div className='form-group text-left'>
-                  <label htmlFor='username' className='form-label'>
-                    Task Description:
+                  <label htmlFor='Task_description' className='form-label'>
+                    <strong>Task Description:</strong>
                   </label>
                   <input
                     type='text'
                     className='form-control'
+                    id='Task_description'
                     value={formData.Task_description}
                     name='Task_description'
                     onChange={handleChange}
@@ -118,12 +120,14 @@ export default function CreateTaskModel({ plans, onFormSubmit }) {
                   />
                 </div>
                 <div className='form-group text-left'>
-                  <label htmlFor='username' className='form-label'>
-                    <p>Task Notes:</p>
+                  <label htmlFor='Task_notes' className='form-label'>
+                    <strong>
+                      <p>Task Notes:</p>
+                    </strong>
                   </label>
                   <textarea
                     class='form-control'
-                    id='exampleFormControlTextarea1'
+                    id='Task_notes'
                     rows='10'
                     name='Task_notes'
                     value={formData.Task_notes}
@@ -131,15 +135,12 @@ export default function CreateTaskModel({ plans, onFormSubmit }) {
                   ></textarea>
                 </div>
                 <div class='form-group text-left'>
-                  <label
-                    htmlfor='exampleFormControlSelect1'
-                    className='form-label'
-                  >
-                    Plans
+                  <label htmlfor='Task_plan' className='form-label'>
+                    <strong>Task Plans</strong>
                   </label>
                   <select
                     className='form-control'
-                    id='exampleFormControlSelect1'
+                    id='Task_plan'
                     name='Task_plan'
                     onChange={handleChange}
                   >

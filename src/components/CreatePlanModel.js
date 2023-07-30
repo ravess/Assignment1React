@@ -94,7 +94,7 @@ export default function CreatePlanModel({ onFormSubmit }) {
                 <div className='row'>
                   <div className='col text-left p-3'>
                     <label htmlFor='Plan_MVP_name' className='form-label'>
-                      Plan Name
+                      <strong>Plan Name</strong>
                     </label>
                     <input
                       type='text'
@@ -109,7 +109,7 @@ export default function CreatePlanModel({ onFormSubmit }) {
                 <div className='row'>
                   <div className='col text-left p-3'>
                     <label htmlFor='Plan_startDate' className='form-label'>
-                      Start Date
+                      <strong>Start Date</strong>
                     </label>
                     <input
                       type='date'
@@ -121,7 +121,7 @@ export default function CreatePlanModel({ onFormSubmit }) {
                   </div>
                   <div className='col text-left p-3'>
                     <label htmlFor='Plan_endDate' className='form-label'>
-                      End Date
+                      <strong>End Date</strong>
                     </label>
                     <input
                       type='date'

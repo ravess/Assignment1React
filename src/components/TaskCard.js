@@ -24,10 +24,10 @@ export default function TaskCard({
       >
         <div className='card-body'>
           <h5 className='card-title'>{task.Task_name}</h5>
-          <button className='btn btn-dark' onClick={handleClickLeft}>
+          <button className='btn btn-outline-dark' onClick={handleClickLeft}>
             &larr; Left
           </button>
-          <button className='btn btn-dark' onClick={handleClickRight}>
+          <button className='btn btn-outline-dark' onClick={handleClickRight}>
             Right &rarr;
           </button>
         </div>

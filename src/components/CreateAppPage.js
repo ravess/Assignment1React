@@ -129,7 +129,7 @@ export default function CreateAppPage() {
           <form className='form-group' onSubmit={handleSubmit}>
             <div className='mb-3 w-50'>
               <label htmlFor='App_Acronym' className='form-label'>
-                Application Acronym
+                <strong>Application Acronym</strong>
               </label>
               <input
                 type='text'
@@ -144,7 +144,7 @@ export default function CreateAppPage() {
             </div>
             <div className='mb-3'>
               <label htmlFor='App_Description' className='form-label'>
-                Application Description
+                <strong>Application Description</strong>
               </label>
               <textarea
                 class='form-control'
@@ -161,7 +161,7 @@ export default function CreateAppPage() {
                 {' '}
                 <div className='mb-3'>
                   <label htmlFor='App_Rnumber' className='form-label'>
-                    App R Number
+                    <strong>App R Number</strong>
                   </label>
                   <input
                     type='number'
@@ -177,7 +177,7 @@ export default function CreateAppPage() {
               <div className='col'>
                 <div className='mb-3'>
                   <label htmlFor='App_startDate' className='form-label'>
-                    App Start Date
+                    <strong>App Start Date</strong>
                   </label>
                   <input
                     type='date'
@@ -193,7 +193,7 @@ export default function CreateAppPage() {
                 {' '}
                 <div className='mb-3'>
                   <label htmlFor='App_endDate' className='form-label'>
-                    App End Date
+                    <strong>App End Date</strong>
                   </label>
                   <input
                     type='date'
@@ -211,7 +211,7 @@ export default function CreateAppPage() {
               <div className='row'>
                 <div className='col d-flex flex-column'>
                   <label htmlFor='App_permit_Open' className='form-label'>
-                    Permit Open
+                    <strong>Permit Open</strong>
                   </label>
                   <select
                     className='form-control'
@@ -232,7 +232,7 @@ export default function CreateAppPage() {
                 </div>
                 <div className='col d-flex flex-column'>
                   <label htmlFor='App_permit_toDoList' className='form-label'>
-                    Permit to Do List
+                    <strong>Permit to Do List</strong>
                   </label>
                   <select
                     className='form-control'
@@ -253,7 +253,7 @@ export default function CreateAppPage() {
                 </div>
                 <div className='col d-flex flex-column'>
                   <label htmlFor='App_permit_Doing' className='form-label'>
-                    Permit Doing
+                    <strong>Permit Doing</strong>
                   </label>
                   <select
                     className='form-control'
@@ -274,7 +274,7 @@ export default function CreateAppPage() {
                 </div>
                 <div className='col d-flex flex-column'>
                   <label htmlFor='App_permit_Done' className='form-label'>
-                    Permit Done
+                    <strong>Permit Done</strong>
                   </label>
                   <select
                     className='form-control'
