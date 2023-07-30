@@ -74,7 +74,7 @@ export default function CreatePlanModel({ onFormSubmit }) {
           role='document'
         >
           <div className='modal-content'>
-            <div className='modal-header'>
+            <div className='modal-header p-5 bg-dark text-white'>
               <h5 className='modal-title' id='createPlanModalTitle'>
                 Create Plan
               </h5>
@@ -84,15 +84,17 @@ export default function CreatePlanModel({ onFormSubmit }) {
                 data-dismiss='modal'
                 aria-label='Close'
               >
-                <span aria-hidden='true'>&times;</span>
+                <span aria-hidden='true' className='text-white'>
+                  &times;
+                </span>
               </button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className='modal-body'>
                 <div className='row'>
-                  <div className='col'>
+                  <div className='col text-left p-3'>
                     <label htmlFor='Plan_MVP_name' className='form-label'>
-                      Plan_MVP_name
+                      Plan Name
                     </label>
                     <input
                       type='text'
@@ -103,9 +105,11 @@ export default function CreatePlanModel({ onFormSubmit }) {
                       required
                     />
                   </div>
-                  <div className='col'>
+                </div>
+                <div className='row'>
+                  <div className='col text-left p-3'>
                     <label htmlFor='Plan_startDate' className='form-label'>
-                      Plan Start Date
+                      Start Date
                     </label>
                     <input
                       type='date'
@@ -114,8 +118,10 @@ export default function CreatePlanModel({ onFormSubmit }) {
                       value={formData.Plan_startDate}
                       onChange={handleChange}
                     />
+                  </div>
+                  <div className='col text-left p-3'>
                     <label htmlFor='Plan_endDate' className='form-label'>
-                      Plan End Date
+                      End Date
                     </label>
                     <input
                       type='date'

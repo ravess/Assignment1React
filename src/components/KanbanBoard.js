@@ -52,6 +52,8 @@ export default function KanbanBoard() {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [key, setKey] = useState(0);
   const [isPlanFormSubmitted, setIsPlanFormSubmitted] = useState(false);
+  const [isTaskFormSubmitted, setIsTaskFormSubmitted] = useState(false);
+
   const handleMoveLeft = (taskId) => {
     // Move the task with the given taskId to the left column
     // Implement your state transition logic here
@@ -120,15 +122,19 @@ export default function KanbanBoard() {
         // if (appResponse.data.data) {
         //   dispatch({ type: 'fetchApp', data: appResponse.data.data });
         // }
-        // const getAllTasksResponse = await axios.get(
-        //   `/apps/${params.appacronym}/tasks`
-        // );
-        // if (getAllTasksResponse.data.data) {
-        //   dispatch({
-        //     type: 'fetchAllTasks',
-        //     data: getAllTasksResponse.data.data,
-        //   });
-        // }
+
+        if (isTaskFormSubmitted) {
+          const getAllTasksResponse = await axios.get(
+            `/apps/${params.appacronym}/tasks`
+          );
+          if (getAllTasksResponse.data.data) {
+            dispatch({
+              type: 'fetchAllTasks',
+              data: getAllTasksResponse.data.data,
+            });
+            setIsTaskFormSubmitted(false);
+          }
+        }
         if (isPlanFormSubmitted) {
           const getAllPlansResponse = await axios.get(
             `/apps/${params.appacronym}/plans`
@@ -158,7 +164,7 @@ export default function KanbanBoard() {
 
     fetchData();
     return () => ourRequest.cancel();
-  }, [isPlanFormSubmitted, params.appacronym]);
+  }, [isPlanFormSubmitted, isTaskFormSubmitted, params.appacronym]);
 
   return (
     <div>
@@ -282,7 +288,10 @@ export default function KanbanBoard() {
           </div>
         </div>
         <div>
-          <CreateTaskModel />
+          <CreateTaskModel
+            plans={state.plans.data}
+            onFormSubmit={() => setIsTaskFormSubmitted(true)}
+          />
           <CreatePlanModel onFormSubmit={() => setIsPlanFormSubmitted(true)} />
           <EditTaskModel selectedTaskId={selectedTaskId} key={key} />
         </div>
