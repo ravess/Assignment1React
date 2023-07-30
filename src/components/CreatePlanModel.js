@@ -1,15 +1,17 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
 
-export default function CreatePlanModel() {
-  const [formData, setFormData] = useState({
+export default function CreatePlanModel({ onFormSubmit }) {
+  const initialState = {
     Plan_MVP_name: '',
     Plan_startDate: '',
     Plan_endDate: '',
-  });
+  };
+  const [formData, setFormData] = useState(initialState);
   const params = useParams();
+  const formRef = useRef(null);
   const appDispatch = useContext(DispatchContext);
 
   const handleChange = (e) => {
@@ -33,6 +35,11 @@ export default function CreatePlanModel() {
           type: 'flashMessage',
           value: 'Plan Successfully Created',
         });
+        setFormData(initialState);
+        onFormSubmit();
+        if (formRef.current) {
+          formRef.current.reset();
+        }
       }
     } catch (error) {
       if (error.response.data.error.statusCode === 403) {
@@ -40,13 +47,15 @@ export default function CreatePlanModel() {
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+
         navigate('/user/dashboard');
       }
-      if (error.response.data)
+      if (error.response.data) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+      }
     }
   };
 
@@ -78,11 +87,11 @@ export default function CreatePlanModel() {
                 <span aria-hidden='true'>&times;</span>
               </button>
             </div>
-            <div className='modal-body'>
-              <form>
+            <form onSubmit={handleSubmit}>
+              <div className='modal-body'>
                 <div className='row'>
                   <div className='col'>
-                    <label htmlFor='planmvpname' className='form-label' re>
+                    <label htmlFor='Plan_MVP_name' className='form-label'>
                       Plan_MVP_name
                     </label>
                     <input
@@ -95,7 +104,7 @@ export default function CreatePlanModel() {
                     />
                   </div>
                   <div className='col'>
-                    <label htmlFor='username' className='form-label'>
+                    <label htmlFor='Plan_startDate' className='form-label'>
                       Plan Start Date
                     </label>
                     <input
@@ -105,7 +114,7 @@ export default function CreatePlanModel() {
                       value={formData.Plan_startDate}
                       onChange={handleChange}
                     />
-                    <label htmlFor='username' className='form-label'>
+                    <label htmlFor='Plan_endDate' className='form-label'>
                       Plan End Date
                     </label>
                     <input
@@ -117,24 +126,20 @@ export default function CreatePlanModel() {
                     />
                   </div>
                 </div>
-              </form>
-            </div>
-            <div className='modal-footer'>
-              <button
-                type='button'
-                className='btn btn-secondary'
-                data-dismiss='modal'
-              >
-                Close
-              </button>
-              <button
-                type='button'
-                className='btn btn-dark'
-                onClick={handleSubmit}
-              >
-                Create
-              </button>
-            </div>
+              </div>
+              <div className='modal-footer'>
+                <button
+                  type='button'
+                  className='btn btn-secondary'
+                  data-dismiss='modal'
+                >
+                  Close
+                </button>
+                <button type='submit' className='btn btn-dark'>
+                  Create
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

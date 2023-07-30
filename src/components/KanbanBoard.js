@@ -25,7 +25,6 @@ export default function KanbanBoard() {
     usergroups: {
       data: [],
     },
-    submitCount: 0,
   };
 
   function ourReducer(draft, action) {
@@ -52,6 +51,7 @@ export default function KanbanBoard() {
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [key, setKey] = useState(0);
+  const [isPlanFormSubmitted, setIsPlanFormSubmitted] = useState(false);
   const handleMoveLeft = (taskId) => {
     // Move the task with the given taskId to the left column
     // Implement your state transition logic here
@@ -92,7 +92,6 @@ export default function KanbanBoard() {
           `/apps/${params.appacronym}/plans`
         );
         if (getAllPlansResponse.data.data) {
-          console.log(getAllPlansResponse.data.data);
           dispatch({
             type: 'fetchAllPlans',
             data: getAllPlansResponse.data.data,
@@ -112,6 +111,54 @@ export default function KanbanBoard() {
     fetchData();
     return () => ourRequest.cancel();
   }, []);
+
+  useEffect(() => {
+    const ourRequest = axios.CancelToken.source();
+    const fetchData = async () => {
+      try {
+        // const appResponse = await axios.get(`/apps/${params.appacronym}`);
+        // if (appResponse.data.data) {
+        //   dispatch({ type: 'fetchApp', data: appResponse.data.data });
+        // }
+        // const getAllTasksResponse = await axios.get(
+        //   `/apps/${params.appacronym}/tasks`
+        // );
+        // if (getAllTasksResponse.data.data) {
+        //   dispatch({
+        //     type: 'fetchAllTasks',
+        //     data: getAllTasksResponse.data.data,
+        //   });
+        // }
+        if (isPlanFormSubmitted) {
+          const getAllPlansResponse = await axios.get(
+            `/apps/${params.appacronym}/plans`
+          );
+          if (getAllPlansResponse.data.data) {
+            console.log(
+              getAllPlansResponse.data.data,
+              `it ran to fetch latest data`
+            );
+            dispatch({
+              type: 'fetchAllPlans',
+              data: getAllPlansResponse.data.data,
+            });
+            setIsPlanFormSubmitted(false);
+          }
+        }
+      } catch (error) {
+        if (error.response.data) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          console.log(`either navigate away or do other things`);
+        }
+      }
+    };
+
+    fetchData();
+    return () => ourRequest.cancel();
+  }, [isPlanFormSubmitted, params.appacronym]);
 
   return (
     <div>
@@ -236,7 +283,7 @@ export default function KanbanBoard() {
         </div>
         <div>
           <CreateTaskModel />
-          <CreatePlanModel />
+          <CreatePlanModel onFormSubmit={() => setIsPlanFormSubmitted(true)} />
           <EditTaskModel selectedTaskId={selectedTaskId} key={key} />
         </div>
       </div>
