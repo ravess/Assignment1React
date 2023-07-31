@@ -3,7 +3,11 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
 
-export default function CreatePlanModel({ onFormSubmit }) {
+export default function CreatePlanModel({
+  onFormSubmit,
+  showModal,
+  setShowModal,
+}) {
   const initialState = {
     Plan_MVP_name: '',
     Plan_startDate: '',
@@ -21,6 +25,11 @@ export default function CreatePlanModel({ onFormSubmit }) {
       [name]: value,
     }));
   };
+  const toggleModal = () => {
+    setShowModal(!showModal);
+    document.body.classList.toggle('modal-open');
+    document.body.removeChild(document.querySelector('.modal-backdrop'));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +46,7 @@ export default function CreatePlanModel({ onFormSubmit }) {
         });
         setFormData(initialState);
         onFormSubmit();
+        toggleModal();
         if (formRef.current) {
           formRef.current.reset();
         }

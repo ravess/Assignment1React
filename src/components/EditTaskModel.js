@@ -1,28 +1,35 @@
-import React, { useEffect, useContext, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import DispatchContext from "../DispatchContext";
+import React, { useEffect, useContext, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import DispatchContext from '../DispatchContext';
 
 export default function EditTaskModel({
   selectedTaskId,
   key,
   plans,
   onFormSubmit,
-  isFormSubmitted,
+  showModal,
+  setShowModal,
 }) {
   const [task, setTask] = useState([]);
-  const [notes, setNotes] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState("");
+  const [notes, setNotes] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('');
   const appDispatch = useContext(DispatchContext);
   const params = useParams();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "Task_plan") {
+    if (name === 'Task_plan') {
       setSelectedPlan(value);
-    } else if (name === "Task_notes") {
+    } else if (name === 'Task_notes') {
       setNotes(value);
     }
+  };
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+    document.body.classList.toggle('modal-open');
+    document.body.removeChild(document.querySelector('.modal-backdrop'));
   };
 
   const handlePromote = async () => {
@@ -31,27 +38,28 @@ export default function EditTaskModel({
         `/apps/${params.appacronym}/tasks/${selectedTaskId}/edit`,
         {
           Task_state: task[0].Task_state,
-          Task_newState: "promote",
+          Task_newState: 'promote',
         }
       );
       if (response.data.data) {
         appDispatch({
-          type: "flashMessage",
-          value: "Task State Promoted",
+          type: 'flashMessage',
+          value: 'Task State Promoted',
         });
         onFormSubmit();
+        toggleModal();
       }
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 403) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate("/user/dashboard");
+        navigate('/user/dashboard');
       }
       if (error.response && error.response.data) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
       }
@@ -64,27 +72,28 @@ export default function EditTaskModel({
         `/apps/${params.appacronym}/tasks/${selectedTaskId}/edit`,
         {
           Task_state: task[0].Task_state,
-          Task_newState: "demote",
+          Task_newState: 'demote',
         }
       );
       if (response.data.data) {
         appDispatch({
-          type: "flashMessage",
-          value: "Task State Demoted",
+          type: 'flashMessage',
+          value: 'Task State Demoted',
         });
         onFormSubmit();
+        toggleModal();
       }
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 403) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate("/user/dashboard");
+        navigate('/user/dashboard');
       }
       if (error.response && error.response.data) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
       }
@@ -109,11 +118,12 @@ export default function EditTaskModel({
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {
         appDispatch({
-          type: "flashMessage",
-          value: "Task Successfully Updated",
+          type: 'flashMessage',
+          value: 'Task Successfully Updated',
         });
-        setNotes("");
+        setNotes('');
         onFormSubmit();
+        toggleModal();
         if (formRef.current) {
           formRef.current.reset();
         }
@@ -121,14 +131,14 @@ export default function EditTaskModel({
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 403) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate("/user/dashboard");
+        navigate('/user/dashboard');
       }
       if (error.response && error.response.data) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
       }
@@ -156,7 +166,7 @@ export default function EditTaskModel({
       } catch (error) {
         if (error.response && error.response.data) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           console.log(`either navigate away or do other things`);
@@ -173,61 +183,61 @@ export default function EditTaskModel({
   return (
     <>
       <div
-        className="modal fade"
-        id="editTaskModal"
+        className='modal fade'
+        id='editTaskModal'
         key={key}
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="editTaskModalTitle"
-        aria-hidden="true"
+        tabindex='-1'
+        role='dialog'
+        aria-labelledby='editTaskModalTitle'
+        aria-hidden='true'
       >
         <div
-          className="modal-dialog modal-dialog-centered modal-lg"
-          role="document"
+          className='modal-dialog modal-dialog-centered modal-lg'
+          role='document'
         >
-          <div className="modal-content">
-            <div className="modal-header bg-dark p-5 text-white">
-              <h5 className="modal-title" id="editTaskModalTitle">
+          <div className='modal-content'>
+            <div className='modal-header bg-dark p-5 text-white'>
+              <h5 className='modal-title' id='editTaskModalTitle'>
                 Task Details
               </h5>
 
               <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
+                type='button'
+                className='close'
+                data-dismiss='modal'
+                aria-label='Close'
               >
-                <span aria-hidden="true" className="text-white">
+                <span aria-hidden='true' className='text-white'>
                   &times;
                 </span>
               </button>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <div className="form-group text-left">
+              <div className='modal-body'>
+                <div className='form-group text-left'>
                   <strong>
                     <span>Task Name: </span>
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_name}</span>}
                 </div>
-                <div className="form-group text-left">
+                <div className='form-group text-left'>
                   <strong>Task Description:</strong>
                   <textarea
-                    class="form-control"
-                    id="Task_description"
-                    rows="3"
+                    class='form-control'
+                    id='Task_description'
+                    rows='3'
                     value={task.length > 0 && task[0].Task_description}
                     readOnly
                   ></textarea>
                 </div>
-                <div className="form-group text-left">
+                <div className='form-group text-left'>
                   <strong>
                     <span>Task State: </span>
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_state}</span>}
                 </div>
                 {task.length > 0 && (
-                  <div className="form-group text-left">
+                  <div className='form-group text-left'>
                     <strong>
                       <span>Created On: </span>
                     </strong>
@@ -239,24 +249,24 @@ export default function EditTaskModel({
                     )}
                   </div>
                 )}
-                <div className="form-group text-left">
+                <div className='form-group text-left'>
                   <strong>
                     <span>Task Owner: </span>
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_owner}</span>}
                 </div>
-                <div class="form-group text-left">
-                  <label for="Task_plan">
+                <div class='form-group text-left'>
+                  <label for='Task_plan'>
                     <strong>Task Plan:</strong>
                   </label>
                   <select
-                    class="form-control"
-                    id="Task_plan"
-                    name="Task_plan"
+                    class='form-control'
+                    id='Task_plan'
+                    name='Task_plan'
                     value={selectedPlan}
                     onChange={handleChange}
                   >
-                    <option value="">Select a Plan</option>
+                    <option value=''>Select a Plan</option>
                     {plans.map((plan) => (
                       <option
                         key={plan.Plan_MVP_name}
@@ -267,64 +277,64 @@ export default function EditTaskModel({
                     ))}
                   </select>
                 </div>
-                <div className="form-group text-left">
-                  <label htmlFor="Task_notes" className="form-label">
+                <div className='form-group text-left'>
+                  <label htmlFor='Task_notes' className='form-label'>
                     <strong>Audit Trail:</strong>
                   </label>
                   <textarea
-                    class="form-control"
-                    id="Task_notes"
-                    rows="10"
-                    name="Task_notes"
+                    class='form-control'
+                    id='Task_notes'
+                    rows='10'
+                    name='Task_notes'
                     readOnly
                     value={
                       task.length > 0
                         ? task[0].Task_notes.map((entry) => {
                             return `\n [Username: ${entry.username}, State: ${entry.currentState}, Date: ${entry.date}, ${entry.timestamp}]\n ${entry.notes}`;
-                          }).join("\n")
-                        : ""
+                          }).join('\n')
+                        : ''
                     }
                   ></textarea>
                 </div>
-                <div className="form-group text-left">
-                  <label htmlFor="Task_notes" className="form-label">
+                <div className='form-group text-left'>
+                  <label htmlFor='Task_notes' className='form-label'>
                     <strong>Task Notes:</strong>
                   </label>
                   <textarea
-                    class="form-control"
-                    id="Task_notes"
-                    rows="3"
-                    name="Task_notes"
+                    class='form-control'
+                    id='Task_notes'
+                    rows='3'
+                    name='Task_notes'
                     value={notes}
                     onChange={handleChange}
                   ></textarea>
                 </div>
               </div>
-              <div className="modal-footer">
+              <div className='modal-footer'>
                 <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
+                  type='button'
+                  className='btn btn-secondary'
+                  data-dismiss='modal'
                 >
                   Close
                 </button>
-                {task.length > 0 && task[0].Task_state !== "open" ? (
+                {task.length > 0 && task[0].Task_state !== 'open' ? (
                   <button
-                    type="button"
-                    className="btn btn-outline-danger"
+                    type='button'
+                    className='btn btn-outline-danger'
                     onClick={handleDemote}
                   >
                     Demote
                   </button>
                 ) : (
-                  ""
+                  ''
                 )}
-                <button type="submit" className="btn btn-dark">
+                <button type='submit' className='btn btn-dark'>
                   Update
                 </button>
                 <button
-                  type="button"
-                  className="btn btn-outline-success"
+                  type='button'
+                  className='btn btn-outline-success'
                   onClick={handlePromote}
                 >
                   Promote
