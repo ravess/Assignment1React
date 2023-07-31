@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useImmerReducer, useImmer } from 'use-immer';
-import axios from 'axios';
-import DispatchContext from '../DispatchContext';
-import { useNavigate, Link, useParams } from 'react-router-dom';
-import CreateTaskModel from './CreateTaskModel';
-import CreatePlanModel from './CreatePlanModel';
-import TaskCard from './TaskCard';
-import EditTaskModel from './EditTaskModel';
+import React, { useContext, useEffect, useState } from "react";
+import { useImmerReducer, useImmer } from "use-immer";
+import axios from "axios";
+import DispatchContext from "../DispatchContext";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import CreateTaskModel from "./CreateTaskModel";
+import CreatePlanModel from "./CreatePlanModel";
+import TaskCard from "./TaskCard";
+import EditTaskModel from "./EditTaskModel";
 
 export default function KanbanBoard() {
   const appDispatch = useContext(DispatchContext);
@@ -29,19 +29,19 @@ export default function KanbanBoard() {
 
   function ourReducer(draft, action) {
     switch (action.type) {
-      case 'fetchApp':
+      case "fetchApp":
         draft.app.data = action.data;
         return;
-      case 'fetchAllTasks':
+      case "fetchAllTasks":
         draft.tasks.data = action.data;
         return;
-      case 'fetchAllPlans':
+      case "fetchAllPlans":
         draft.plans.data = action.data;
         return;
-      case 'fetchUserGroup':
+      case "fetchUserGroup":
         draft.usergroups.data = action.data;
         return;
-      case 'submitRequest':
+      case "submitRequest":
         if (!draft.username.hasErrors && !draft.userpassword.hasErrors) {
           draft.submitCount++;
         }
@@ -53,6 +53,7 @@ export default function KanbanBoard() {
   const [key, setKey] = useState(0);
   const [isPlanFormSubmitted, setIsPlanFormSubmitted] = useState(false);
   const [isTaskFormSubmitted, setIsTaskFormSubmitted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleMoveLeft = (taskId) => {
     // Move the task with the given taskId to the left column
@@ -73,20 +74,20 @@ export default function KanbanBoard() {
     const ourRequest = axios.CancelToken.source();
     const fetchData = async () => {
       try {
-        const profileResponse = await axios.get('/user/profile');
+        const profileResponse = await axios.get("/user/profile");
         if (profileResponse.data.data[0]) {
-          appDispatch({ type: 'isAuth', data: profileResponse.data.data[0] });
+          appDispatch({ type: "isAuth", data: profileResponse.data.data[0] });
         }
         const appResponse = await axios.get(`/apps/${params.appacronym}`);
         if (appResponse.data.data) {
-          dispatch({ type: 'fetchApp', data: appResponse.data.data });
+          dispatch({ type: "fetchApp", data: appResponse.data.data });
         }
         const getAllTasksResponse = await axios.get(
           `/apps/${params.appacronym}/tasks`
         );
         if (getAllTasksResponse.data.data) {
           dispatch({
-            type: 'fetchAllTasks',
+            type: "fetchAllTasks",
             data: getAllTasksResponse.data.data,
           });
         }
@@ -95,14 +96,14 @@ export default function KanbanBoard() {
         );
         if (getAllPlansResponse.data.data) {
           dispatch({
-            type: 'fetchAllPlans',
+            type: "fetchAllPlans",
             data: getAllPlansResponse.data.data,
           });
         }
       } catch (error) {
         if (error.response.data) {
           appDispatch({
-            type: 'flashMessageErr',
+            type: "flashMessageErr",
             value: error.response.data.errMessage,
           });
           console.log(`either navigate away or do other things`);
@@ -114,6 +115,7 @@ export default function KanbanBoard() {
     return () => ourRequest.cancel();
   }, []);
 
+  // This is the useeffect to trigger a get request based on form submission to get latest
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
     const fetchData = async () => {
@@ -129,7 +131,7 @@ export default function KanbanBoard() {
           );
           if (getAllTasksResponse.data.data) {
             dispatch({
-              type: 'fetchAllTasks',
+              type: "fetchAllTasks",
               data: getAllTasksResponse.data.data,
             });
             setIsTaskFormSubmitted(false);
@@ -141,7 +143,7 @@ export default function KanbanBoard() {
           );
           if (getAllPlansResponse.data.data) {
             dispatch({
-              type: 'fetchAllPlans',
+              type: "fetchAllPlans",
               data: getAllPlansResponse.data.data,
             });
             setIsPlanFormSubmitted(false);
@@ -150,7 +152,7 @@ export default function KanbanBoard() {
       } catch (error) {
         if (error.response.data) {
           appDispatch({
-            type: 'flashMessageErr',
+            type: "flashMessageErr",
             value: error.response.data.errMessage,
           });
           console.log(`either navigate away or do other things`);
@@ -164,42 +166,43 @@ export default function KanbanBoard() {
 
   return (
     <div>
-      <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
+      <div className="ml-5 mt-3" onClick={() => navigate(-1)}>
         <i
-          class='fa fa-arrow-left fa-2x align-self-center'
-          aria-hidden='true'
-          style={{ cursor: 'pointer' }}
+          class="fa fa-arrow-left fa-2x align-self-center"
+          aria-hidden="true"
+          style={{ cursor: "pointer" }}
         ></i>
       </div>
-      <div className='container-fluid text-center'>
+      <div className="container-fluid text-center">
         {state.app.data.length > 0 && (
-          <p className='dashboard__description text-center'>
+          <p className="dashboard__description text-center">
             {state.app.data[0].App_Acronym}
           </p>
         )}
-        <div className='container d-flex justify-content-start m-0'>
+        <div className="container d-flex justify-content-start m-0">
           <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            style={{ width: '150px' }}
+            className="btn btn-outline-dark mt-2 mr-2"
+            style={{ width: "150px" }}
           >
-            <i class='fas fa-edit'></i> Edit App
+            <i class="fas fa-edit"></i> Edit App
           </button>
           <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            style={{ width: '150px' }}
-            data-toggle='modal'
-            data-target='#createTaskModal'
+            className="btn btn-outline-dark mt-2 mr-2"
+            style={{ width: "150px" }}
+            data-toggle="modal"
+            data-target="#createTaskModal"
+            onClick={() => setShowModal(true)}
           >
-            <i class='fas fa-plus'></i> Create Task
+            <i class="fas fa-plus"></i> Create Task
           </button>
 
           <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            style={{ width: '150px' }}
-            data-toggle='modal'
-            data-target='#createPlanModal'
+            className="btn btn-outline-dark mt-2 mr-2"
+            style={{ width: "150px" }}
+            data-toggle="modal"
+            data-target="#createPlanModal"
           >
-            <i class='fas fa-plus'></i> Create Plan
+            <i class="fas fa-plus"></i> Create Plan
           </button>
           {/* <button
             className="btn btn-outline-dark mt-2 mr-2"
@@ -208,12 +211,12 @@ export default function KanbanBoard() {
             <i class="fas fa-edit"></i> Edit Plan
           </button> */}
         </div>
-        <div className='container-fluid mt-5'>
-          <div className='row'>
-            <div className='col border mx-4 p-2'>
+        <div className="container-fluid mt-5">
+          <div className="row">
+            <div className="col border mx-4 p-2">
               <h3>Open State</h3>
               {state.tasks.data
-                .filter((task) => task.Task_state === 'open')
+                .filter((task) => task.Task_state === "open")
                 .map((task) => (
                   <TaskCard
                     key={task.Task_id}
@@ -224,10 +227,10 @@ export default function KanbanBoard() {
                   />
                 ))}
             </div>
-            <div className='col border mx-4 p-2'>
+            <div className="col border mx-4 p-2">
               <h3>To Do</h3>
               {state.tasks.data
-                .filter((task) => task.Task_state === 'todo')
+                .filter((task) => task.Task_state === "todo")
                 .map((task) => (
                   <TaskCard
                     key={task.Task_id}
@@ -238,10 +241,10 @@ export default function KanbanBoard() {
                   />
                 ))}
             </div>
-            <div className='col border mx-4 p-2'>
+            <div className="col border mx-4 p-2">
               <h3>Doing</h3>
               {state.tasks.data
-                .filter((task) => task.Task_state === 'doing')
+                .filter((task) => task.Task_state === "doing")
                 .map((task) => (
                   <TaskCard
                     key={task.Task_id}
@@ -253,10 +256,10 @@ export default function KanbanBoard() {
                 ))}
             </div>
 
-            <div className='col border mx-4 p-2'>
+            <div className="col border mx-4 p-2">
               <h3>Done</h3>
               {state.tasks.data
-                .filter((task) => task.Task_state === 'done')
+                .filter((task) => task.Task_state === "done")
                 .map((task) => (
                   <TaskCard
                     key={task.Task_id}
@@ -267,10 +270,10 @@ export default function KanbanBoard() {
                   />
                 ))}
             </div>
-            <div className='col border mx-4 p-2'>
+            <div className="col border mx-4 p-2">
               <h3>Closed</h3>
               {state.tasks.data
-                .filter((task) => task.Task_state === 'closed')
+                .filter((task) => task.Task_state === "closed")
                 .map((task) => (
                   <TaskCard
                     key={task.Task_id}
@@ -284,15 +287,21 @@ export default function KanbanBoard() {
           </div>
         </div>
         <div>
-          <CreateTaskModel
-            plans={state.plans.data}
-            onFormSubmit={() => setIsTaskFormSubmitted(true)}
-          />
+          {showModal && (
+            <CreateTaskModel
+              plans={state.plans.data}
+              onFormSubmit={() => setIsTaskFormSubmitted(true)}
+              showModal={showModal}
+              setShowModal={setShowModal}
+            />
+          )}
           <CreatePlanModel onFormSubmit={() => setIsPlanFormSubmitted(true)} />
           <EditTaskModel
             selectedTaskId={selectedTaskId}
             key={key}
             plans={state.plans.data}
+            onFormSubmit={() => setIsTaskFormSubmitted(true)}
+            isFormSubmitted={isTaskFormSubmitted}
           />
         </div>
       </div>

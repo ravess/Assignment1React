@@ -1,6 +1,6 @@
 .floating-alert {
   display: none;
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   top: 38px;
   left: 50%;
