@@ -10,6 +10,7 @@ export default function AppPage() {
   const [apps, setApps] = useState([]);
   const [key, setKey] = useState(0);
   const [selectedAppAcronym, setSelectedAppAcronym] = useState(null);
+  const [isAppFormSubmitted, setIsAppFormSubmitted] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const handleView = (appacronym) => {
@@ -39,7 +40,7 @@ export default function AppPage() {
         }
       }
     };
-    const fetchApp = async () => {
+    const fetchAllApps = async () => {
       try {
         const response = await axios.get('/apps');
         if (response.data.data) {
@@ -49,10 +50,37 @@ export default function AppPage() {
         console.log(error);
       }
     };
-    fetchApp();
+    fetchAllApps();
     fetchProfile();
     return () => ourRequest.cancel();
   }, []);
+
+  useEffect(() => {
+    const ourRequest = axios.CancelToken.source();
+    const fetchAllApps = async () => {
+      try {
+        if (isAppFormSubmitted) {
+          const getAllAppResponse = await axios.get('/apps');
+          if (getAllAppResponse.data.data) {
+            setApps(getAllAppResponse.data.data);
+            setIsAppFormSubmitted(false);
+          }
+        }
+      } catch (error) {
+        if (error.response.data) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          console.log(`either navigate away or do other things`);
+        }
+      }
+    };
+
+    fetchAllApps();
+    return () => ourRequest.cancel();
+  }, [isAppFormSubmitted]);
+
   return (
     <div className='dashboard'>
       <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
@@ -126,7 +154,7 @@ export default function AppPage() {
                 <EditAppModal
                   selectedAppAcronym={selectedAppAcronym}
                   key={key}
-                  onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                  onFormSubmit={() => setIsAppFormSubmitted(true)}
                   showModal={showModal}
                   setShowModal={setShowModal}
                 />
