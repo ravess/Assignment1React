@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useImmerReducer, useImmer } from 'use-immer';
+import { useImmerReducer } from 'use-immer';
 import axios from 'axios';
 import DispatchContext from '../DispatchContext';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CreateTaskModal from './CreateTaskModal';
 import CreatePlanModal from './CreatePlanModal';
 import EditPlanModal from './EditPlanModal';
@@ -51,7 +51,6 @@ export default function KanbanBoard() {
   }
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
-  const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [key, setKey] = useState(0);
   const [isPlanFormSubmitted, setIsPlanFormSubmitted] = useState(false);
   const [isTaskFormSubmitted, setIsTaskFormSubmitted] = useState(false);
@@ -113,11 +112,6 @@ export default function KanbanBoard() {
     const ourRequest = axios.CancelToken.source();
     const fetchData = async () => {
       try {
-        // const appResponse = await axios.get(`/apps/${params.appacronym}`);
-        // if (appResponse.data.data) {
-        //   dispatch({ type: 'fetchApp', data: appResponse.data.data });
-        // }
-
         if (isTaskFormSubmitted) {
           const getAllTasksResponse = await axios.get(
             `/apps/${params.appacronym}/tasks`

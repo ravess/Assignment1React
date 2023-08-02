@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import DispatchContext from '../DispatchContext';
 import axios from 'axios';
 import EditAppModal from './EditAppModal';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function AppPage() {
   const appDispatch = useContext(DispatchContext);

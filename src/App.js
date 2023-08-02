@@ -30,6 +30,9 @@ export default function App() {
       userisActive: '',
       useremail: '',
       userisAdmin: false,
+      userisPl: false,
+      userisDev: false,
+      userisPm: false,
     },
   };
   function ourReducer(draft, action) {
@@ -47,6 +50,15 @@ export default function App() {
         return;
       case 'isAdmin':
         draft.user.userisAdmin = action.value;
+        return;
+      case 'isPm':
+        draft.user.userisPm = action.value;
+        return;
+      case 'isPl':
+        draft.user.userisPl = action.value;
+        return;
+      case 'isDev':
+        draft.user.userisDev = action.value;
         return;
       case 'flashMessage':
         draft.flashMessages.push(action.value);
