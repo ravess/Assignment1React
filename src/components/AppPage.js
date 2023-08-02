@@ -85,7 +85,7 @@ export default function AppPage() {
     <div className='dashboard'>
       <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
         <i
-          class='fa fa-arrow-left fa-2x align-self-center'
+          className='fa fa-arrow-left fa-2x align-self-center'
           aria-hidden='true'
           style={{ cursor: 'pointer' }}
         ></i>
@@ -99,7 +99,7 @@ export default function AppPage() {
               navigate('/apps/create');
             }}
           >
-            <i class='fas fa-plus'></i> Create App
+            <i className='fas fa-plus'></i> Create App
           </button>
         </div>
 

@@ -151,7 +151,7 @@ export default function CreateTaskModal({
                     </strong>
                   </label>
                   <textarea
-                    class='form-control'
+                    className='form-control'
                     id='Task_notes'
                     rows='10'
                     name='Task_notes'
@@ -159,7 +159,7 @@ export default function CreateTaskModal({
                     onChange={handleChange}
                   ></textarea>
                 </div>
-                <div class='form-group text-left'>
+                <div className='form-group text-left'>
                   <label htmlFor='Task_plan' className='form-label'>
                     <strong>Task Plans</strong>
                   </label>
