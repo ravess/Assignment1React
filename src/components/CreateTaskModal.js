@@ -117,7 +117,7 @@ export default function CreateTaskModal({
             <form onSubmit={handleSubmit} className='p-3'>
               <div className='modal-body'>
                 <div className='form-group text-left'>
-                  <label htmlFor='Task_name' className='form-label' re>
+                  <label htmlFor='Task_name' className='form-label'>
                     <strong>Task Name:</strong>
                   </label>
                   <input
@@ -160,7 +160,7 @@ export default function CreateTaskModal({
                   ></textarea>
                 </div>
                 <div class='form-group text-left'>
-                  <label htmlfor='Task_plan' className='form-label'>
+                  <label htmlFor='Task_plan' className='form-label'>
                     <strong>Task Plans</strong>
                   </label>
                   <select

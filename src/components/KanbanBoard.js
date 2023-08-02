@@ -199,7 +199,7 @@ export default function KanbanBoard() {
             data-target='#editPlanModal'
             onClick={() => setShowModal(true)}
           >
-            <i class='fas fa-edit'></i> Edit Plan
+            <i className='fas fa-edit'></i> Edit Plan
           </button>
         </div>
         <div className='container-fluid mt-5'>

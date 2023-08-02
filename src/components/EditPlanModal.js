@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useRef } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
@@ -9,14 +9,13 @@ export default function EditPlanModal({
   setShowModal,
   plans,
 }) {
-  const initialState = {
-    Plan_MVP_name: '',
-    Plan_startDate: '',
-    Plan_endDate: '',
-  };
-  const [formData, setFormData] = useState(initialState);
+  // const initialState = {
+  //   Plan_MVP_name: '',
+  //   Plan_startDate: '',
+  //   Plan_endDate: '',
+  // };
+  // const [formData, setFormData] = useState(initialState);
   const params = useParams();
-  const formRef = useRef(null);
   const appDispatch = useContext(DispatchContext);
   const [selectedPlan, setSelectedPlan] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState('');
@@ -24,11 +23,9 @@ export default function EditPlanModal({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     // Check if the selected plan option is the default value
     if (value === '') {
       // Reset the form fields to initial state
-      setFormData(initialState);
       setSelectedPlan(value); // Reset selected plan to the default value
       setSelectedStartDate('');
       setSelectedEndDate('');
@@ -39,10 +36,7 @@ export default function EditPlanModal({
     } else if (name === 'Plan_endDate') {
       setSelectedEndDate(value);
     } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: value,
-      }));
+      console.log(`hi`);
     }
   };
   const toggleModal = () => {
@@ -53,23 +47,26 @@ export default function EditPlanModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formObj = {
+      Plan_startDate: selectedStartDate,
+      Plan_endDate: selectedEndDate,
+    };
     try {
-      const response = await axios.post(
-        `/apps/${params.appacronym}/plans/create`,
-        formData
+      const response = await axios.put(
+        `/apps/${params.appacronym}/plans/${selectedPlan}/edit`,
+        formObj
       );
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {
         appDispatch({
           type: 'flashMessage',
-          value: 'Plan Successfully Created',
+          value: 'Plan Successfully Updated',
         });
-        setFormData(initialState);
+        setSelectedPlan('');
+        setSelectedStartDate('');
+        setSelectedEndDate('');
         onFormSubmit();
         toggleModal();
-        if (formRef.current) {
-          formRef.current.reset();
-        }
       }
     } catch (error) {
       if (error.response.data.error.statusCode === 403) {
@@ -89,10 +86,28 @@ export default function EditPlanModal({
     }
   };
 
+  useEffect(() => {
+    const fetchPlanData = async () => {
+      try {
+        if (selectedPlan) {
+          const response = await axios.get(
+            `/apps/${params.appacronym}/plans/${selectedPlan}`
+          );
+          if (response.data.data) {
+            setSelectedStartDate(response.data.data[0].Plan_startDate);
+            setSelectedEndDate(response.data.data[0].Plan_endDate);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPlanData();
+  }, [selectedPlan, params.appacronym]);
+
   // For clearing the forms after clicking out
   useEffect(() => {
     const handleModalHide = () => {
-      setFormData(initialState);
       setSelectedPlan('');
       setSelectedEndDate('');
       setSelectedStartDate('');
@@ -104,32 +119,6 @@ export default function EditPlanModal({
       $('#editPlanModal').off('hidden.bs.modal', handleModalHide);
     };
   }, []);
-
-  useEffect(() => {
-    const fetchPlanData = async () => {
-      try {
-        if (selectedPlan) {
-          const response = await axios.get(
-            `/apps/${params.appacronym}/plans/${selectedPlan}`
-          );
-          if (response.data.data) {
-            setFormData({
-              Plan_MVP_name: response.data.data[0].Plan_MVP_name,
-              Plan_startDate: response.data.data[0].Plan_startDate,
-              Plan_endDate: response.data.data[0].Plan_endDate,
-            });
-            setSelectedStartDate(response.data.data[0].Plan_startDate);
-            setSelectedEndDate(response.data.data[0].Plan_endDate);
-          }
-          // Set the fetched plan data into the formData state to pre-fill the form
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchPlanData();
-  }, [selectedPlan, params.appacronym]);
 
   return (
     <>
@@ -174,6 +163,7 @@ export default function EditPlanModal({
                       name='Task_plan'
                       value={selectedPlan}
                       onChange={handleChange}
+                      required
                     >
                       <option value=''>Select a Plan</option>
                       {plans.map((plan) => (
