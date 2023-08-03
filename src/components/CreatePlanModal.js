@@ -1,7 +1,7 @@
-import React, { useEffect, useContext, useState, useRef } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import DispatchContext from '../DispatchContext';
+import React, { useEffect, useContext, useState, useRef } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import DispatchContext from "../DispatchContext";
 
 export default function CreatePlanModal({
   onFormSubmit,
@@ -9,9 +9,9 @@ export default function CreatePlanModal({
   setShowModal,
 }) {
   const initialState = {
-    Plan_MVP_name: '',
-    Plan_startDate: '',
-    Plan_endDate: '',
+    Plan_MVP_name: "",
+    Plan_startDate: "",
+    Plan_endDate: "",
   };
   const [formData, setFormData] = useState(initialState);
   const params = useParams();
@@ -28,8 +28,8 @@ export default function CreatePlanModal({
   const toggleModal = () => {
     setShowModal(!showModal);
     setFormData(initialState);
-    document.body.classList.toggle('modal-open');
-    document.body.removeChild(document.querySelector('.modal-backdrop'));
+    document.body.classList.toggle("modal-open");
+    document.body.removeChild(document.querySelector(".modal-backdrop"));
   };
 
   const handleSubmit = async (e) => {
@@ -37,13 +37,13 @@ export default function CreatePlanModal({
     try {
       const response = await axios.post(
         `/apps/${params.appacronym}/plans/create`,
-        formData
+        { ...formData, usergroup: "admin" }
       );
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {
         appDispatch({
-          type: 'flashMessage',
-          value: 'Plan Successfully Created',
+          type: "flashMessage",
+          value: "Plan Successfully Created",
         });
         setFormData(initialState);
         onFormSubmit();
@@ -55,15 +55,15 @@ export default function CreatePlanModal({
     } catch (error) {
       if (error.response.data.error.statusCode === 403) {
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
 
-        navigate('/user/dashboard');
+        navigate("/user/dashboard");
       }
       if (error.response.data) {
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
       }
@@ -77,99 +77,99 @@ export default function CreatePlanModal({
     };
 
     // Add event listener to the modal when it's hidden (closed)
-    $('#createPlanModal').on('hidden.bs.modal', handleModalHide);
+    $("#createPlanModal").on("hidden.bs.modal", handleModalHide);
 
     // Clean up the event listener when the component is unmounted
     return () => {
-      $('#createPlanModal').off('hidden.bs.modal', handleModalHide);
+      $("#createPlanModal").off("hidden.bs.modal", handleModalHide);
     };
   }, []);
 
   return (
     <>
       <div
-        className='modal fade'
-        id='createPlanModal'
-        tabindex='-1'
-        role='dialog'
-        aria-labelledby='createPlanModalTitle'
-        aria-hidden='true'
+        className="modal fade"
+        id="createPlanModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="createPlanModalTitle"
+        aria-hidden="true"
       >
         <div
-          className='modal-dialog modal-dialog-centered modal-lg'
-          role='document'
+          className="modal-dialog modal-dialog-centered modal-lg"
+          role="document"
         >
-          <div className='modal-content'>
-            <div className='modal-header p-5 bg-dark text-white'>
-              <h5 className='modal-title' id='createPlanModalTitle'>
+          <div className="modal-content">
+            <div className="modal-header p-5 bg-dark text-white">
+              <h5 className="modal-title" id="createPlanModalTitle">
                 Create Plan
               </h5>
               <button
-                type='button'
-                className='close'
-                data-dismiss='modal'
-                aria-label='Close'
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
                 onClick={() => setFormData(initialState)}
               >
-                <span aria-hidden='true' className='text-white'>
+                <span aria-hidden="true" className="text-white">
                   &times;
                 </span>
               </button>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className='modal-body'>
-                <div className='row'>
-                  <div className='col text-left p-3'>
-                    <label htmlFor='Plan_MVP_name' className='form-label'>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col text-left p-3">
+                    <label htmlFor="Plan_MVP_name" className="form-label">
                       <strong>Plan Name</strong>
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      name='Plan_MVP_name'
+                      type="text"
+                      className="form-control"
+                      name="Plan_MVP_name"
                       value={formData.Plan_MVP_name}
                       onChange={handleChange}
                       required
                     />
                   </div>
                 </div>
-                <div className='row'>
-                  <div className='col text-left p-3'>
-                    <label htmlFor='Plan_startDate' className='form-label'>
+                <div className="row">
+                  <div className="col text-left p-3">
+                    <label htmlFor="Plan_startDate" className="form-label">
                       <strong>Start Date</strong>
                     </label>
                     <input
-                      type='date'
-                      className='form-control'
-                      name='Plan_startDate'
+                      type="date"
+                      className="form-control"
+                      name="Plan_startDate"
                       value={formData.Plan_startDate}
                       onChange={handleChange}
                     />
                   </div>
-                  <div className='col text-left p-3'>
-                    <label htmlFor='Plan_endDate' className='form-label'>
+                  <div className="col text-left p-3">
+                    <label htmlFor="Plan_endDate" className="form-label">
                       <strong>End Date</strong>
                     </label>
                     <input
-                      type='date'
-                      className='form-control'
-                      name='Plan_endDate'
+                      type="date"
+                      className="form-control"
+                      name="Plan_endDate"
                       value={formData.Plan_endDate}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
               </div>
-              <div className='modal-footer'>
+              <div className="modal-footer">
                 <button
-                  type='button'
-                  className='btn btn-secondary'
-                  data-dismiss='modal'
+                  type="button"
+                  className="btn btn-secondary"
+                  data-dismiss="modal"
                   onClick={() => setFormData(initialState)}
                 >
                   Close
                 </button>
-                <button type='submit' className='btn btn-dark'>
+                <button type="submit" className="btn btn-dark">
                   Create
                 </button>
               </div>

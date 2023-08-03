@@ -16,7 +16,9 @@ export default function CreateGroupForm() {
     const ourRequest = axios.CancelToken.source();
     async function fetchGroup() {
       try {
-        const response = await axios.get("/admin/groups");
+        const response = await axios.post("/admin/groups", {
+          usergroup: "admin",
+        });
         if (response.data.data) {
           setDisplayGroups(response.data.data);
         }

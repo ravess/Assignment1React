@@ -26,7 +26,9 @@ export default function CreateAppPage() {
     const ourRequest = axios.CancelToken.source();
     const fetchUsergroups = async () => {
       try {
-        const response = await axios.get("/admin/groups");
+        const response = await axios.post("/admin/groups", {
+          usergroup: "admin",
+        });
         if (response.data.data) {
           setUserGroup(response.data.data);
         }
@@ -66,15 +68,6 @@ export default function CreateAppPage() {
     return () => ourRequest.cancel();
   }, []);
 
-  //This portions help to create an array when you select the option.value in the select so that we can use join method to become a string like
-  // const handleChange = (e) => {
-  //   const selectedOptions = Array.from(
-  //     e.target.selectedOptions,
-  //     (option) => option.value
-  //   );
-  //   const joinedSelectedOptions = '.' + selectedOptions.join('.') + '.';
-  //   dispatch({ type: 'selectedUsergroups', value: joinedSelectedOptions });
-  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -86,7 +79,10 @@ export default function CreateAppPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/apps/create", formData);
+      const response = await axios.post("/apps/create", {
+        ...formData,
+        usergroup: "admin",
+      });
       if (response.data.data) {
         appDispatch({
           type: "flashMessage",

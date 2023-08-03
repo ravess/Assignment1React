@@ -16,11 +16,14 @@ export default function UserList() {
     const ourRequest = axios.CancelToken.source();
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("/admin/users");
+        const response = await axios.post("/admin/users", {
+          usergroup: "admin",
+        });
         if (response.data.data) {
           setUsers(response.data.data);
         }
       } catch (error) {
+        console.log(`it came here`);
         if (error.response.data.error.statusCode === 403) {
           appDispatch({
             type: "flashMessageErr",
@@ -76,7 +79,7 @@ export default function UserList() {
                   className="btn btn-outline-dark mt-2 mr-2"
                   onClick={handleCreateUser}
                 >
-                  <i class="fas fa-plus"></i> Create User
+                  <i className="fas fa-plus"></i> Create User
                 </button>
 
                 {/* <button
