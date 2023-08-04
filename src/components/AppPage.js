@@ -124,7 +124,9 @@ export default function AppPage() {
                     <td>{app.App_Acronym}</td>
                     <td>{app.App_startDate}</td>
                     <td>{app.App_endDate}</td>
-                    <td>{app.App_Description}</td>
+                    <td className="text-truncate" style={{ width: "10" }}>
+                      {app.App_Description}
+                    </td>
                     <td className="d-flex justify-content-center">
                       <button
                         className="btn btn-outline-dark text-center mr-2"

@@ -28,7 +28,8 @@ export default function CreatePlanModal({
   const toggleModal = () => {
     setShowModal(!showModal);
     setFormData(initialState);
-    document.body.classList.toggle("modal-open");
+    document.body.removeAttribute("class");
+    document.body.removeAttribute("style");
     document.body.removeChild(document.querySelector(".modal-backdrop"));
   };
 

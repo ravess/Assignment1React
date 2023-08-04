@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import DispatchContext from "../DispatchContext";
 import StateContext from "../StateContext";
@@ -8,6 +8,7 @@ export default function CreateAppPage() {
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
   const navigate = useNavigate();
+  const acronymInputRef = useRef(null);
   const initialState = {
     App_Description: "",
     App_Acronym: "",
@@ -89,6 +90,9 @@ export default function CreateAppPage() {
           value: "App succesfully created",
         });
         setFormData(initialState);
+        if (acronymInputRef.current) {
+          acronymInputRef.current.focus();
+        }
       }
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 403) {
@@ -134,7 +138,7 @@ export default function CreateAppPage() {
                 value={formData.App_Acronym}
                 onChange={handleChange}
                 required
-                autoFocus
+                ref={acronymInputRef}
               />
             </div>
             <div className="mb-3">

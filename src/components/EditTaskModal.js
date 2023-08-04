@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import DispatchContext from "../DispatchContext";
@@ -15,6 +15,7 @@ export default function EditTaskModal({
   const [notes, setNotes] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
   const appDispatch = useContext(DispatchContext);
+  const notesTextareaRef = useRef(null);
   const params = useParams();
 
   const handleChange = (e) => {
@@ -28,7 +29,9 @@ export default function EditTaskModal({
 
   const toggleModal = () => {
     setShowModal(!showModal);
-    document.body.classList.toggle("modal-open");
+    // document.body.classList.toggle("modal-open");
+    document.body.removeAttribute("class");
+    document.body.removeAttribute("style");
     document.body.removeChild(document.querySelector(".modal-backdrop"));
   };
 
@@ -167,6 +170,9 @@ export default function EditTaskModal({
         if (getTasksResponse.data.data) {
           setTask(getTasksResponse.data.data);
           setSelectedPlan(getTasksResponse.data.data[0].Task_plan);
+          if (notesTextareaRef.current) {
+            notesTextareaRef.current.scrollIntoView({ behavior: "smooth" });
+          }
         }
       } catch (error) {
         if (error.response && error.response.data) {
@@ -184,6 +190,13 @@ export default function EditTaskModal({
 
     return () => ourRequest.cancel();
   }, [selectedTaskId]);
+
+  useEffect(() => {
+    if (showModal && notesTextareaRef.current) {
+      notesTextareaRef.current.scrollBottom =
+        notesTextareaRef.current.scrollHeight;
+    }
+  }, [showModal]);
 
   return (
     <>
@@ -283,7 +296,7 @@ export default function EditTaskModal({
                     ))}
                   </select>
                 </div>
-                <div className="form-group text-left">
+                <div className="form-group text-left " ref={notesTextareaRef}>
                   <label htmlFor="Task_notes" className="form-label">
                     <strong>Audit Trail:</strong>
                   </label>
@@ -300,6 +313,7 @@ export default function EditTaskModal({
                           }).join("\n")
                         : ""
                     }
+                    ref={notesTextareaRef}
                   ></textarea>
                 </div>
                 <div className="form-group text-left">
@@ -331,7 +345,7 @@ export default function EditTaskModal({
                     className="btn btn-outline-danger"
                     onClick={handleDemote}
                   >
-                    Demote
+                    {task[0].Task_state === "done" ? "Reject" : "Demote"}
                   </button>
                 ) : (
                   ""
@@ -339,13 +353,17 @@ export default function EditTaskModal({
                 <button type="submit" className="btn btn-dark">
                   Update
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-outline-success"
-                  onClick={handlePromote}
-                >
-                  Promote
-                </button>
+                {task.length > 0 && task[0].Task_state !== "closed" ? (
+                  <button
+                    type="button"
+                    className="btn btn-outline-success"
+                    onClick={handlePromote}
+                  >
+                    {task[0].Task_state === "done" ? "Approve" : "Promote"}
+                  </button>
+                ) : (
+                  ""
+                )}
               </div>
             </form>
           </div>

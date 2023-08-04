@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useImmerReducer } from "use-immer";
 import axios from "axios";
 import DispatchContext from "../DispatchContext";
@@ -101,12 +101,15 @@ export default function CreateUserForm() {
   }
 
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
+  const createUserRef = useRef(null);
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
     const fetchUsergroups = async () => {
       try {
-        const response = await axios.get("/admin/groups");
+        const response = await axios.post("/admin/groups", {
+          usergroup: "admin",
+        });
         if (response.data) {
           dispatch({ type: "fetchUserGroup", data: response.data.data });
         }
@@ -163,27 +166,6 @@ export default function CreateUserForm() {
     dispatch({ type: "selectedUsergroups", value: joinedSelectedOptions });
   };
 
-  // const handleSelectChange = (e) => {
-  //   const selectedOption = e.target.value;
-  //   const isChecked = e.target.checked;
-  //   const currentSelectedOptions = state.selectedUsergroups.value;
-
-  //   let updatedSelectedOptions;
-
-  //   if (isChecked) {
-  //     // Add the selected option to the current selected options
-  //     updatedSelectedOptions = [...currentSelectedOptions, selectedOption];
-  //   } else {
-  //     // Remove the selected option from the current selected options
-  //     updatedSelectedOptions = currentSelectedOptions.filter(
-  //       (option) => option !== selectedOption
-  //     );
-  //   }
-  //   const joinedCheckedOptions = '.' + updatedSelectedOptions.join('.') + '.';
-  //   console.log(joinedCheckedOptions);
-  //   dispatch({ type: 'selectedUsergroups', value: joinedCheckedOptions });
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -196,11 +178,13 @@ export default function CreateUserForm() {
       });
       if (response.data) {
         dispatch({ type: "submitRequest" });
-
         appDispatch({
           type: "flashMessage",
           value: "User succesfully created",
         });
+        if (createUserRef) {
+          createUserRef.focus();
+        }
       }
     } catch (error) {
       if (error.response.data.error.statusCode === 403) {
@@ -238,7 +222,7 @@ export default function CreateUserForm() {
                     dispatch({ type: "usernameChange", value: e.target.value })
                   }
                   required
-                  autoFocus
+                  ref={createUserRef}
                   onBlur={(e) =>
                     dispatch({ type: "usernameRules", value: e.target.value })
                   }

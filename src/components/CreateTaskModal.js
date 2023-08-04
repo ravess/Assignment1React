@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import DispatchContext from "../DispatchContext";
 import axios from "axios";
@@ -15,6 +15,7 @@ export default function CreateTaskModal({
     Task_notes: "",
     Task_plan: "",
   };
+  const taskRef = useRef(null);
   const [formData, setFormData] = useState(initialState);
   const appDispatch = useContext(DispatchContext);
   const params = useParams();
@@ -28,7 +29,8 @@ export default function CreateTaskModal({
   };
   const toggleModal = () => {
     setShowModal(!showModal);
-    document.body.classList.toggle("modal-open");
+    document.body.removeAttribute("class");
+    document.body.removeAttribute("style");
     document.body.removeChild(document.querySelector(".modal-backdrop"));
   };
 
@@ -50,9 +52,9 @@ export default function CreateTaskModal({
         });
         setFormData(initialState);
         onFormSubmit();
-        toggleModal();
-        if (formRef.current) {
-          formRef.current.reset();
+        // toggleModal();
+        if (taskRef.current) {
+          taskRef.current.focus();
         }
       }
     } catch (error) {
@@ -131,6 +133,7 @@ export default function CreateTaskModal({
                     name="Task_name"
                     onChange={handleChange}
                     required
+                    ref={taskRef}
                   />
                 </div>
                 <div className="form-group text-left">

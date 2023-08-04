@@ -197,9 +197,10 @@ export default function KanbanBoard() {
           </button>
         </div>
         <div className="container-fluid mt-5">
-          <div className="row">
-            <div className="col border mx-4 p-2">
-              <h3>Open State</h3>
+          <div className="row d-flex justify-content-center">
+            <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
+              <h5>Open</h5>
+              <hr />
               {state.tasks.data
                 .filter((task) => task.Task_state === "open")
                 .map((task) => (
@@ -207,11 +208,13 @@ export default function KanbanBoard() {
                     key={task.Task_id}
                     task={task}
                     onTaskCardClick={handleTaskCardClick}
+                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
                   />
                 ))}
             </div>
-            <div className="col border mx-4 p-2">
-              <h3>To Do</h3>
+            <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
+              <h5>To Do</h5>
+              <hr />
               {state.tasks.data
                 .filter((task) => task.Task_state === "todo")
                 .map((task) => (
@@ -219,11 +222,13 @@ export default function KanbanBoard() {
                     key={task.Task_id}
                     task={task}
                     onTaskCardClick={handleTaskCardClick}
+                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
                   />
                 ))}
             </div>
-            <div className="col border mx-4 p-2">
-              <h3>Doing</h3>
+            <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
+              <h5>Doing</h5>
+              <hr />
               {state.tasks.data
                 .filter((task) => task.Task_state === "doing")
                 .map((task) => (
@@ -231,12 +236,14 @@ export default function KanbanBoard() {
                     key={task.Task_id}
                     task={task}
                     onTaskCardClick={handleTaskCardClick}
+                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
                   />
                 ))}
             </div>
 
-            <div className="col border mx-4 p-2">
-              <h3>Done</h3>
+            <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
+              <h5>Done</h5>
+              <hr />
               {state.tasks.data
                 .filter((task) => task.Task_state === "done")
                 .map((task) => (
@@ -244,11 +251,13 @@ export default function KanbanBoard() {
                     key={task.Task_id}
                     task={task}
                     onTaskCardClick={handleTaskCardClick}
+                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
                   />
                 ))}
             </div>
-            <div className="col border mx-4 p-2">
-              <h3>Closed</h3>
+            <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
+              <h5>Closed</h5>
+              <hr />
               {state.tasks.data
                 .filter((task) => task.Task_state === "closed")
                 .map((task) => (
@@ -256,6 +265,7 @@ export default function KanbanBoard() {
                     key={task.Task_id}
                     task={task}
                     onTaskCardClick={handleTaskCardClick}
+                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
                   />
                 ))}
             </div>
