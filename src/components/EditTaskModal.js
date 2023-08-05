@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
+import StateContext from '../StateContext';
 
 export default function EditTaskModal({
   selectedTaskId,
@@ -15,6 +16,7 @@ export default function EditTaskModal({
   const [notes, setNotes] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
   const appDispatch = useContext(DispatchContext);
+  const appState = useContext(StateContext);
   const notesTextareaRef = useRef(null);
   const params = useParams();
 
@@ -55,19 +57,28 @@ export default function EditTaskModal({
         toggleModal();
       }
     } catch (error) {
+      if (error.response && error.response.data.error.statusCode === 401) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        toggleModal();
+        navigate(`/apps/${params.appacronym}`);
+      }
       if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate('/user/dashboard');
+        toggleModal();
+        navigate('/');
       }
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-      }
     }
   };
 
@@ -91,19 +102,28 @@ export default function EditTaskModal({
         toggleModal();
       }
     } catch (error) {
+      if (error.response && error.response.data.error.statusCode === 401) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        toggleModal();
+        navigate(`/apps/${params.appacronym}`);
+      }
       if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate('/user/dashboard');
+        toggleModal();
+        navigate('/');
       }
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-      }
     }
   };
 
@@ -137,19 +157,28 @@ export default function EditTaskModal({
         }
       }
     } catch (error) {
+      if (error.response && error.response.data.error.statusCode === 401) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        toggleModal();
+        navigate(`/apps/${params.appacronym}`);
+      }
       if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate('/user/dashboard');
+        toggleModal();
+        navigate('/');
       }
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-      }
     }
   };
 
@@ -175,13 +204,28 @@ export default function EditTaskModal({
           }
         }
       } catch (error) {
-        if (error.response && error.response.data) {
+        if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          console.log(`either navigate away or do other things`);
+          toggleModal();
+          navigate(`/apps/${params.appacronym}`);
         }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          toggleModal();
+          navigate('/');
+        }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     if (selectedTaskId) {
@@ -191,12 +235,12 @@ export default function EditTaskModal({
     return () => ourRequest.cancel();
   }, [selectedTaskId]);
 
-  useEffect(() => {
-    if (showModal && notesTextareaRef.current) {
-      notesTextareaRef.current.scrollBottom =
-        notesTextareaRef.current.scrollHeight;
-    }
-  }, [showModal]);
+  // useEffect(() => {
+  //   if (showModal && notesTextareaRef.current) {
+  //     notesTextareaRef.current.scrollBottom =
+  //       notesTextareaRef.current.scrollHeight;
+  //   }
+  // }, [showModal]);
 
   return (
     <>

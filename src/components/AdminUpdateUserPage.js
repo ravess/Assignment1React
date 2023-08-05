@@ -121,14 +121,22 @@ export default function EditUserForm() {
         navigate('/admin/users');
       }
     } catch (error) {
-      if (error.response.data.error.statusCode === 403) {
+      if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         navigate('/user/dashboard');
       }
-      if (error.response.data)
+      if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        navigate('/');
+      }
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
@@ -155,21 +163,26 @@ export default function EditUserForm() {
           dispatch({ type: 'fetchUserGroupData', data: response2.data.data });
         }
       } catch (error) {
-        if (error.response.data.error.statusCode === 403) {
+        if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/user/dashboard');
         }
-        if (error.response.data) {
-          console.log(error.response.data.error.statusCode);
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate('/user/dashboard');
+          navigate('/');
         }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     fetchUsers();
@@ -184,13 +197,26 @@ export default function EditUserForm() {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
         }
       } catch (error) {
-        if (error.response.data) {
+        if (error.response && error.response.data.error.statusCode === 401) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
+        }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/');
         }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     }
     fetchResults();

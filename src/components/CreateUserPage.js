@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import { useImmerReducer } from 'use-immer';
 import axios from 'axios';
 import DispatchContext from '../DispatchContext';
@@ -114,14 +114,22 @@ export default function CreateUserForm() {
           dispatch({ type: 'fetchUserGroup', data: response.data.data });
         }
       } catch (error) {
-        if (error.response.data.error.statusCode === 403) {
+        if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/user/dashboard');
         }
-        if (error.response.data)
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
@@ -188,12 +196,20 @@ export default function CreateUserForm() {
         }
       }
     } catch (error) {
-      if (error.response && error.response.data.error.statusCode === 403) {
+      if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         navigate('/user/dashboard');
+      }
+      if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        navigate('/');
       }
       if (error.response && error.response.data)
         appDispatch({

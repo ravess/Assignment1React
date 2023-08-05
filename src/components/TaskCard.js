@@ -29,19 +29,28 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
         onFormSubmit();
       }
     } catch (error) {
+      if (error.response && error.response.data.error.statusCode === 401) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        toggleModal();
+        navigate(`/apps/${params.appacronym}`);
+      }
       if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate('/user/dashboard');
+        toggleModal();
+        navigate('/');
       }
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-      }
     }
   };
 
@@ -64,19 +73,28 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
         onFormSubmit();
       }
     } catch (error) {
+      if (error.response && error.response.data.error.statusCode === 401) {
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        toggleModal();
+        navigate(`/apps/${params.appacronym}`);
+      }
       if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate('/user/dashboard');
+        toggleModal();
+        navigate('/');
       }
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-      }
     }
   };
   return (

@@ -23,15 +23,22 @@ export default function UserList() {
           setUsers(response.data.data);
         }
       } catch (error) {
-        console.log(`it came here`);
-        if (error.response.data.error.statusCode === 403) {
+        if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/user/dashboard');
         }
-        if (error.response.data)
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
@@ -45,13 +52,26 @@ export default function UserList() {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
         }
       } catch (error) {
-        if (error.response.data) {
+        if (error.response && error.response.data.error.statusCode === 401) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
+        }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/');
         }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     fetchProfile();

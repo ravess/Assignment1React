@@ -23,7 +23,26 @@ export default function Header() {
         if (response.data.data === 0)
           appDispatch({ type: 'isAdmin', value: false });
       } catch (error) {
-        console.log(error); //********need to handle this */
+        if (error.response && error.response.data.error.statusCode === 404) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
+        }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     }
     checkAdmin();
@@ -41,14 +60,22 @@ export default function Header() {
         navigate('/');
       }
     } catch (error) {
-      if (error.response.data.error.statusCode === 403) {
+      if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         navigate('/user/dashboard');
       }
-      if (error.response.data)
+      if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        navigate('/');
+      }
+      if (error.response && error.response.data)
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,

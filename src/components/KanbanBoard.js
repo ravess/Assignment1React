@@ -74,7 +74,6 @@ export default function KanbanBoard() {
         }
         const appResponse = await axios.get(`/apps/${params.appacronym}`);
         if (appResponse.data.data) {
-          console.log(appResponse.data.data[0].App_permissions);
           appDispatch({
             type: 'setPermission',
             data: appResponse.data.data[0].App_permissions,
@@ -100,13 +99,26 @@ export default function KanbanBoard() {
           });
         }
       } catch (error) {
-        if (error.response.data) {
+        if (error.response && error.response.data.error.statusCode === 404) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          console.log(`either navigate away or do other things`);
+          navigate(`/apps/${params.appacronym}`);
         }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
 
@@ -144,13 +156,26 @@ export default function KanbanBoard() {
           }
         }
       } catch (error) {
-        if (error.response.data) {
+        if (error.response && error.response.data.error.statusCode === 404) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          console.log(`either navigate away or do other things`);
+          navigate(`/apps/${params.appacronym}`);
         }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
 
@@ -160,7 +185,6 @@ export default function KanbanBoard() {
 
   return (
     <div>
-      {console.log(appState.user)}
       <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
         <i
           className='fa fa-arrow-left fa-2x align-self-center'
