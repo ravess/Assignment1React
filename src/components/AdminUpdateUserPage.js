@@ -46,7 +46,7 @@ export default function EditUserForm() {
       case 'fetchUserData':
         draft.useremail.value = action.data.useremail;
         draft.userisActive.value = action.data.userisActive;
-        draft.selectedUsergroups.value = action.data.usergroup;
+        draft.selectedUsergroups.value = action.data.usergroups;
         setUserh1(action.data.username);
         return;
       case 'userpasswordChange':
@@ -109,7 +109,8 @@ export default function EditUserForm() {
         userpassword: state.userpassword.value,
         useremail: state.useremail.value,
         userisActive: state.userisActive.value,
-        usergroup: state.selectedUsergroups.value,
+        usergroups: state.selectedUsergroups.value,
+        usergroup: 'admin',
       };
       const response = await axios.put(`/admin/users/${userid}/edit`, user);
       if (response.data.success) {

@@ -26,7 +26,7 @@ export default function App() {
     flashMessagesErr: [],
     user: {
       username: '',
-      usergroup: '',
+      usergroups: '',
       userisActive: '',
       useremail: '',
       userisAdmin: false,

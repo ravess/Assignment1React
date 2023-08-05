@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
-import { useImmerReducer } from "use-immer";
-import axios from "axios";
-import DispatchContext from "../DispatchContext";
-import StateContext from "../StateContext";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { useImmerReducer } from 'use-immer';
+import axios from 'axios';
+import DispatchContext from '../DispatchContext';
+import StateContext from '../StateContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateUserForm() {
   const appDispatch = useContext(DispatchContext);
@@ -11,69 +11,69 @@ export default function CreateUserForm() {
   const navigate = useNavigate();
   const originalState = {
     username: {
-      value: "",
+      value: '',
       hasErrors: false,
-      message: "",
+      message: '',
     },
     userpassword: {
-      value: "",
+      value: '',
       hasErrors: false,
-      message: "",
+      message: '',
     },
     useremail: {
-      value: "",
+      value: '',
     },
     userisActive: {
       value: true,
       hasErrors: false,
-      message: "",
+      message: '',
     },
     usergroups: {
       data: [],
     },
     selectedUsergroups: {
-      value: "",
+      value: '',
     },
     submitCount: 0,
   };
 
   function ourReducer(draft, action) {
     switch (action.type) {
-      case "fetchUserGroup":
+      case 'fetchUserGroup':
         draft.usergroups.data = action.data;
         return;
 
-      case "usernameChange":
+      case 'usernameChange':
         draft.username.hasErrors = false;
         draft.username.value = action.value;
         return;
-      case "userpasswordChange":
+      case 'userpasswordChange':
         draft.userpassword.hasErrors = false;
         draft.userpassword.value = action.value;
         return;
 
-      case "useremailChange":
+      case 'useremailChange':
         draft.useremail.value = action.value;
         return;
 
-      case "userisActive":
+      case 'userisActive':
         draft.userisActive.hasErrors = false;
         draft.userisActive.value = action.value;
         return;
-      case "selectedUsergroups":
+      case 'selectedUsergroups':
         draft.selectedUsergroups.hasErrors = false;
         draft.selectedUsergroups.value = action.value;
 
         return;
-      case "usernameRules":
+      case 'usernameRules':
         if (!action.value.trim()) {
           draft.username.hasErrors = true;
-          draft.username.message = "You must provide a username";
+          draft.username.message = 'You must provide a username';
         }
         return;
-      case "userpasswordRules":
+      case 'userpasswordRules':
         const rePassword = new RegExp(
-          "^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$"
+          '^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$'
         );
         if (
           !action.value.trim() ||
@@ -81,18 +81,18 @@ export default function CreateUserForm() {
         ) {
           draft.userpassword.hasErrors = true;
           draft.userpassword.message =
-            "Your Password is required and alphanumeric min8 chars, max10chars with special chars.";
+            'Your Password is required and alphanumeric min8 chars, max10chars with special chars.';
         } else {
           draft.userpassword.hasErrors = false;
         }
         return;
 
-      case "submitRequest":
+      case 'submitRequest':
         if (!draft.username.hasErrors && !draft.userpassword.hasErrors) {
-          (draft.username.value = ""),
-            (draft.userpassword.value = ""),
-            (draft.selectedUsergroups.value = ""),
-            (draft.useremail.value = ""),
+          (draft.username.value = ''),
+            (draft.userpassword.value = ''),
+            (draft.selectedUsergroups.value = ''),
+            (draft.useremail.value = ''),
             (draft.userisActive.value = true);
           draft.submitCount++;
         }
@@ -107,40 +107,40 @@ export default function CreateUserForm() {
     const ourRequest = axios.CancelToken.source();
     const fetchUsergroups = async () => {
       try {
-        const response = await axios.post("/admin/groups", {
-          usergroup: "admin",
+        const response = await axios.post('/admin/groups', {
+          usergroup: 'admin',
         });
         if (response.data) {
-          dispatch({ type: "fetchUserGroup", data: response.data.data });
+          dispatch({ type: 'fetchUserGroup', data: response.data.data });
         }
       } catch (error) {
         if (error.response.data.error.statusCode === 403) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate("/user/dashboard");
+          navigate('/user/dashboard');
         }
         if (error.response.data)
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
       }
     };
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("/user/profile");
+        const response = await axios.get('/user/profile');
         if (response.data.data[0]) {
-          appDispatch({ type: "isAuth", data: response.data.data[0] });
+          appDispatch({ type: 'isAuth', data: response.data.data[0] });
         }
       } catch (error) {
         if (error.response.data) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate("/");
+          navigate('/');
         }
       }
     };
@@ -150,7 +150,7 @@ export default function CreateUserForm() {
   }, []);
 
   const handleUserIsActiveChange = (e) => {
-    dispatch({ type: "userisActive", value: e.target.checked });
+    dispatch({ type: 'userisActive', value: e.target.checked });
   };
 
   //This portions help to create an array when you select the option.value in the select so that we can use join method to become a string like
@@ -160,43 +160,44 @@ export default function CreateUserForm() {
       (option) => option.value
     );
 
-    const joinedSelectedOptions = "." + selectedOptions.join(".") + ".";
+    const joinedSelectedOptions = '.' + selectedOptions.join('.') + '.';
 
     console.log(joinedSelectedOptions);
-    dispatch({ type: "selectedUsergroups", value: joinedSelectedOptions });
+    dispatch({ type: 'selectedUsergroups', value: joinedSelectedOptions });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/admin/users/create", {
+      const response = await axios.post('/admin/users/create', {
         username: state.username.value,
         userpassword: state.userpassword.value,
         useremail: state.useremail.value,
         userisActive: state.userisActive.value,
-        usergroup: state.selectedUsergroups.value,
+        usergroups: state.selectedUsergroups.value,
+        usergroup: 'admin',
       });
       if (response.data) {
-        dispatch({ type: "submitRequest" });
+        dispatch({ type: 'submitRequest' });
         appDispatch({
-          type: "flashMessage",
-          value: "User succesfully created",
+          type: 'flashMessage',
+          value: 'User succesfully created',
         });
         if (createUserRef) {
           createUserRef.focus();
         }
       }
     } catch (error) {
-      if (error.response.data.error.statusCode === 403) {
+      if (error.response && error.response.data.error.statusCode === 403) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate("/user/dashboard");
+        navigate('/user/dashboard');
       }
-      if (error.response.data)
+      if (error.response && error.response.data)
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
     }
@@ -206,90 +207,90 @@ export default function CreateUserForm() {
     <>
       {appState.user.userisAdmin ? (
         <div>
-          <div className="container d-flex flex-column mt-3 border border-dark rounded w-50">
+          <div className='container d-flex flex-column mt-3 border border-dark rounded w-50'>
             <h2>Create User</h2>
-            <form className="form-group" onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label htmlFor="username" className="form-label">
+            <form className='form-group' onSubmit={handleSubmit}>
+              <div className='mb-3'>
+                <label htmlFor='username' className='form-label'>
                   Username
                 </label>
                 <input
-                  type="text"
-                  className="form-control"
-                  id="username"
+                  type='text'
+                  className='form-control'
+                  id='username'
                   value={state.username.value}
                   onChange={(e) =>
-                    dispatch({ type: "usernameChange", value: e.target.value })
+                    dispatch({ type: 'usernameChange', value: e.target.value })
                   }
                   required
                   ref={createUserRef}
                   onBlur={(e) =>
-                    dispatch({ type: "usernameRules", value: e.target.value })
+                    dispatch({ type: 'usernameRules', value: e.target.value })
                   }
                 />
                 {state.username.hasErrors && (
-                  <div className="alert alert-danger small liveValidateMessage">
+                  <div className='alert alert-danger small liveValidateMessage'>
                     {state.username.message}
                   </div>
                 )}
               </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">
+              <div className='mb-3'>
+                <label htmlFor='password' className='form-label'>
                   Password
                 </label>
                 <input
-                  type="password"
-                  className="form-control"
-                  id="password"
+                  type='password'
+                  className='form-control'
+                  id='password'
                   value={state.userpassword.value}
                   onChange={(e) =>
                     dispatch({
-                      type: "userpasswordChange",
+                      type: 'userpasswordChange',
                       value: e.target.value,
                     })
                   }
                   onBlur={(e) =>
                     dispatch({
-                      type: "userpasswordRules",
+                      type: 'userpasswordRules',
                       value: e.target.value,
                     })
                   }
                   required
                 />
                 {state.userpassword.hasErrors && (
-                  <div className="alert alert-danger small liveValidateMessage">
+                  <div className='alert alert-danger small liveValidateMessage'>
                     {state.userpassword.message}
                   </div>
                 )}
               </div>
-              <div className="mb-3">
-                <label htmlFor="useremail" className="form-label">
+              <div className='mb-3'>
+                <label htmlFor='useremail' className='form-label'>
                   Useremail
                 </label>
                 <input
-                  type="email"
-                  className="form-control"
-                  id="useremail"
+                  type='email'
+                  className='form-control'
+                  id='useremail'
                   value={state.useremail.value}
                   onChange={(e) =>
-                    dispatch({ type: "useremailChange", value: e.target.value })
+                    dispatch({ type: 'useremailChange', value: e.target.value })
                   }
                 />
               </div>
-              <div className="mb-3 form-check">
+              <div className='mb-3 form-check'>
                 <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="isActive"
+                  className='form-check-input'
+                  type='checkbox'
+                  id='isActive'
                   checked={state.userisActive.value}
                   onChange={handleUserIsActiveChange}
                 />
-                <label className="form-check-label" htmlFor="isActive">
+                <label className='form-check-label' htmlFor='isActive'>
                   Active
                 </label>
               </div>
-              <div className="mb-3 d-flex flex-column">
-                <label htmlFor="usergroups" className="form-label">
+              <div className='mb-3 d-flex flex-column'>
+                <label htmlFor='usergroups' className='form-label'>
                   Usergroups
                 </label>
 
@@ -319,8 +320,8 @@ export default function CreateUserForm() {
 
                 <select
                   multiple
-                  className="form-select"
-                  id="usergroups"
+                  className='form-select'
+                  id='usergroups'
                   onChange={handleSelectChange}
                 >
                   {state.usergroups.data.map((group) => {
@@ -332,10 +333,10 @@ export default function CreateUserForm() {
                   })}
                 </select>
               </div>
-              <div className="d-flex justify-content-center">
+              <div className='d-flex justify-content-center'>
                 <button
-                  type="submit"
-                  className="btn btn-dark d-flex ml-0 justify-content-center"
+                  type='submit'
+                  className='btn btn-dark d-flex ml-0 justify-content-center'
                   disabled={
                     state.username.hasErrors ||
                     state.userpassword.hasErrors ||
@@ -350,7 +351,7 @@ export default function CreateUserForm() {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );

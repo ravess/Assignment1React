@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import DispatchContext from "../DispatchContext";
-import StateContext from "../StateContext";
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import DispatchContext from '../DispatchContext';
+import StateContext from '../StateContext';
 
 export default function CreateGroupForm() {
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
   const navigate = useNavigate();
-  const [createGroup, setCreateGroup] = useState("");
+  const [createGroup, setCreateGroup] = useState('');
   const [hasError, setHasError] = useState(false);
   const [displayGroups, setDisplayGroups] = useState([]);
 
@@ -16,8 +16,8 @@ export default function CreateGroupForm() {
     const ourRequest = axios.CancelToken.source();
     async function fetchGroup() {
       try {
-        const response = await axios.post("/admin/groups", {
-          usergroup: "admin",
+        const response = await axios.post('/admin/groups', {
+          usergroup: 'admin',
         });
         if (response.data.data) {
           setDisplayGroups(response.data.data);
@@ -25,14 +25,14 @@ export default function CreateGroupForm() {
       } catch (error) {
         if (error.response.data.error.statusCode === 403) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate("/user/dashboard");
+          navigate('/user/dashboard');
         }
         if (error.response.data)
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
       }
@@ -46,23 +46,23 @@ export default function CreateGroupForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/admin/groups/create", {
-        usergroup: createGroup,
+      const response = await axios.post('/admin/groups/create', {
+        usergroups: createGroup,
       });
       if (response.data)
-        appDispatch({ type: "flashMessage", value: "Group created" });
-      setCreateGroup("");
+        appDispatch({ type: 'flashMessage', value: 'Group created' });
+      setCreateGroup('');
     } catch (error) {
       if (error.response.data.error.statusCode === 403) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate("/user/dashboard");
+        navigate('/user/dashboard');
       }
       if (error.response.data)
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
     }
@@ -71,11 +71,11 @@ export default function CreateGroupForm() {
   return (
     <>
       {appState.user.userisAdmin ? (
-        <div className="d-flex flex-column align-items-center">
+        <div className='d-flex flex-column align-items-center'>
           <h2>Current Groups:</h2>
-          <div className="mt-3 border border-dark rounded w-50">
-            <div className="container mt-3">
-              <table className="table">
+          <div className='mt-3 border border-dark rounded w-50'>
+            <div className='container mt-3'>
+              <table className='table'>
                 <thead>
                   <tr>
                     <th>Available group to assign</th>
@@ -90,17 +90,17 @@ export default function CreateGroupForm() {
                 </tbody>
               </table>
             </div>
-            <div className="container mt-3">
+            <div className='container mt-3'>
               <h2>Create Group</h2>
-              <form className="form-group" onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="username" className="form-label">
+              <form className='form-group' onSubmit={handleSubmit}>
+                <div className='mb-3'>
+                  <label htmlFor='username' className='form-label'>
                     Groupname
                   </label>
                   <input
-                    type="text"
-                    className="form-control"
-                    id="usergroup"
+                    type='text'
+                    className='form-control'
+                    id='usergroup'
                     value={createGroup}
                     onChange={(e) => {
                       if (e.target.value.length < 0) {
@@ -115,10 +115,10 @@ export default function CreateGroupForm() {
                   />
                 </div>
 
-                <div className="d-flex justify-content-center">
+                <div className='d-flex justify-content-center'>
                   <button
-                    type="submit"
-                    className="btn btn-dark d-flex ml-0 justify-content-center"
+                    type='submit'
+                    className='btn btn-dark d-flex ml-0 justify-content-center'
                     disabled={hasError}
                   >
                     Create Group
@@ -129,7 +129,7 @@ export default function CreateGroupForm() {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );
