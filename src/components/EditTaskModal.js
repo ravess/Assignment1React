@@ -242,7 +242,7 @@ export default function EditTaskModal({
                 <div className='form-group text-left'>
                   <strong>Task Description:</strong>
                   <textarea
-                    class='form-control'
+                    className='form-control'
                     id='Task_description'
                     rows='3'
                     value={task.length > 0 && task[0].Task_description}
@@ -274,12 +274,12 @@ export default function EditTaskModal({
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_owner}</span>}
                 </div>
-                <div class='form-group text-left'>
+                <div className='form-group text-left'>
                   <label htmlFor='Task_plan'>
                     <strong>Task Plan:</strong>
                   </label>
                   <select
-                    class='form-control'
+                    className='form-control'
                     id='Task_plan'
                     name='Task_plan'
                     value={selectedPlan}
@@ -301,7 +301,7 @@ export default function EditTaskModal({
                     <strong>Audit Trail:</strong>
                   </label>
                   <textarea
-                    class='form-control'
+                    className='form-control'
                     id='Task_notes'
                     rows='10'
                     name='Task_notes'
@@ -321,7 +321,7 @@ export default function EditTaskModal({
                     <strong>Task Notes:</strong>
                   </label>
                   <textarea
-                    class='form-control'
+                    className='form-control'
                     id='Task_notes'
                     rows='3'
                     name='Task_notes'
