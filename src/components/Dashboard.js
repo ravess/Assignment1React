@@ -23,13 +23,6 @@ export default function Dashboard() {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
         }
       } catch (error) {
-        if (error.response && error.response.data.error.statusCode === 401) {
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate(`/user/dashboard`);
-        }
         if (error.response && error.response.data.error.statusCode === 403) {
           appDispatch({ type: 'logout' });
           appDispatch({

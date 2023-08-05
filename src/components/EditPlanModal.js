@@ -69,8 +69,8 @@ export default function EditPlanModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate(`/apps/${params.appacronym}`);
         toggleModal();
+        navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
         appDispatch({ type: 'logout' });
@@ -161,7 +161,7 @@ export default function EditPlanModal({
                       <strong>Select a Plan:</strong>
                     </label>
                     <select
-                      class='form-control'
+                      className='form-control'
                       id='Task_plan'
                       name='Task_plan'
                       value={selectedPlan}

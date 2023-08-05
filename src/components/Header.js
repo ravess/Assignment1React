@@ -13,39 +13,48 @@ export default function Header() {
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
-    async function checkAdmin() {
+    async function checkRole() {
       try {
-        const response = await axios.post('/checkgroup', {
+        const responseAdmin = await axios.post('/checkgroup', {
           usergroup: 'admin',
         });
-        if (response.data.data === 1)
+        if (responseAdmin.data.data === 1) {
           appDispatch({ type: 'isAdmin', value: true });
-        if (response.data.data === 0)
+        }
+        if (responseAdmin.data.data === 0) {
           appDispatch({ type: 'isAdmin', value: false });
+        }
       } catch (error) {
-        if (error.response && error.response.data.error.statusCode === 404) {
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/user/dashboard');
+        console.log(error);
+      }
+      try {
+        const responsePl = await axios.post('/checkgroup', {
+          usergroup: 'pl',
+        });
+        if (responsePl.data.data === 1) {
+          appDispatch({ type: 'isPl', value: true });
         }
-        if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: 'logout' });
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/');
+        if (responsePl.data.data === 0) {
+          appDispatch({ type: 'isPl', value: false });
         }
-        if (error.response && error.response.data)
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
+      } catch (error) {
+        console.log(error);
+      }
+      try {
+        const responsePm = await axios.post('/checkgroup', {
+          usergroup: 'pm',
+        });
+        if (responsePm.data.data === 1) {
+          appDispatch({ type: 'isPm', value: true });
+        }
+        if (responsePm.data.data === 0) {
+          appDispatch({ type: 'isPm', value: false });
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
-    checkAdmin();
+    checkRole();
     return () => {
       ourRequest.cancel();
     };

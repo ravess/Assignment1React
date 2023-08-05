@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import DispatchContext from '../DispatchContext';
 
@@ -19,6 +19,7 @@ export default function EditAppModal({
   const [selectedPermitToDoList, setSelectedPermitToDoList] = useState('');
   const [selectedPermitDoing, setSelectedPermitDoing] = useState('');
   const [selectedPermitDone, setSelectedPermitDone] = useState('');
+  const params = useParams();
   const navigate = useNavigate();
 
   const appDispatch = useContext(DispatchContext);
@@ -60,7 +61,7 @@ export default function EditAppModal({
     try {
       const response = await axios.put(`/apps/${selectedAppAcronym}/edit`, {
         ...formObj,
-        usergroup: 'admin',
+        usergroup: 'pl',
       });
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {
@@ -133,9 +134,7 @@ export default function EditAppModal({
 
     const fetchUserGroup = async () => {
       try {
-        const response = await axios.post('/admin/groups', {
-          usergroup: 'admin',
-        });
+        const response = await axios.get('/groups');
         if (response.data.data) {
           setUserGroup(response.data.data);
         }

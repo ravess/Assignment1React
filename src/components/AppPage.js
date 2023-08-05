@@ -3,9 +3,11 @@ import DispatchContext from '../DispatchContext';
 import axios from 'axios';
 import EditAppModal from './EditAppModal';
 import { useNavigate } from 'react-router-dom';
+import StateContext from '../StateContext';
 
 export default function AppPage() {
   const appDispatch = useContext(DispatchContext);
+  const appState = useContext(StateContext);
   const navigate = useNavigate();
   const [apps, setApps] = useState([]);
   const [key, setKey] = useState(0);
@@ -87,7 +89,6 @@ export default function AppPage() {
 
   return (
     <div className='dashboard'>
-      {console.log(apps, `why are you running in apppage`)}
       <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
         <i
           className='fa fa-arrow-left fa-2x align-self-center'
@@ -97,16 +98,18 @@ export default function AppPage() {
       </div>
       <div className='container-fluid text-center'>
         <p className='dashboard__description text-center'>All Available Apps</p>
-        <div className='d-flex justify-content-center mb-2'>
-          <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            onClick={() => {
-              navigate('/apps/create');
-            }}
-          >
-            <i className='fas fa-plus'></i> Create App
-          </button>
-        </div>
+        {appState.user.userisPl && (
+          <div className='d-flex justify-content-center mb-2'>
+            <button
+              className='btn btn-outline-dark mt-2 mr-2'
+              onClick={() => {
+                navigate('/apps/create');
+              }}
+            >
+              <i className='fas fa-plus'></i> Create App
+            </button>
+          </div>
+        )}
 
         <div className='container-fluid row justify-content-center d-inline-flex mt-5 mx-auto'>
           <div className='table-responsive mt-2 mb-5'>
@@ -140,15 +143,17 @@ export default function AppPage() {
                       >
                         View
                       </button>
-                      <button
-                        className='btn btn-outline-dark text-center '
-                        style={{ width: '60px' }}
-                        onClick={() => handleEdit(app.App_Acronym)}
-                        data-toggle='modal'
-                        data-target='#editAppModal'
-                      >
-                        Edit
-                      </button>
+                      {appState.user.userisPl && (
+                        <button
+                          className='btn btn-outline-dark text-center '
+                          style={{ width: '60px' }}
+                          onClick={() => handleEdit(app.App_Acronym)}
+                          data-toggle='modal'
+                          data-target='#editAppModal'
+                        >
+                          Edit
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -156,7 +161,7 @@ export default function AppPage() {
             </table>
           </div>
           <div>
-            {showModal && (
+            {showModal && appState.user.userisPl && (
               <>
                 <EditAppModal
                   selectedAppAcronym={selectedAppAcronym}

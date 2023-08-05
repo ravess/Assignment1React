@@ -27,9 +27,7 @@ export default function CreateAppPage() {
     const ourRequest = axios.CancelToken.source();
     const fetchUsergroups = async () => {
       try {
-        const response = await axios.post('/admin/groups', {
-          usergroup: 'admin',
-        });
+        const response = await axios.get('/groups');
         if (response.data.data) {
           setUserGroup(response.data.data);
         }

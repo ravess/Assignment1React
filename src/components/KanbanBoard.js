@@ -199,34 +199,39 @@ export default function KanbanBoard() {
           </p>
         )}
         <div className='container d-flex justify-content-start m-0'>
-          <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            style={{ width: '150px' }}
-            data-toggle='modal'
-            data-target='#createTaskModal'
-            onClick={() => setShowModal(true)}
-          >
-            <i className='fas fa-plus'></i> Create Task
-          </button>
-
-          <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            style={{ width: '150px' }}
-            data-toggle='modal'
-            data-target='#createPlanModal'
-            onClick={() => setShowModal(true)}
-          >
-            <i className='fas fa-plus'></i> Create Plan
-          </button>
-          <button
-            className='btn btn-outline-dark mt-2 mr-2'
-            style={{ width: '150px' }}
-            data-toggle='modal'
-            data-target='#editPlanModal'
-            onClick={() => setShowModal(true)}
-          >
-            <i className='fas fa-edit'></i> Edit Plan
-          </button>
+          {appState.user.userisPl && (
+            <button
+              className='btn btn-outline-dark mt-2 mr-2'
+              style={{ width: '150px' }}
+              data-toggle='modal'
+              data-target='#createTaskModal'
+              onClick={() => setShowModal(true)}
+            >
+              <i className='fas fa-plus'></i> Create Task
+            </button>
+          )}
+          {appState.user.userisPm && (
+            <>
+              <button
+                className='btn btn-outline-dark mt-2 mr-2'
+                style={{ width: '150px' }}
+                data-toggle='modal'
+                data-target='#createPlanModal'
+                onClick={() => setShowModal(true)}
+              >
+                <i className='fas fa-plus'></i> Create Plan
+              </button>
+              <button
+                className='btn btn-outline-dark mt-2 mr-2'
+                style={{ width: '150px' }}
+                data-toggle='modal'
+                data-target='#editPlanModal'
+                onClick={() => setShowModal(true)}
+              >
+                <i className='fas fa-edit'></i> Edit Plan
+              </button>
+            </>
+          )}
         </div>
         <div className='container-fluid mt-5'>
           <div className='row d-flex justify-content-center'>
@@ -304,28 +309,23 @@ export default function KanbanBoard() {
           </div>
         </div>
         <div>
-          {showModal && (
+          {showModal && appState.user.userisPl && (
+            <CreateTaskModal
+              plans={state.plans.data}
+              onFormSubmit={() => setIsTaskFormSubmitted(true)}
+              showModal={showModal}
+              setShowModal={setShowModal}
+            />
+          )}
+
+          {showModal && appState.user.userisPm && (
             <>
-              <CreateTaskModal
-                plans={state.plans.data}
-                onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
               <CreatePlanModal
                 onFormSubmit={() => setIsPlanFormSubmitted(true)}
                 showModal={showModal}
                 setShowModal={setShowModal}
               />
-              <EditTaskModal
-                selectedTaskId={selectedTaskId}
-                key={key}
-                plans={state.plans.data}
-                onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                isFormSubmitted={isTaskFormSubmitted}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
+
               <EditPlanModal
                 plans={state.plans.data}
                 onFormSubmit={() => setIsPlanFormSubmitted(true)}
@@ -334,6 +334,16 @@ export default function KanbanBoard() {
               />
             </>
           )}
+
+          <EditTaskModal
+            selectedTaskId={selectedTaskId}
+            key={key}
+            plans={state.plans.data}
+            onFormSubmit={() => setIsTaskFormSubmitted(true)}
+            isFormSubmitted={isTaskFormSubmitted}
+            showModal={showModal}
+            setShowModal={setShowModal}
+          />
         </div>
       </div>
     </div>

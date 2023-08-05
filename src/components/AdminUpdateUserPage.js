@@ -148,19 +148,23 @@ export default function EditUserForm() {
   };
 
   useEffect(() => {
+    const ourRequest = axios.CancelToken.source();
     const fetchUsers = async () => {
       try {
         const requests = [
+          axios.get('/user/profile'),
           axios.post(`/admin/user/${userid}`, { usergroup: 'admin' }),
-          axios.post(`/admin/groups`, { usergroup: 'admin' }),
+          axios.get('/groups'),
         ];
-        const [response1, response2] = await axios.all(requests);
-
+        const [response1, response2, response3] = await axios.all(requests);
         if (response1.data.data) {
-          dispatch({ type: 'fetchUserData', data: response1.data.data[0] });
+          appDispatch({ type: 'isAuth', data: response1.data.data[0] });
         }
         if (response2.data.data) {
-          dispatch({ type: 'fetchUserGroupData', data: response2.data.data });
+          dispatch({ type: 'fetchUserData', data: response2.data.data[0] });
+        }
+        if (response3.data.data) {
+          dispatch({ type: 'fetchUserGroupData', data: response3.data.data });
         }
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 401) {
@@ -178,48 +182,14 @@ export default function EditUserForm() {
           });
           navigate('/');
         }
-        if (error.response && error.response.data)
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
+        // if (error.response && error.response.data)
+        //   appDispatch({
+        //     type: 'flashMessageErr',
+        //     value: error.response.data.errMessage,
+        //   });
       }
     };
     fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    const ourRequest = axios.CancelToken.source();
-    async function fetchResults() {
-      try {
-        const response = await axios.get('/user/profile');
-        if (response.data.data[0]) {
-          appDispatch({ type: 'isAuth', data: response.data.data[0] });
-        }
-      } catch (error) {
-        if (error.response && error.response.data.error.statusCode === 401) {
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/user/dashboard');
-        }
-        if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: 'logout' });
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/');
-        }
-        if (error.response && error.response.data)
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-      }
-    }
-    fetchResults();
     return () => ourRequest.cancel();
   }, []);
 

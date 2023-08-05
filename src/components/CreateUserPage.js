@@ -42,7 +42,6 @@ export default function CreateUserForm() {
       case 'fetchUserGroup':
         draft.usergroups.data = action.data;
         return;
-
       case 'usernameChange':
         draft.username.hasErrors = false;
         draft.username.value = action.value;
@@ -51,11 +50,9 @@ export default function CreateUserForm() {
         draft.userpassword.hasErrors = false;
         draft.userpassword.value = action.value;
         return;
-
       case 'useremailChange':
         draft.useremail.value = action.value;
         return;
-
       case 'userisActive':
         draft.userisActive.hasErrors = false;
         draft.userisActive.value = action.value;
@@ -63,7 +60,6 @@ export default function CreateUserForm() {
       case 'selectedUsergroups':
         draft.selectedUsergroups.hasErrors = false;
         draft.selectedUsergroups.value = action.value;
-
         return;
       case 'usernameRules':
         if (!action.value.trim()) {
@@ -107,28 +103,11 @@ export default function CreateUserForm() {
     const ourRequest = axios.CancelToken.source();
     const fetchUsergroups = async () => {
       try {
-        const response = await axios.post('/admin/groups', {
-          usergroup: 'admin',
-        });
+        const response = await axios.get('/groups');
         if (response.data) {
           dispatch({ type: 'fetchUserGroup', data: response.data.data });
         }
       } catch (error) {
-        if (error.response && error.response.data.error.statusCode === 401) {
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/user/dashboard');
-        }
-        if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: 'logout' });
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/');
-        }
         if (error.response && error.response.data)
           appDispatch({
             type: 'flashMessageErr',
@@ -142,14 +121,34 @@ export default function CreateUserForm() {
         if (response.data.data[0]) {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
         }
+        if (!appState.user.userisAdmin) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: 'You are not authorised to access this resource',
+          });
+          navigate('/user/dashboard');
+        }
       } catch (error) {
-        if (error.response.data) {
+        if (error.response.data.error.statusCode === 401) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/user/dashboard');
+        }
+        if (error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/');
         }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     fetchProfile();

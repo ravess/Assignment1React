@@ -30,8 +30,11 @@ export default function App() {
       userisActive: '',
       useremail: '',
       userisAdmin: false,
+      userisPm: false,
+      userisPl: false,
       userPermission: {},
     },
+    app: [],
   };
   function ourReducer(draft, action) {
     switch (action.type) {
@@ -49,12 +52,13 @@ export default function App() {
       case 'isAdmin':
         draft.user.userisAdmin = action.value;
         return;
-      // case 'isPm':
-      //   draft.user.userisPm = action.value;
-      //   return;
-      // case 'isPl':
-      //   draft.user.userisPl = action.value;
-      //   return;
+      case 'isPm':
+        draft.user.userisPm = action.value;
+
+        return;
+      case 'isPl':
+        draft.user.userisPl = action.value;
+        return;
       // case 'isDev':
       //   draft.user.userisDev = action.value;
       //   return;
