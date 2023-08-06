@@ -30,11 +30,12 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
       }
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 401) {
+        onFormSubmit();
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        toggleModal();
+
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
@@ -43,7 +44,7 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        toggleModal();
+
         navigate('/');
       }
       if (error.response && error.response.data)
@@ -74,11 +75,12 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
       }
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 401) {
+        onFormSubmit();
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        toggleModal();
+
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
@@ -87,7 +89,7 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        toggleModal();
+
         navigate('/');
       }
       if (error.response && error.response.data)
@@ -120,7 +122,9 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
 
           <div
             className={`row d-flex justify-content-${
-              task.Task_state === 'open' ? 'end' : 'between'
+              task.Task_state === 'open' || task.Task_state === 'todolist'
+                ? 'end'
+                : 'between'
             }`}
           >
             {/* {task.Task_state !== 'open' && task.Task_state !== 'closed' && (
@@ -142,7 +146,7 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
                   <i className='fa fa-arrow-circle-right'></i>
                 </div>
               )}
-            {task.Task_state === 'todo' &&
+            {task.Task_state === 'todolist' &&
               appState.user.userPermission.App_permit_toDoList && (
                 <div onClick={handlePromote}>
                   <i className='fa fa-arrow-circle-right'></i>

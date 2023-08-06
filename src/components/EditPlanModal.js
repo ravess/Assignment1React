@@ -49,7 +49,7 @@ export default function EditPlanModal({
     try {
       const response = await axios.put(
         `/apps/${params.appacronym}/plans/${selectedPlan}/edit`,
-        { ...formObj, usergroup: 'admin' }
+        { ...formObj, usergroup: 'pm' }
       );
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {

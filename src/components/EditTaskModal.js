@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState, useRef } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
 import StateContext from '../StateContext';
 
@@ -19,6 +19,7 @@ export default function EditTaskModal({
   const appState = useContext(StateContext);
   const notesTextareaRef = useRef(null);
   const params = useParams();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,7 +46,6 @@ export default function EditTaskModal({
           Task_state: task[0].Task_state,
           Task_newState: 'promote',
           Task_notes: notes,
-          usergroup: 'admin',
         }
       );
       if (response.data.data) {
@@ -62,7 +62,8 @@ export default function EditTaskModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        toggleModal();
+        // toggleModal();
+        onFormSubmit();
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
@@ -71,6 +72,7 @@ export default function EditTaskModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+        onFormSubmit();
         toggleModal();
         navigate('/');
       }
@@ -90,7 +92,6 @@ export default function EditTaskModal({
           Task_state: task[0].Task_state,
           Task_newState: 'demote',
           Task_notes: notes,
-          usergroup: 'admin',
         }
       );
       if (response.data.data) {
@@ -133,7 +134,6 @@ export default function EditTaskModal({
       Task_notes: notes,
       Task_plan: selectedPlan,
       Task_state: task[0].Task_state,
-      usergroup: 'admin',
     };
     if (selectedPlan) {
       combinedData.Task_plan = selectedPlan;
@@ -162,6 +162,7 @@ export default function EditTaskModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+        onFormSubmit();
         toggleModal();
         navigate(`/apps/${params.appacronym}`);
       }
@@ -171,6 +172,7 @@ export default function EditTaskModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+        onFormSubmit();
         toggleModal();
         navigate('/');
       }
@@ -197,6 +199,10 @@ export default function EditTaskModal({
           `/apps/${params.appacronym}/tasks/${selectedTaskId}`
         );
         if (getTasksResponse.data.data) {
+          appDispatch({
+            type: 'setPermission',
+            data: getTasksResponse.data.data[0].App_permissions,
+          });
           setTask(getTasksResponse.data.data);
           setSelectedPlan(getTasksResponse.data.data[0].Task_plan);
           if (notesTextareaRef.current) {
@@ -235,15 +241,9 @@ export default function EditTaskModal({
     return () => ourRequest.cancel();
   }, [selectedTaskId]);
 
-  // useEffect(() => {
-  //   if (showModal && notesTextareaRef.current) {
-  //     notesTextareaRef.current.scrollBottom =
-  //       notesTextareaRef.current.scrollHeight;
-  //   }
-  // }, [showModal]);
-
   return (
     <>
+      {console.log(appState.user.userPermission)}
       <div
         className='modal fade'
         id='editTaskModal'
@@ -328,6 +328,21 @@ export default function EditTaskModal({
                     name='Task_plan'
                     value={selectedPlan}
                     onChange={handleChange}
+                    readOnly={
+                      (task.length > 0 &&
+                        task[0].Task_state === 'open' &&
+                        !appState.user.userPermission.App_permit_Open) ||
+                      (task.length > 0 &&
+                        task[0].Task_state === 'todolist' &&
+                        !appState.user.userPermission.App_permit_toDoList) ||
+                      (task.length > 0 &&
+                        task[0].Task_state === 'doing' &&
+                        !appState.user.userPermission.App_permit_Doing) ||
+                      (task.length > 0 &&
+                        task[0].Task_state === 'done' &&
+                        !appState.user.userPermission.App_permit_Done) ||
+                      (task.length > 0 && task[0].Task_state === 'closed')
+                    }
                   >
                     <option value=''>Select a Plan</option>
                     {plans.map((plan) => (
@@ -371,6 +386,21 @@ export default function EditTaskModal({
                     name='Task_notes'
                     value={notes}
                     onChange={handleChange}
+                    readOnly={
+                      (task.length > 0 &&
+                        task[0].Task_state === 'open' &&
+                        !appState.user.userPermission.App_permit_Open) ||
+                      (task.length > 0 &&
+                        task[0].Task_state === 'todolist' &&
+                        !appState.user.userPermission.App_permit_toDoList) ||
+                      (task.length > 0 &&
+                        task[0].Task_state === 'doing' &&
+                        !appState.user.userPermission.App_permit_Doing) ||
+                      (task.length > 0 &&
+                        task[0].Task_state === 'done' &&
+                        !appState.user.userPermission.App_permit_Done) ||
+                      (task.length > 0 && task[0].Task_state === 'closed')
+                    }
                   ></textarea>
                 </div>
               </div>
@@ -383,28 +413,89 @@ export default function EditTaskModal({
                 >
                   Close
                 </button>
-                {task.length > 0 && task[0].Task_state !== 'open' ? (
-                  <button
-                    type='button'
-                    className='btn btn-outline-danger'
-                    onClick={handleDemote}
-                  >
-                    {task[0].Task_state === 'done' ? 'Reject' : 'Demote'}
-                  </button>
+                {task.length > 0 &&
+                task[0].Task_state === 'open' &&
+                appState.user.userPermission.App_permit_Open ? (
+                  <>
+                    <button type='submit' className='btn btn-dark'>
+                      Update
+                    </button>
+                    <button
+                      type='button'
+                      className='btn btn-outline-success'
+                      onClick={handlePromote}
+                    >
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
+                    </button>
+                  </>
                 ) : (
                   ''
                 )}
-                <button type='submit' className='btn btn-dark'>
-                  Update
-                </button>
-                {task.length > 0 && task[0].Task_state !== 'closed' ? (
-                  <button
-                    type='button'
-                    className='btn btn-outline-success'
-                    onClick={handlePromote}
-                  >
-                    {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
-                  </button>
+                {task.length > 0 &&
+                task[0].Task_state === 'todolist' &&
+                appState.user.userPermission.App_permit_toDoList ? (
+                  <>
+                    <button type='submit' className='btn btn-dark'>
+                      Update
+                    </button>
+                    <button
+                      type='button'
+                      className='btn btn-outline-success'
+                      onClick={handlePromote}
+                    >
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
+                    </button>
+                  </>
+                ) : (
+                  ''
+                )}
+                {task.length > 0 &&
+                task[0].Task_state === 'doing' &&
+                appState.user.userPermission.App_permit_Doing ? (
+                  <>
+                    <button
+                      type='button'
+                      className='btn btn-outline-danger'
+                      onClick={handleDemote}
+                    >
+                      {task[0].Task_state === 'done' ? 'Reject' : 'Demote'}
+                    </button>
+                    <button type='submit' className='btn btn-dark'>
+                      Update
+                    </button>
+                    <button
+                      type='button'
+                      className='btn btn-outline-success'
+                      onClick={handlePromote}
+                    >
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
+                    </button>
+                  </>
+                ) : (
+                  ''
+                )}
+                {task.length > 0 &&
+                task[0].Task_state === 'done' &&
+                appState.user.userPermission.App_permit_Done ? (
+                  <>
+                    <button
+                      type='button'
+                      className='btn btn-outline-danger'
+                      onClick={handleDemote}
+                    >
+                      {task[0].Task_state === 'done' ? 'Reject' : 'Demote'}
+                    </button>
+                    <button type='submit' className='btn btn-dark'>
+                      Update
+                    </button>
+                    <button
+                      type='button'
+                      className='btn btn-outline-success'
+                      onClick={handlePromote}
+                    >
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
+                    </button>
+                  </>
                 ) : (
                   ''
                 )}

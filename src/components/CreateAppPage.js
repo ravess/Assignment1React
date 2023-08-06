@@ -59,6 +59,13 @@ export default function CreateAppPage() {
         const response = await axios.get('/user/profile');
         if (response.data.data[0]) {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
+          if (!isPl) {
+            appDispatch({
+              type: 'flashMessageErr',
+              value: 'You are not authorised.',
+            });
+            navigate('/apps');
+          }
         }
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 401) {
@@ -101,7 +108,7 @@ export default function CreateAppPage() {
     try {
       const response = await axios.post('/apps/create', {
         ...formData,
-        usergroup: 'admin',
+        usergroup: 'pl',
       });
       if (response.data.data) {
         appDispatch({
@@ -114,12 +121,20 @@ export default function CreateAppPage() {
         }
       }
     } catch (error) {
-      if (error.response && error.response.data.error.statusCode === 403) {
+      if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
-        navigate('/user/dashboard');
+        navigate('/apps/');
+      }
+      if (error.response && error.response.data.error.statusCode === 403) {
+        appDispatch({ type: 'logout' });
+        appDispatch({
+          type: 'flashMessageErr',
+          value: error.response.data.errMessage,
+        });
+        navigate('/');
       }
       if (error.response && error.response.data)
         appDispatch({
@@ -131,199 +146,208 @@ export default function CreateAppPage() {
 
   return (
     <>
-      <div className='d-flex justify-content-start'>
-        <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
-          <i
-            className='fa fa-arrow-left fa-2x align-self-center'
-            aria-hidden='true'
-            style={{ cursor: 'pointer' }}
-          ></i>
-        </div>
-      </div>
+      {appState.user.userisPl && (
+        <>
+          <div className='d-flex justify-content-start'>
+            <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
+              <i
+                className='fa fa-arrow-left fa-2x align-self-center'
+                aria-hidden='true'
+                style={{ cursor: 'pointer' }}
+              ></i>
+            </div>
+          </div>
 
-      <div className='d-flex justify-content-center'>
-        <div className='d-flex flex-column mt-3 border border-dark rounded w-75 p-3'>
-          <h2 className='contianer-fluid bg-dark text-white p-5'>Create App</h2>
-          <form className='form-group' onSubmit={handleSubmit}>
-            <div className='mb-3 w-50'>
-              <label htmlFor='App_Acronym' className='form-label'>
-                <strong>Application Acronym</strong>
-              </label>
-              <input
-                type='text'
-                className='form-control'
-                id='App_Acronym'
-                name='App_Acronym'
-                value={formData.App_Acronym}
-                onChange={handleChange}
-                required
-                ref={acronymInputRef}
-              />
-            </div>
-            <div className='mb-3'>
-              <label htmlFor='App_Description' className='form-label'>
-                <strong>Application Description</strong>
-              </label>
-              <textarea
-                className='form-control'
-                id='App_Description'
-                name='App_Description'
-                value={formData.App_Description}
-                rows='3'
-                onChange={handleChange}
-                required
-              ></textarea>
-            </div>
-            <div className='row'>
-              <div className='col'>
-                {' '}
-                <div className='mb-3'>
-                  <label htmlFor='App_Rnumber' className='form-label'>
-                    <strong>App R Number</strong>
+          <div className='d-flex justify-content-center'>
+            <div className='d-flex flex-column mt-3 border border-dark rounded w-75 p-3'>
+              <h2 className='contianer-fluid bg-dark text-white p-5'>
+                Create App
+              </h2>
+              <form className='form-group' onSubmit={handleSubmit}>
+                <div className='mb-3 w-50'>
+                  <label htmlFor='App_Acronym' className='form-label'>
+                    <strong>Application Acronym</strong>
                   </label>
                   <input
-                    type='number'
+                    type='text'
                     className='form-control'
-                    id='App_Rnumber'
-                    name='App_Rnumber'
-                    value={formData.App_Rnumber}
+                    id='App_Acronym'
+                    name='App_Acronym'
+                    value={formData.App_Acronym}
                     onChange={handleChange}
                     required
+                    ref={acronymInputRef}
                   />
                 </div>
-              </div>
-              <div className='col'>
                 <div className='mb-3'>
-                  <label htmlFor='App_startDate' className='form-label'>
-                    <strong>App Start Date</strong>
+                  <label htmlFor='App_Description' className='form-label'>
+                    <strong>Application Description</strong>
                   </label>
-                  <input
-                    type='date'
+                  <textarea
                     className='form-control'
-                    id='App_startDate'
-                    name='App_startDate'
-                    value={formData.App_startDate}
+                    id='App_Description'
+                    name='App_Description'
+                    value={formData.App_Description}
+                    rows='3'
                     onChange={handleChange}
-                  />
+                    required
+                  ></textarea>
                 </div>
-              </div>
-              <div className='col'>
-                {' '}
-                <div className='mb-3'>
-                  <label htmlFor='App_endDate' className='form-label'>
-                    <strong>App End Date</strong>
-                  </label>
-                  <input
-                    type='date'
-                    className='form-control'
-                    id='App_endDate'
-                    name='App_endDate'
-                    value={formData.App_endDate}
-                    onChange={handleChange}
-                  />
+                <div className='row'>
+                  <div className='col'>
+                    {' '}
+                    <div className='mb-3'>
+                      <label htmlFor='App_Rnumber' className='form-label'>
+                        <strong>App R Number</strong>
+                      </label>
+                      <input
+                        type='number'
+                        className='form-control'
+                        id='App_Rnumber'
+                        name='App_Rnumber'
+                        value={formData.App_Rnumber}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className='col'>
+                    <div className='mb-3'>
+                      <label htmlFor='App_startDate' className='form-label'>
+                        <strong>App Start Date</strong>
+                      </label>
+                      <input
+                        type='date'
+                        className='form-control'
+                        id='App_startDate'
+                        name='App_startDate'
+                        value={formData.App_startDate}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className='col'>
+                    {' '}
+                    <div className='mb-3'>
+                      <label htmlFor='App_endDate' className='form-label'>
+                        <strong>App End Date</strong>
+                      </label>
+                      <input
+                        type='date'
+                        className='form-control'
+                        id='App_endDate'
+                        name='App_endDate'
+                        value={formData.App_endDate}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className='mb-3 d-flex flex-column'>
-              <div className='row'>
-                <div className='col d-flex flex-column'>
-                  <label htmlFor='App_permit_Open' className='form-label'>
-                    <strong>Permit Open</strong>
-                  </label>
-                  <select
-                    className='form-control'
-                    id='App_permit_Open'
-                    name='App_permit_Open'
-                    value={formData.App_permit_Open}
-                    onChange={handleChange}
-                  >
-                    <option value=''>Select Permission</option>
-                    {usergroup.map((group) => {
-                      return (
-                        <option key={group.groupid} value={group.groupname}>
-                          {group.groupname}
-                        </option>
-                      );
-                    })}
-                  </select>
+                <div className='mb-3 d-flex flex-column'>
+                  <div className='row'>
+                    <div className='col d-flex flex-column'>
+                      <label htmlFor='App_permit_Open' className='form-label'>
+                        <strong>Permit Open</strong>
+                      </label>
+                      <select
+                        className='form-control'
+                        id='App_permit_Open'
+                        name='App_permit_Open'
+                        value={formData.App_permit_Open}
+                        onChange={handleChange}
+                      >
+                        <option value=''>Select Permission</option>
+                        {usergroup.map((group) => {
+                          return (
+                            <option key={group.groupid} value={group.groupname}>
+                              {group.groupname}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className='col d-flex flex-column'>
+                      <label
+                        htmlFor='App_permit_toDoList'
+                        className='form-label'
+                      >
+                        <strong>Permit to Do List</strong>
+                      </label>
+                      <select
+                        className='form-control'
+                        id='App_permit_toDoList'
+                        name='App_permit_toDoList'
+                        value={formData.App_permit_toDoList}
+                        onChange={handleChange}
+                      >
+                        <option value=''>Select Permission</option>
+                        {usergroup.map((group) => {
+                          return (
+                            <option key={group.groupid} value={group.groupname}>
+                              {group.groupname}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className='col d-flex flex-column'>
+                      <label htmlFor='App_permit_Doing' className='form-label'>
+                        <strong>Permit Doing</strong>
+                      </label>
+                      <select
+                        className='form-control'
+                        id='App_permit_Doing'
+                        name='App_permit_Doing'
+                        value={formData.App_permit_Doing}
+                        onChange={handleChange}
+                      >
+                        <option value=''>Select Permission</option>
+                        {usergroup.map((group) => {
+                          return (
+                            <option key={group.groupid} value={group.groupname}>
+                              {group.groupname}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className='col d-flex flex-column'>
+                      <label htmlFor='App_permit_Done' className='form-label'>
+                        <strong>Permit Done</strong>
+                      </label>
+                      <select
+                        className='form-control'
+                        id='App_permit_Done'
+                        name='App_permit_Done'
+                        value={formData.App_permit_Done}
+                        onChange={handleChange}
+                      >
+                        <option value=''>Select Permission</option>
+                        {usergroup.map((group) => {
+                          return (
+                            <option key={group.groupid} value={group.groupname}>
+                              {group.groupname}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  </div>
                 </div>
-                <div className='col d-flex flex-column'>
-                  <label htmlFor='App_permit_toDoList' className='form-label'>
-                    <strong>Permit to Do List</strong>
-                  </label>
-                  <select
-                    className='form-control'
-                    id='App_permit_toDoList'
-                    name='App_permit_toDoList'
-                    value={formData.App_permit_toDoList}
-                    onChange={handleChange}
+                <div className='d-flex justify-content-center'>
+                  <button
+                    type='submit'
+                    className='btn btn-dark d-flex ml-0 justify-content-center'
                   >
-                    <option value=''>Select Permission</option>
-                    {usergroup.map((group) => {
-                      return (
-                        <option key={group.groupid} value={group.groupname}>
-                          {group.groupname}
-                        </option>
-                      );
-                    })}
-                  </select>
+                    Create App
+                  </button>
                 </div>
-                <div className='col d-flex flex-column'>
-                  <label htmlFor='App_permit_Doing' className='form-label'>
-                    <strong>Permit Doing</strong>
-                  </label>
-                  <select
-                    className='form-control'
-                    id='App_permit_Doing'
-                    name='App_permit_Doing'
-                    value={formData.App_permit_Doing}
-                    onChange={handleChange}
-                  >
-                    <option value=''>Select Permission</option>
-                    {usergroup.map((group) => {
-                      return (
-                        <option key={group.groupid} value={group.groupname}>
-                          {group.groupname}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-                <div className='col d-flex flex-column'>
-                  <label htmlFor='App_permit_Done' className='form-label'>
-                    <strong>Permit Done</strong>
-                  </label>
-                  <select
-                    className='form-control'
-                    id='App_permit_Done'
-                    name='App_permit_Done'
-                    value={formData.App_permit_Done}
-                    onChange={handleChange}
-                  >
-                    <option value=''>Select Permission</option>
-                    {usergroup.map((group) => {
-                      return (
-                        <option key={group.groupid} value={group.groupname}>
-                          {group.groupname}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-              </div>
+              </form>
             </div>
-            <div className='d-flex justify-content-center'>
-              <button
-                type='submit'
-                className='btn btn-dark d-flex ml-0 justify-content-center'
-              >
-                Create App
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

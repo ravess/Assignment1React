@@ -81,11 +81,10 @@ export default function Dashboard() {
             </Link>
             <Link to={'/apps'} className='col-md-4 mb-4' style={linkStyle}>
               <div className='card m-auto h-100'>
-                <div className='card-body bg-dark'>
+                <div className='card-body bg-dark d-flex justify-content-center align-items-center'>
                   <h5 className='card-title text-white text-center'>
                     View All Apps
                   </h5>
-                  <p className='card-title text-white'>Number of Apps: </p>
                 </div>
               </div>
             </Link>

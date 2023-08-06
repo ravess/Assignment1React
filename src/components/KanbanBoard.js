@@ -63,6 +63,13 @@ export default function KanbanBoard() {
     setKey((prevKey) => prevKey + 1); // Update the key to trigger a re-render
     setShowModal(true);
   };
+  const toggleModal = () => {
+    setShowModal(!showModal);
+    // document.body.classList.toggle("modal-open");
+    document.body.removeAttribute('class');
+    document.body.removeAttribute('style');
+    document.body.removeChild(document.querySelector('.modal-backdrop'));
+  };
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
@@ -84,6 +91,10 @@ export default function KanbanBoard() {
           `/apps/${params.appacronym}/tasks`
         );
         if (getAllTasksResponse.data.data) {
+          appDispatch({
+            type: 'setPermission',
+            data: getAllTasksResponse.data.data[0].App_permissions,
+          });
           dispatch({
             type: 'fetchAllTasks',
             data: getAllTasksResponse.data.data,
@@ -99,7 +110,7 @@ export default function KanbanBoard() {
           });
         }
       } catch (error) {
-        if (error.response && error.response.data.error.statusCode === 404) {
+        if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
@@ -112,6 +123,7 @@ export default function KanbanBoard() {
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
+          toggleModal();
           navigate('/');
         }
         if (error.response && error.response.data)
@@ -136,6 +148,10 @@ export default function KanbanBoard() {
             `/apps/${params.appacronym}/tasks`
           );
           if (getAllTasksResponse.data.data) {
+            appDispatch({
+              type: 'setPermission',
+              data: getAllTasksResponse.data.data[0].App_permissions,
+            });
             dispatch({
               type: 'fetchAllTasks',
               data: getAllTasksResponse.data.data,
@@ -184,168 +200,173 @@ export default function KanbanBoard() {
   }, [isPlanFormSubmitted, isTaskFormSubmitted, params.appacronym]);
 
   return (
-    <div>
-      <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
-        <i
-          className='fa fa-arrow-left fa-2x align-self-center'
-          aria-hidden='true'
-          style={{ cursor: 'pointer' }}
-        ></i>
-      </div>
-      <div className='container-fluid text-center'>
-        {state.app.data.length > 0 && (
-          <p className='dashboard__description text-center'>
-            {state.app.data[0].App_Acronym}
-          </p>
-        )}
-        <div className='container d-flex justify-content-start m-0'>
-          {appState.user.userisPl && (
-            <button
-              className='btn btn-outline-dark mt-2 mr-2'
-              style={{ width: '150px' }}
-              data-toggle='modal'
-              data-target='#createTaskModal'
-              onClick={() => setShowModal(true)}
-            >
-              <i className='fas fa-plus'></i> Create Task
-            </button>
-          )}
-          {appState.user.userisPm && (
-            <>
-              <button
-                className='btn btn-outline-dark mt-2 mr-2'
-                style={{ width: '150px' }}
-                data-toggle='modal'
-                data-target='#createPlanModal'
-                onClick={() => setShowModal(true)}
-              >
-                <i className='fas fa-plus'></i> Create Plan
-              </button>
-              <button
-                className='btn btn-outline-dark mt-2 mr-2'
-                style={{ width: '150px' }}
-                data-toggle='modal'
-                data-target='#editPlanModal'
-                onClick={() => setShowModal(true)}
-              >
-                <i className='fas fa-edit'></i> Edit Plan
-              </button>
-            </>
-          )}
-        </div>
-        <div className='container-fluid mt-5'>
-          <div className='row d-flex justify-content-center'>
-            <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
-              <h5>Open</h5>
-              <hr />
-              {state.tasks.data
-                .filter((task) => task.Task_state === 'open')
-                .map((task) => (
-                  <TaskCard
-                    key={task.Task_id}
-                    task={task}
-                    onTaskCardClick={handleTaskCardClick}
-                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                  />
-                ))}
+    <>
+      {appState.loggedIn && (
+        <div>
+          <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
+            <i
+              className='fa fa-arrow-left fa-2x align-self-center'
+              aria-hidden='true'
+              style={{ cursor: 'pointer' }}
+            ></i>
+          </div>
+          <div className='container-fluid text-center'>
+            {state.app.data.length > 0 && (
+              <p className='dashboard__description text-center'>
+                {state.app.data[0].App_Acronym}
+              </p>
+            )}
+            <div className='container d-flex justify-content-start m-0'>
+              {appState.user.userisPl && (
+                <button
+                  className='btn btn-outline-dark mt-2 mr-2'
+                  style={{ width: '150px' }}
+                  data-toggle='modal'
+                  data-target='#createTaskModal'
+                  onClick={() => setShowModal(true)}
+                >
+                  <i className='fas fa-plus'></i> Create Task
+                </button>
+              )}
+              {appState.user.userisPm && (
+                <>
+                  <button
+                    className='btn btn-outline-dark mt-2 mr-2'
+                    style={{ width: '150px' }}
+                    data-toggle='modal'
+                    data-target='#createPlanModal'
+                    onClick={() => setShowModal(true)}
+                  >
+                    <i className='fas fa-plus'></i> Create Plan
+                  </button>
+                  <button
+                    className='btn btn-outline-dark mt-2 mr-2'
+                    style={{ width: '150px' }}
+                    data-toggle='modal'
+                    data-target='#editPlanModal'
+                    onClick={() => setShowModal(true)}
+                  >
+                    <i className='fas fa-edit'></i> Edit Plan
+                  </button>
+                </>
+              )}
             </div>
-            <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
-              <h5>To Do</h5>
-              <hr />
-              {state.tasks.data
-                .filter((task) => task.Task_state === 'todo')
-                .map((task) => (
-                  <TaskCard
-                    key={task.Task_id}
-                    task={task}
-                    onTaskCardClick={handleTaskCardClick}
-                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                  />
-                ))}
-            </div>
-            <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
-              <h5>Doing</h5>
-              <hr />
-              {state.tasks.data
-                .filter((task) => task.Task_state === 'doing')
-                .map((task) => (
-                  <TaskCard
-                    key={task.Task_id}
-                    task={task}
-                    onTaskCardClick={handleTaskCardClick}
-                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                  />
-                ))}
-            </div>
+            <div className='container-fluid mt-5'>
+              <div className='row d-flex justify-content-center'>
+                <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
+                  <h5>Open</h5>
+                  <hr />
+                  {state.tasks.data
+                    .filter((task) => task.Task_state === 'open')
+                    .map((task) => (
+                      <TaskCard
+                        key={task.Task_id}
+                        task={task}
+                        onTaskCardClick={handleTaskCardClick}
+                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                      />
+                    ))}
+                </div>
+                <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
+                  <h5>To Do</h5>
+                  <hr />
+                  {state.tasks.data
+                    .filter((task) => task.Task_state === 'todolist')
+                    .map((task) => (
+                      <TaskCard
+                        key={task.Task_id}
+                        task={task}
+                        onTaskCardClick={handleTaskCardClick}
+                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                      />
+                    ))}
+                </div>
+                <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
+                  <h5>Doing</h5>
+                  <hr />
+                  {state.tasks.data
+                    .filter((task) => task.Task_state === 'doing')
+                    .map((task) => (
+                      <TaskCard
+                        key={task.Task_id}
+                        task={task}
+                        onTaskCardClick={handleTaskCardClick}
+                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                      />
+                    ))}
+                </div>
 
-            <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
-              <h5>Done</h5>
-              <hr />
-              {state.tasks.data
-                .filter((task) => task.Task_state === 'done')
-                .map((task) => (
-                  <TaskCard
-                    key={task.Task_id}
-                    task={task}
-                    onTaskCardClick={handleTaskCardClick}
-                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                  />
-                ))}
+                <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
+                  <h5>Done</h5>
+                  <hr />
+                  {state.tasks.data
+                    .filter((task) => task.Task_state === 'done')
+                    .map((task) => (
+                      <TaskCard
+                        key={task.Task_id}
+                        task={task}
+                        onTaskCardClick={handleTaskCardClick}
+                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                      />
+                    ))}
+                </div>
+                <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
+                  <h5>Closed</h5>
+                  <hr />
+                  {state.tasks.data
+                    .filter((task) => task.Task_state === 'closed')
+                    .map((task) => (
+                      <TaskCard
+                        key={task.Task_id}
+                        task={task}
+                        onTaskCardClick={handleTaskCardClick}
+                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                      />
+                    ))}
+                </div>
+              </div>
             </div>
-            <div className='col border mx-4 p-2' style={{ width: '10rem' }}>
-              <h5>Closed</h5>
-              <hr />
-              {state.tasks.data
-                .filter((task) => task.Task_state === 'closed')
-                .map((task) => (
-                  <TaskCard
-                    key={task.Task_id}
-                    task={task}
-                    onTaskCardClick={handleTaskCardClick}
-                    onFormSubmit={() => setIsTaskFormSubmitted(true)}
+            <div>
+              {showModal && appState.user.userisPl && (
+                <CreateTaskModal
+                  plans={state.plans.data}
+                  onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                />
+              )}
+              {showModal && appState.user.userisPm && (
+                <>
+                  <CreatePlanModal
+                    onFormSubmit={() => setIsPlanFormSubmitted(true)}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
                   />
-                ))}
+
+                  <EditPlanModal
+                    plans={state.plans.data}
+                    onFormSubmit={() => setIsPlanFormSubmitted(true)}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                  />
+                </>
+              )}
+
+              {showModal && (
+                <EditTaskModal
+                  selectedTaskId={selectedTaskId}
+                  key={key}
+                  plans={state.plans.data}
+                  onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                  isFormSubmitted={isTaskFormSubmitted}
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                />
+              )}
             </div>
           </div>
         </div>
-        <div>
-          {showModal && appState.user.userisPl && (
-            <CreateTaskModal
-              plans={state.plans.data}
-              onFormSubmit={() => setIsTaskFormSubmitted(true)}
-              showModal={showModal}
-              setShowModal={setShowModal}
-            />
-          )}
-
-          {showModal && appState.user.userisPm && (
-            <>
-              <CreatePlanModal
-                onFormSubmit={() => setIsPlanFormSubmitted(true)}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
-
-              <EditPlanModal
-                plans={state.plans.data}
-                onFormSubmit={() => setIsPlanFormSubmitted(true)}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
-            </>
-          )}
-
-          <EditTaskModal
-            selectedTaskId={selectedTaskId}
-            key={key}
-            plans={state.plans.data}
-            onFormSubmit={() => setIsTaskFormSubmitted(true)}
-            isFormSubmitted={isTaskFormSubmitted}
-            showModal={showModal}
-            setShowModal={setShowModal}
-          />
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

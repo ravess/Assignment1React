@@ -34,13 +34,26 @@ export default function AppPage() {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
         }
       } catch (error) {
-        if (error.response.data) {
+        if (error.response && error.response.data.error.statusCode === 401) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/apps/');
+        }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/');
         }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     const fetchAllApps = async () => {
@@ -50,7 +63,26 @@ export default function AppPage() {
           setApps(response.data.data);
         }
       } catch (error) {
-        console.log(error);
+        if (error.response && error.response.data.error.statusCode === 401) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/apps/');
+        }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
       }
     };
     fetchAllApps();
@@ -68,7 +100,6 @@ export default function AppPage() {
           const getAllAppResponse = await axios.get('/apps');
           if (getAllAppResponse.data.data) {
             setApps(getAllAppResponse.data.data);
-            console.log(apps);
             setIsAppFormSubmitted(false);
           }
         }

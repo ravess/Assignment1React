@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+import StateContext from '../StateContext';
 import DispatchContext from '../DispatchContext';
 
 export default function EditAppModal({
@@ -19,9 +19,8 @@ export default function EditAppModal({
   const [selectedPermitToDoList, setSelectedPermitToDoList] = useState('');
   const [selectedPermitDoing, setSelectedPermitDoing] = useState('');
   const [selectedPermitDone, setSelectedPermitDone] = useState('');
-  const params = useParams();
   const navigate = useNavigate();
-
+  const appState = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
 
   const handleChange = (e) => {
@@ -78,8 +77,9 @@ export default function EditAppModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+        onFormSubmit();
         toggleModal();
-        navigate(`/apps/${params.appacronym}`);
+        navigate('/apps/');
       }
       if (error.response && error.response.data.error.statusCode === 403) {
         appDispatch({ type: 'logout' });
@@ -144,7 +144,6 @@ export default function EditAppModal({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate(`/apps/${params.appacronym}`);
         }
         if (error.response && error.response.data.error.statusCode === 403) {
           appDispatch({ type: 'logout' });
@@ -172,196 +171,218 @@ export default function EditAppModal({
 
   return (
     <>
-      <div
-        className='modal fade'
-        id='editAppModal'
-        key={key}
-        tabindex='-1'
-        role='dialog'
-        aria-labelledby='editAppModalTitle'
-        aria-hidden='true'
-      >
-        <div
-          className='modal-dialog modal-dialog-centered modal-lg'
-          role='document'
-        >
-          <div className='modal-content'>
-            <div className='modal-header p-5 bg-dark text-white'>
-              <h5 className='modal-title' id='editAppModalTitle'>
-                Edit App
-              </h5>
-              <button
-                type='button'
-                className='close'
-                data-dismiss='modal'
-                aria-label='Close'
-              >
-                <span aria-hidden='true' className='text-white'>
-                  &times;
-                </span>
-              </button>
+      {appState.user.userisPl && (
+        <>
+          <div
+            className='modal fade'
+            id='editAppModal'
+            key={key}
+            tabindex='-1'
+            role='dialog'
+            aria-labelledby='editAppModalTitle'
+            aria-hidden='true'
+          >
+            <div
+              className='modal-dialog modal-dialog-centered modal-lg'
+              role='document'
+            >
+              <div className='modal-content'>
+                <div className='modal-header p-5 bg-dark text-white'>
+                  <h5 className='modal-title' id='editAppModalTitle'>
+                    Edit App
+                  </h5>
+                  <button
+                    type='button'
+                    className='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
+                  >
+                    <span aria-hidden='true' className='text-white'>
+                      &times;
+                    </span>
+                  </button>
+                </div>
+                <form onSubmit={handleSubmit}>
+                  <div className='modal-body'>
+                    <div className='row'>
+                      <div className='col form-group text-left'>
+                        <strong>
+                          <span>App Acronym: </span>
+                        </strong>
+                        {app.length > 0 && <span>{app[0].App_Acronym}</span>}
+                      </div>
+                    </div>
+                    <div className='row'>
+                      <div className='col form-group text-left'>
+                        <strong>
+                          <span>App Description:</span>
+                        </strong>
+                        <textarea
+                          className='form-control'
+                          name='Plan_startDate'
+                          rows='3'
+                          value={app.length > 0 && app[0].App_Description}
+                          readOnly
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div className='row'>
+                      <div className='col form-group text-left'>
+                        <strong>
+                          <span>App R number: </span>
+                        </strong>
+                        {app.length > 0 && <span>{app[0].App_Rnumber}</span>}
+                      </div>
+                    </div>
+                    <div className='row'>
+                      <div className='col form-group text-left p-3'>
+                        <label htmlFor='App_startDate' className='form-label'>
+                          <strong>App Start Date:</strong>
+                        </label>
+                        <input
+                          type='date'
+                          className='form-control'
+                          name='App_startDate'
+                          value={selectedStartDate}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className='col form-group text-left p-3'>
+                        <label htmlFor='App_endDate' className='form-label'>
+                          <strong>App End Date:</strong>
+                        </label>
+                        <input
+                          type='date'
+                          className='form-control'
+                          name='App_endDate'
+                          value={selectedEndDate}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className='row'>
+                      <div className='col form-group text-left p-3'>
+                        <label htmlFor='App_permit_Open' className='form-label'>
+                          <strong>Permit Open:</strong>
+                        </label>
+                        <select
+                          className='form-control'
+                          id='App_permit_Open'
+                          name='App_permit_Open'
+                          value={selectedPermitOpen}
+                          onChange={handleChange}
+                        >
+                          <option value=''>Select Permission</option>
+                          {usergroup.map((group) => {
+                            return (
+                              <option
+                                key={group.groupid}
+                                value={group.groupname}
+                              >
+                                {group.groupname}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                      <div className='col form-group text-left p-3'>
+                        <label
+                          htmlFor='App_permit_toDoList'
+                          className='form-label'
+                        >
+                          <strong>Permit To Do List</strong>
+                        </label>
+                        <select
+                          className='form-control'
+                          id='App_permit_toDoList'
+                          name='App_permit_toDoList'
+                          value={selectedPermitToDoList}
+                          onChange={handleChange}
+                        >
+                          <option value=''>Select Permission</option>
+                          {usergroup.map((group) => {
+                            return (
+                              <option
+                                key={group.groupid}
+                                value={group.groupname}
+                              >
+                                {group.groupname}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                      <div className='col form-group text-left p-3'>
+                        <label
+                          htmlFor='App_permit_Doing'
+                          className='form-label'
+                        >
+                          <strong>Permit Doing</strong>
+                        </label>
+                        <select
+                          className='form-control'
+                          id='App_permit_Doing'
+                          name='App_permit_Doing'
+                          value={selectedPermitDoing}
+                          onChange={handleChange}
+                        >
+                          <option value=''>Select Permission</option>
+                          {usergroup.map((group) => {
+                            return (
+                              <option
+                                key={group.groupid}
+                                value={group.groupname}
+                              >
+                                {group.groupname}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                      <div className='col form-group text-left p-3'>
+                        <label htmlFor='App_permit_Done' className='form-label'>
+                          <strong>Permit Done</strong>
+                        </label>
+                        <select
+                          className='form-control'
+                          id='App_permit_Done'
+                          name='App_permit_Done'
+                          value={selectedPermitDone}
+                          onChange={handleChange}
+                        >
+                          <option value=''>Select Permission</option>
+                          {usergroup.map((group) => {
+                            return (
+                              <option
+                                key={group.groupid}
+                                value={group.groupname}
+                              >
+                                {group.groupname}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button
+                      type='button'
+                      className='btn btn-secondary'
+                      data-dismiss='modal'
+                    >
+                      Close
+                    </button>
+                    <button type='submit' className='btn btn-dark'>
+                      Edit
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
-            <form onSubmit={handleSubmit}>
-              <div className='modal-body'>
-                <div className='row'>
-                  <div className='col form-group text-left'>
-                    <strong>
-                      <span>App Acronym: </span>
-                    </strong>
-                    {app.length > 0 && <span>{app[0].App_Acronym}</span>}
-                  </div>
-                </div>
-                <div className='row'>
-                  <div className='col form-group text-left'>
-                    <strong>
-                      <span>App Description:</span>
-                    </strong>
-                    <textarea
-                      className='form-control'
-                      name='Plan_startDate'
-                      rows='3'
-                      value={app.length > 0 && app[0].App_Description}
-                      readOnly
-                    ></textarea>
-                  </div>
-                </div>
-                <div className='row'>
-                  <div className='col form-group text-left'>
-                    <strong>
-                      <span>App R number: </span>
-                    </strong>
-                    {app.length > 0 && <span>{app[0].App_Rnumber}</span>}
-                  </div>
-                </div>
-                <div className='row'>
-                  <div className='col form-group text-left p-3'>
-                    <label htmlFor='App_startDate' className='form-label'>
-                      <strong>App Start Date:</strong>
-                    </label>
-                    <input
-                      type='date'
-                      className='form-control'
-                      name='App_startDate'
-                      value={selectedStartDate}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className='col form-group text-left p-3'>
-                    <label htmlFor='App_endDate' className='form-label'>
-                      <strong>App End Date:</strong>
-                    </label>
-                    <input
-                      type='date'
-                      className='form-control'
-                      name='App_endDate'
-                      value={selectedEndDate}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-                <div className='row'>
-                  <div className='col form-group text-left p-3'>
-                    <label htmlFor='App_permit_Open' className='form-label'>
-                      <strong>Permit Open:</strong>
-                    </label>
-                    <select
-                      className='form-control'
-                      id='App_permit_Open'
-                      name='App_permit_Open'
-                      value={selectedPermitOpen}
-                      onChange={handleChange}
-                    >
-                      <option value=''>Select Permission</option>
-                      {usergroup.map((group) => {
-                        return (
-                          <option key={group.groupid} value={group.groupname}>
-                            {group.groupname}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                  <div className='col form-group text-left p-3'>
-                    <label htmlFor='App_permit_toDoList' className='form-label'>
-                      <strong>Permit To Do List</strong>
-                    </label>
-                    <select
-                      className='form-control'
-                      id='App_permit_toDoList'
-                      name='App_permit_toDoList'
-                      value={selectedPermitToDoList}
-                      onChange={handleChange}
-                    >
-                      <option value=''>Select Permission</option>
-                      {usergroup.map((group) => {
-                        return (
-                          <option key={group.groupid} value={group.groupname}>
-                            {group.groupname}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                  <div className='col form-group text-left p-3'>
-                    <label htmlFor='App_permit_Doing' className='form-label'>
-                      <strong>Permit Doing</strong>
-                    </label>
-                    <select
-                      className='form-control'
-                      id='App_permit_Doing'
-                      name='App_permit_Doing'
-                      value={selectedPermitDoing}
-                      onChange={handleChange}
-                    >
-                      <option value=''>Select Permission</option>
-                      {usergroup.map((group) => {
-                        return (
-                          <option key={group.groupid} value={group.groupname}>
-                            {group.groupname}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                  <div className='col form-group text-left p-3'>
-                    <label htmlFor='App_permit_Done' className='form-label'>
-                      <strong>Permit Done</strong>
-                    </label>
-                    <select
-                      className='form-control'
-                      id='App_permit_Done'
-                      name='App_permit_Done'
-                      value={selectedPermitDone}
-                      onChange={handleChange}
-                    >
-                      <option value=''>Select Permission</option>
-                      {usergroup.map((group) => {
-                        return (
-                          <option key={group.groupid} value={group.groupname}>
-                            {group.groupname}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className='modal-footer'>
-                <button
-                  type='button'
-                  className='btn btn-secondary'
-                  data-dismiss='modal'
-                >
-                  Close
-                </button>
-                <button type='submit' className='btn btn-dark'>
-                  Edit
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 }

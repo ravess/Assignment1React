@@ -41,7 +41,7 @@ export default function CreateTaskModal({
         `/apps/${params.appacronym}/tasks/create`,
         {
           ...formData,
-          usergroup: 'admin',
+          usergroup: 'pl',
         }
       );
       // Handle successful response, e.g., show a success message or perform other actions

@@ -34,7 +34,6 @@ export default function App() {
       userisPl: false,
       userPermission: {},
     },
-    app: [],
   };
   function ourReducer(draft, action) {
     switch (action.type) {
@@ -54,14 +53,10 @@ export default function App() {
         return;
       case 'isPm':
         draft.user.userisPm = action.value;
-
         return;
       case 'isPl':
         draft.user.userisPl = action.value;
         return;
-      // case 'isDev':
-      //   draft.user.userisDev = action.value;
-      //   return;
       case 'setPermission':
         draft.user.userPermission = action.data;
         return;
@@ -93,7 +88,11 @@ export default function App() {
             <Route path='/apps' element={<AppPage />} />
             <Route path='/apps/:appacronym' element={<KanbanBoard />} />
             <Route path='/apps/create' element={<CreateAppPage />} />
-            <Route path='*' element={<Dashboard />} />
+            {state.loggedIn ? (
+              <Route path='*' element={<Dashboard />} />
+            ) : (
+              <Route path='*' element={<LoginPage />} />
+            )}
           </Routes>
           <FlashMessages messages={state.flashMessages} />
           <FlashMessagesErr messages={state.flashMessagesErr} />
