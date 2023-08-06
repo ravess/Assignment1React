@@ -38,7 +38,8 @@ export default function Header() {
           appDispatch({ type: 'isPl', value: false });
         }
       } catch (error) {
-        console.log(error);
+        // Might have issue with other error handler
+        console.log('Error occurred while checking user group:', error);
       }
       try {
         const responsePm = await axios.post('/checkgroup', {
@@ -105,6 +106,7 @@ export default function Header() {
       <Link to='/user/dashboard' className='navbar-brand'>
         TMS
       </Link>
+      {appState.user.userisPl}
       <div className='navbar-collapse'>
         <ul className='navbar-nav ml-auto'>
           <li className='nav-item'>

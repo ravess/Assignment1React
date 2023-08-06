@@ -105,8 +105,8 @@ export default function EditAppModal({
       setApp([]);
       return;
     }
-    console.log(`it ran in editappmodel to fetch 1 app`);
     const ourRequest = axios.CancelToken.source();
+
     const fetchApp = async () => {
       try {
         const getAppResponse = await axios.get(`/apps/${selectedAppAcronym}`);

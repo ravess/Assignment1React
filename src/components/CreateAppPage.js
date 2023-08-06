@@ -32,21 +32,6 @@ export default function CreateAppPage() {
           setUserGroup(response.data.data);
         }
       } catch (error) {
-        if (error.response && error.response.data.error.statusCode === 401) {
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/apps');
-        }
-        if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: 'logout' });
-          appDispatch({
-            type: 'flashMessageErr',
-            value: error.response.data.errMessage,
-          });
-          navigate('/');
-        }
         if (error.response && error.response.data)
           appDispatch({
             type: 'flashMessageErr',
@@ -59,13 +44,6 @@ export default function CreateAppPage() {
         const response = await axios.get('/user/profile');
         if (response.data.data[0]) {
           appDispatch({ type: 'isAuth', data: response.data.data[0] });
-          if (!isPl) {
-            appDispatch({
-              type: 'flashMessageErr',
-              value: 'You are not authorised.',
-            });
-            navigate('/apps');
-          }
         }
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 401) {
@@ -73,7 +51,7 @@ export default function CreateAppPage() {
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate('/user/dashboard');
+          navigate('/apps/');
         }
         if (error.response && error.response.data.error.statusCode === 403) {
           appDispatch({ type: 'logout' });

@@ -26,7 +26,7 @@ export default function AppPage() {
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
-    console.log(`i'm fetching in app page`);
+
     const fetchProfile = async () => {
       try {
         const response = await axios.get('/user/profile');
@@ -85,15 +85,43 @@ export default function AppPage() {
           });
       }
     };
-    fetchAllApps();
     fetchProfile();
+    fetchAllApps();
     return () => ourRequest.cancel();
   }, []);
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get('/user/profile');
+        if (response.data.data[0]) {
+          appDispatch({ type: 'isAuth', data: response.data.data[0] });
+        }
+      } catch (error) {
+        if (error.response && error.response.data.error.statusCode === 401) {
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/apps/');
+        }
+        if (error.response && error.response.data.error.statusCode === 403) {
+          appDispatch({ type: 'logout' });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+          navigate('/');
+        }
+        if (error.response && error.response.data)
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
+      }
+    };
 
-    console.log(`it fetches again after formsubmission`);
     const fetchAllApps = async () => {
       try {
         if (isAppFormSubmitted) {
@@ -113,7 +141,7 @@ export default function AppPage() {
         }
       }
     };
-
+    fetchProfile();
     fetchAllApps();
     return () => ourRequest.cancel();
   }, [isAppFormSubmitted]);

@@ -88,11 +88,10 @@ export default function App() {
             <Route path='/apps' element={<AppPage />} />
             <Route path='/apps/:appacronym' element={<KanbanBoard />} />
             <Route path='/apps/create' element={<CreateAppPage />} />
-            {state.loggedIn ? (
-              <Route path='*' element={<Dashboard />} />
-            ) : (
-              <Route path='*' element={<LoginPage />} />
-            )}
+            <Route
+              path='*'
+              element={state.loggedIn ? <Dashboard /> : <LoginPage />}
+            />
           </Routes>
           <FlashMessages messages={state.flashMessages} />
           <FlashMessagesErr messages={state.flashMessagesErr} />
