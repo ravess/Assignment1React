@@ -53,6 +53,7 @@ export default function CreateGroupForm() {
     e.preventDefault();
     try {
       const response = await axios.post('/admin/groups/create', {
+        usergroup: 'admin',
         usergroups: createGroup,
       });
       if (response.data)

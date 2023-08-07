@@ -101,7 +101,12 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
   };
   return (
     <>
-      <div className='container-fluid card mt-3'>
+      <div
+        className='container-fluid card mt-3'
+        style={{
+          border: `2px solid ${task.plan_color ? task.plan_color : '#CED4DA'}`,
+        }}
+      >
         <div className='card-body'>
           <div className='row d-flex justify-content-end'>
             <span

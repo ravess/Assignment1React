@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useImmerReducer } from "use-immer";
-import axios from "axios";
-import DispatchContext from "../DispatchContext";
-import { useNavigate, useParams } from "react-router-dom";
-import CreateTaskModal from "./CreateTaskModal";
-import CreatePlanModal from "./CreatePlanModal";
-import EditPlanModal from "./EditPlanModal";
-import TaskCard from "./TaskCard";
-import EditTaskModal from "./EditTaskModal";
-import StateContext from "../StateContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { useImmerReducer } from 'use-immer';
+import axios from 'axios';
+import DispatchContext from '../DispatchContext';
+import { useNavigate, useParams } from 'react-router-dom';
+import CreateTaskModal from './CreateTaskModal';
+import CreatePlanModal from './CreatePlanModal';
+import EditPlanModal from './EditPlanModal';
+import TaskCard from './TaskCard';
+import EditTaskModal from './EditTaskModal';
+import StateContext from '../StateContext';
 
 export default function KanbanBoard() {
   const appDispatch = useContext(DispatchContext);
@@ -32,16 +32,16 @@ export default function KanbanBoard() {
 
   function ourReducer(draft, action) {
     switch (action.type) {
-      case "fetchApp":
+      case 'fetchApp':
         draft.app.data = action.data;
         return;
-      case "fetchAllTasks":
+      case 'fetchAllTasks':
         draft.tasks.data = action.data;
         return;
-      case "fetchAllPlans":
+      case 'fetchAllPlans':
         draft.plans.data = action.data;
         return;
-      case "fetchUserGroup":
+      case 'fetchUserGroup':
         draft.usergroups.data = action.data;
         return;
     }
@@ -49,30 +49,30 @@ export default function KanbanBoard() {
 
   async function checkPL() {
     try {
-      const response = await axios.post("/checkgroup", { usergroup: "pl" });
+      const response = await axios.post('/checkgroup', { usergroup: 'pl' });
       if (response.data.data === 1) {
-        appDispatch({ type: "isPl", value: true });
+        appDispatch({ type: 'isPl', value: true });
         return true;
       }
     } catch (error) {
-      appDispatch({ type: "isPl", value: false });
+      appDispatch({ type: 'isPl', value: false });
       return false;
     }
   }
 
-  const handleCreate = async () => {
-    const test = checkPL();
-    console.log(test);
-    if (test === false) {
-      setShowModal(false);
-      document.body.removeAttribute("class");
-      document.body.removeAttribute("style");
-      document.body.removeChild(document.querySelector(".modal-backdrop"));
-    }
-    if (appState.user.userisPl) {
-      setShowModal(true);
-    }
-  };
+  // const handleCreate = async () => {
+  //   const test = checkPL();
+  //   console.log(test);
+  //   if (test === false) {
+  //     setShowModal(false);
+  //     document.body.removeAttribute('class');
+  //     document.body.removeAttribute('style');
+  //     document.body.removeChild(document.querySelector('.modal-backdrop'));
+  //   }
+  //   if (appState.user.userisPl) {
+  //     setShowModal(true);
+  //   }
+  // };
 
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
@@ -89,37 +89,38 @@ export default function KanbanBoard() {
   const toggleModal = () => {
     setShowModal(!showModal);
     // document.body.classList.toggle("modal-open");
-    document.body.removeAttribute("class");
-    document.body.removeAttribute("style");
-    document.body.removeChild(document.querySelector(".modal-backdrop"));
+    document.body.removeAttribute('class');
+    document.body.removeAttribute('style');
+    document.body.removeChild(document.querySelector('.modal-backdrop'));
   };
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
     const fetchData = async () => {
       try {
-        const profileResponse = await axios.get("/user/profile");
+        const profileResponse = await axios.get('/user/profile');
         if (profileResponse.data.data[0]) {
-          appDispatch({ type: "isAuth", data: profileResponse.data.data[0] });
+          appDispatch({ type: 'isAuth', data: profileResponse.data.data[0] });
         }
         const appResponse = await axios.get(`/apps/${params.appacronym}`);
         if (appResponse.data.data) {
           appDispatch({
-            type: "setPermission",
+            type: 'setPermission',
             data: appResponse.data.data[0].App_permissions,
           });
-          dispatch({ type: "fetchApp", data: appResponse.data.data });
+          dispatch({ type: 'fetchApp', data: appResponse.data.data });
         }
         const getAllTasksResponse = await axios.get(
           `/apps/${params.appacronym}/tasks`
         );
         if (getAllTasksResponse.data.data) {
+          console.log(getAllTasksResponse.data.data);
           appDispatch({
-            type: "setPermission",
+            type: 'setPermission',
             data: getAllTasksResponse.data.data[0].App_permissions,
           });
           dispatch({
-            type: "fetchAllTasks",
+            type: 'fetchAllTasks',
             data: getAllTasksResponse.data.data,
           });
         }
@@ -128,32 +129,35 @@ export default function KanbanBoard() {
         );
         if (getAllPlansResponse.data.data) {
           dispatch({
-            type: "fetchAllPlans",
+            type: 'fetchAllPlans',
             data: getAllPlansResponse.data.data,
           });
         }
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate(`/apps/${params.appacronym}`);
-        }
-        if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: "logout" });
+        } else if (
+          error.response &&
+          error.response.data.error.statusCode === 403
+        ) {
+          appDispatch({ type: 'logout' });
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           toggleModal();
-          navigate("/");
+          navigate('/');
+        } else if (error.response && error.response.data) {
+          console.log(error);
+          // appDispatch({
+          //   type: 'flashMessageErr',
+          //   value: error.response.data.errMessage,
+          // });
         }
-        if (error.response && error.response.data)
-          appDispatch({
-            type: "flashMessageErr",
-            value: error.response.data.errMessage,
-          });
       }
     };
     checkPL();
@@ -172,11 +176,11 @@ export default function KanbanBoard() {
           );
           if (getAllTasksResponse.data.data) {
             appDispatch({
-              type: "setPermission",
+              type: 'setPermission',
               data: getAllTasksResponse.data.data[0].App_permissions,
             });
             dispatch({
-              type: "fetchAllTasks",
+              type: 'fetchAllTasks',
               data: getAllTasksResponse.data.data,
             });
             setIsTaskFormSubmitted(false);
@@ -188,7 +192,7 @@ export default function KanbanBoard() {
           );
           if (getAllPlansResponse.data.data) {
             dispatch({
-              type: "fetchAllPlans",
+              type: 'fetchAllPlans',
               data: getAllPlansResponse.data.data,
             });
             setIsPlanFormSubmitted(false);
@@ -197,22 +201,22 @@ export default function KanbanBoard() {
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 404) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate(`/apps/${params.appacronym}`);
         }
         if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: "logout" });
+          appDispatch({ type: 'logout' });
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
-          navigate("/");
+          navigate('/');
         }
         if (error.response && error.response.data)
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
       }
@@ -226,129 +230,169 @@ export default function KanbanBoard() {
     <>
       {appState.loggedIn && (
         <div>
-          <div className="ml-5 mt-3" onClick={() => navigate(-1)}>
+          <div className='ml-5 mt-3' onClick={() => navigate(-1)}>
             <i
-              className="fa fa-arrow-left fa-2x align-self-center"
-              aria-hidden="true"
-              style={{ cursor: "pointer" }}
+              className='fa fa-arrow-left fa-2x align-self-center'
+              aria-hidden='true'
+              style={{ cursor: 'pointer' }}
             ></i>
           </div>
-          <div className="container-fluid text-center">
+          <div className='container-fluid text-center'>
             {state.app.data.length > 0 && (
-              <p className="dashboard__description text-center">
+              <p className='dashboard__description text-center'>
                 {state.app.data[0].App_Acronym}
               </p>
             )}
-            <div className="container d-flex justify-content-start m-0">
+            <div className='container d-flex justify-content-start m-0'>
               {appState.user.userPermission.App_permit_Create && (
                 <button
-                  className="btn btn-outline-dark mt-2 mr-2"
-                  style={{ width: "150px" }}
-                  data-toggle="modal"
-                  data-target="#createTaskModal"
-                  onClick={() => handleCreate()}
+                  className='btn btn-outline-dark mt-2 mr-2'
+                  style={{ width: '150px' }}
+                  data-toggle='modal'
+                  data-target='#createTaskModal'
+                  onClick={() => setShowModal(true)}
                 >
-                  <i className="fas fa-plus"></i> Create Task
+                  <i className='fas fa-plus'></i> Create Task
                 </button>
               )}
               {appState.user.userisPm && (
                 <>
                   <button
-                    className="btn btn-outline-dark mt-2 mr-2"
-                    style={{ width: "150px" }}
-                    data-toggle="modal"
-                    data-target="#createPlanModal"
+                    className='btn btn-outline-dark mt-2 mr-2'
+                    style={{ width: '150px' }}
+                    data-toggle='modal'
+                    data-target='#createPlanModal'
                     onClick={() => setShowModal(true)}
                   >
-                    <i className="fas fa-plus"></i> Create Plan
+                    <i className='fas fa-plus'></i> Create Plan
                   </button>
                   <button
-                    className="btn btn-outline-dark mt-2 mr-2"
-                    style={{ width: "150px" }}
-                    data-toggle="modal"
-                    data-target="#editPlanModal"
+                    className='btn btn-outline-dark mt-2 mr-2'
+                    style={{ width: '150px' }}
+                    data-toggle='modal'
+                    data-target='#editPlanModal'
                     onClick={() => setShowModal(true)}
                   >
-                    <i className="fas fa-edit"></i> Edit Plan
+                    <i className='fas fa-edit'></i> Edit Plan
                   </button>
                 </>
               )}
             </div>
-            <div className="container-fluid mt-5">
-              <div className="row d-flex justify-content-center">
-                <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
-                  <h5>Open</h5>
-                  <hr />
-                  {state.tasks.data
-                    .filter((task) => task.Task_state === "open")
-                    .map((task) => (
-                      <TaskCard
-                        key={task.Task_id}
-                        task={task}
-                        onTaskCardClick={handleTaskCardClick}
-                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                      />
-                    ))}
-                </div>
-                <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
-                  <h5>To Do</h5>
-                  <hr />
-                  {state.tasks.data
-                    .filter((task) => task.Task_state === "todolist")
-                    .map((task) => (
-                      <TaskCard
-                        key={task.Task_id}
-                        task={task}
-                        onTaskCardClick={handleTaskCardClick}
-                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                      />
-                    ))}
-                </div>
-                <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
-                  <h5>Doing</h5>
-                  <hr />
-                  {state.tasks.data
-                    .filter((task) => task.Task_state === "doing")
-                    .map((task) => (
-                      <TaskCard
-                        key={task.Task_id}
-                        task={task}
-                        onTaskCardClick={handleTaskCardClick}
-                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                      />
-                    ))}
-                </div>
+            {state.tasks.data.length > 0 && (
+              <div className='container-fluid mt-5' style={{ height: '100vh' }}>
+                <div className='row d-flex justify-content-center'>
+                  <div
+                    className='col border mx-4 p-2 bg-light'
+                    style={{
+                      width: '10rem',
+                      height: '60vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <h5 className='bg-dark text-white border rounded'>Open</h5>
+                    <hr />
+                    {state.tasks.data
+                      .filter((task) => task.Task_state === 'open')
+                      .map((task) => (
+                        <TaskCard
+                          key={task.Task_id}
+                          task={task}
+                          onTaskCardClick={handleTaskCardClick}
+                          onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                        />
+                      ))}
+                  </div>
+                  <div
+                    className='col border mx-4 p-2 bg-light'
+                    style={{
+                      width: '10rem',
+                      height: '60vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <h5 className='bg-dark text-white border rounded'>To Do</h5>
+                    <hr />
+                    {state.tasks.data
+                      .filter((task) => task.Task_state === 'todolist')
+                      .map((task) => (
+                        <TaskCard
+                          key={task.Task_id}
+                          task={task}
+                          onTaskCardClick={handleTaskCardClick}
+                          onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                        />
+                      ))}
+                  </div>
+                  <div
+                    className='col border mx-4 p-2 bg-light'
+                    style={{
+                      width: '10rem',
+                      height: '60vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <h5 className='bg-dark text-white border rounded'>Doing</h5>
+                    <hr />
+                    {state.tasks.data
+                      .filter((task) => task.Task_state === 'doing')
+                      .map((task) => (
+                        <TaskCard
+                          key={task.Task_id}
+                          task={task}
+                          onTaskCardClick={handleTaskCardClick}
+                          onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                        />
+                      ))}
+                  </div>
 
-                <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
-                  <h5>Done</h5>
-                  <hr />
-                  {state.tasks.data
-                    .filter((task) => task.Task_state === "done")
-                    .map((task) => (
-                      <TaskCard
-                        key={task.Task_id}
-                        task={task}
-                        onTaskCardClick={handleTaskCardClick}
-                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                      />
-                    ))}
-                </div>
-                <div className="col border mx-4 p-2" style={{ width: "10rem" }}>
-                  <h5>Closed</h5>
-                  <hr />
-                  {state.tasks.data
-                    .filter((task) => task.Task_state === "closed")
-                    .map((task) => (
-                      <TaskCard
-                        key={task.Task_id}
-                        task={task}
-                        onTaskCardClick={handleTaskCardClick}
-                        onFormSubmit={() => setIsTaskFormSubmitted(true)}
-                      />
-                    ))}
+                  <div
+                    className='col border mx-4 p-2 bg-light'
+                    style={{
+                      width: '10rem',
+                      height: '60vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <h5 className='bg-dark text-white border rounded'>Done</h5>
+                    <hr />
+                    {state.tasks.data
+                      .filter((task) => task.Task_state === 'done')
+                      .map((task) => (
+                        <TaskCard
+                          key={task.Task_id}
+                          task={task}
+                          onTaskCardClick={handleTaskCardClick}
+                          onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                        />
+                      ))}
+                  </div>
+                  <div
+                    className='col border mx-4 p-2 bg-light'
+                    style={{
+                      width: '10rem',
+                      height: '60vh',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <h5 className='bg-dark text-white border rounded'>
+                      Closed
+                    </h5>
+                    <hr />
+                    {state.tasks.data
+                      .filter((task) => task.Task_state === 'closed')
+                      .map((task) => (
+                        <TaskCard
+                          key={task.Task_id}
+                          task={task}
+                          onTaskCardClick={handleTaskCardClick}
+                          onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                        />
+                      ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
             <div>
               {showModal && appState.user.userisPl && (
                 <CreateTaskModal

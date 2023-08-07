@@ -12,6 +12,7 @@ export default function CreatePlanModal({
     Plan_MVP_name: '',
     Plan_startDate: '',
     Plan_endDate: '',
+    Plan_color: '#000000',
   };
   const [formData, setFormData] = useState(initialState);
   const params = useParams();
@@ -164,6 +165,20 @@ export default function CreatePlanModal({
                       className='form-control'
                       name='Plan_endDate'
                       value={formData.Plan_endDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className='row'>
+                  <div className='col text-left p-3'>
+                    <label htmlFor='Plan_color' className='form-label'>
+                      <strong>Plan Color</strong>
+                    </label>
+                    <input
+                      type='color'
+                      className='form-control'
+                      name='Plan_color'
+                      value={formData.Plan_color}
                       onChange={handleChange}
                     />
                   </div>

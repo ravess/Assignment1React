@@ -17,7 +17,6 @@ export default function EditTaskModal({
   const [selectedPlan, setSelectedPlan] = useState('');
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
-  const notesTextareaRef = useRef(null);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -45,6 +44,7 @@ export default function EditTaskModal({
         {
           Task_state: task[0].Task_state,
           Task_newState: 'promote',
+          Task_plan: selectedPlan,
           Task_notes: notes,
         }
       );
@@ -91,6 +91,7 @@ export default function EditTaskModal({
         {
           Task_state: task[0].Task_state,
           Task_newState: 'demote',
+          Task_plan: selectedPlan,
           Task_notes: notes,
         }
       );
@@ -205,9 +206,6 @@ export default function EditTaskModal({
           });
           setTask(getTasksResponse.data.data);
           setSelectedPlan(getTasksResponse.data.data[0].Task_plan);
-          if (notesTextareaRef.current) {
-            notesTextareaRef.current.scrollIntoView({ behavior: 'smooth' });
-          }
         }
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 401) {
@@ -243,7 +241,6 @@ export default function EditTaskModal({
 
   return (
     <>
-      {console.log(appState.user.userPermission)}
       <div
         className='modal fade'
         id='editTaskModal'
@@ -322,40 +319,48 @@ export default function EditTaskModal({
                   <label htmlFor='Task_plan'>
                     <strong>Task Plan:</strong>
                   </label>
-                  <select
-                    className='form-control'
-                    id='Task_plan'
-                    name='Task_plan'
-                    value={selectedPlan}
-                    onChange={handleChange}
-                    readOnly={
-                      (task.length > 0 &&
-                        task[0].Task_state === 'open' &&
-                        !appState.user.userPermission.App_permit_Open) ||
-                      (task.length > 0 &&
-                        task[0].Task_state === 'todolist' &&
-                        !appState.user.userPermission.App_permit_toDoList) ||
-                      (task.length > 0 &&
-                        task[0].Task_state === 'doing' &&
-                        !appState.user.userPermission.App_permit_Doing) ||
-                      (task.length > 0 &&
-                        task[0].Task_state === 'done' &&
-                        !appState.user.userPermission.App_permit_Done) ||
-                      (task.length > 0 && task[0].Task_state === 'closed')
-                    }
-                  >
-                    <option value=''>Select a Plan</option>
-                    {plans.map((plan) => (
-                      <option
-                        key={plan.Plan_MVP_name}
-                        value={plan.Plan_MVP_name}
-                      >
-                        {plan.Plan_MVP_name}
-                      </option>
-                    ))}
-                  </select>
+                  {(task.length > 0 &&
+                    task[0].Task_state === 'open' &&
+                    !appState.user.userPermission.App_permit_Open) ||
+                  (task.length > 0 && task[0].Task_state === 'todolist') ||
+                  (task.length > 0 && task[0].Task_state === 'doing') ||
+                  (task.length > 0 &&
+                    task[0].Task_state === 'done' &&
+                    !appState.user.userPermission.App_permit_Done) ||
+                  (task.length > 0 && task[0].Task_state === 'closed') ? (
+                    <span>{' ' + selectedPlan}</span>
+                  ) : (
+                    <select
+                      className='form-control'
+                      id='Task_plan'
+                      name='Task_plan'
+                      value={selectedPlan}
+                      onChange={handleChange}
+                      // readOnly={
+                      //   (task.length > 0 &&
+                      //     task[0].Task_state === 'open' &&
+                      //     !appState.user.userPermission.App_permit_Open) ||
+                      //   (task.length > 0 && task[0].Task_state === 'todolist') ||
+                      //   (task.length > 0 && task[0].Task_state === 'doing') ||
+                      //   (task.length > 0 &&
+                      //     task[0].Task_state === 'done' &&
+                      //     !appState.user.userPermission.App_permit_Done) ||
+                      //   (task.length > 0 && task[0].Task_state === 'closed')
+                      // }
+                    >
+                      <option value=''>Select a Plan</option>
+                      {plans.map((plan) => (
+                        <option
+                          key={plan.Plan_MVP_name}
+                          value={plan.Plan_MVP_name}
+                        >
+                          {plan.Plan_MVP_name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
-                <div className='form-group text-left ' ref={notesTextareaRef}>
+                <div className='form-group text-left '>
                   <label htmlFor='Task_notes' className='form-label'>
                     <strong>Audit Trail:</strong>
                   </label>
@@ -367,12 +372,14 @@ export default function EditTaskModal({
                     readOnly
                     value={
                       task.length > 0
-                        ? task[0].Task_notes.map((entry) => {
-                            return `\n [Username: ${entry.username}, State: ${entry.currentState}, Date: ${entry.date}, ${entry.timestamp}]\n ${entry.notes}`;
-                          }).join('\n')
+                        ? task[0].Task_notes.slice() // Create a shallow copy of the array before reversing (to avoid modifying the original array)
+                            .reverse() // Reverse the array
+                            .map((entry) => {
+                              return `\n [Username: ${entry.username}, State: ${entry.currentState}, Date: ${entry.date}, ${entry.timestamp}]\n ${entry.notes}`;
+                            })
+                            .join('\n')
                         : ''
                     }
-                    ref={notesTextareaRef}
                   ></textarea>
                 </div>
                 <div className='form-group text-left'>
@@ -385,6 +392,7 @@ export default function EditTaskModal({
                     rows='3'
                     name='Task_notes'
                     value={notes}
+                    maxLength='255'
                     onChange={handleChange}
                     readOnly={
                       (task.length > 0 &&
