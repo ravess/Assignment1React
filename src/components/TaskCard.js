@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import DispatchContext from '../DispatchContext';
-import StateContext from '../StateContext';
+import React, { useContext } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import DispatchContext from "../DispatchContext";
+import StateContext from "../StateContext";
 
 export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
   const params = useParams();
@@ -16,15 +16,16 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
         `/apps/${params.appacronym}/tasks/${task.Task_id}/edit`,
         {
           Task_state: task.Task_state,
-          Task_newState: 'promote',
-          Task_notes: '',
-          usergroup: 'admin',
+          Task_newState: "promote",
+          Task_notes: "",
+          Task_plan: task.Task_plan,
+          usergroup: "admin",
         }
       );
       if (response.data.data) {
         appDispatch({
-          type: 'flashMessage',
-          value: 'Task State Promoted',
+          type: "flashMessage",
+          value: "Task State Promoted",
         });
         onFormSubmit();
       }
@@ -32,24 +33,24 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
       if (error.response && error.response.data.error.statusCode === 401) {
         onFormSubmit();
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
 
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
-        appDispatch({ type: 'logout' });
+        appDispatch({ type: "logout" });
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
 
-        navigate('/');
+        navigate("/");
       }
       if (error.response && error.response.data)
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
     }
@@ -61,15 +62,16 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
         `/apps/${params.appacronym}/tasks/${task.Task_id}/edit`,
         {
           Task_state: task.Task_state,
-          Task_newState: 'demote',
-          Task_notes: '',
-          usergroup: 'admin',
+          Task_newState: "demote",
+          Task_notes: "",
+          Task_plan: task.Task_plan,
+          usergroup: "admin",
         }
       );
       if (response.data.data) {
         appDispatch({
-          type: 'flashMessage',
-          value: 'Task State Demoted',
+          type: "flashMessage",
+          value: "Task State Demoted",
         });
         onFormSubmit();
       }
@@ -77,24 +79,24 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
       if (error.response && error.response.data.error.statusCode === 401) {
         onFormSubmit();
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
 
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
-        appDispatch({ type: 'logout' });
+        appDispatch({ type: "logout" });
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
 
-        navigate('/');
+        navigate("/");
       }
       if (error.response && error.response.data)
         appDispatch({
-          type: 'flashMessageErr',
+          type: "flashMessageErr",
           value: error.response.data.errMessage,
         });
     }
@@ -102,34 +104,34 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
   return (
     <>
       <div
-        className='container-fluid card mt-3'
+        className="container-fluid card mt-3"
         style={{
-          border: `2px solid ${task.plan_color ? task.plan_color : '#CED4DA'}`,
+          border: `2px solid ${task.plan_color ? task.plan_color : "#CED4DA"}`,
         }}
       >
-        <div className='card-body'>
-          <div className='row d-flex justify-content-end'>
+        <div className="card-body">
+          <div className="row d-flex justify-content-end">
             <span
               onClick={() => onTaskCardClick(task.Task_id)}
-              data-toggle='modal'
-              data-target='#editTaskModal'
+              data-toggle="modal"
+              data-target="#editTaskModal"
             >
-              <i className='fa fa-list' aria-hidden='true'></i>
+              <i className="fa fa-list" aria-hidden="true"></i>
             </span>
           </div>
-          <div className='row'>
+          <div className="row">
             <span>
               <strong>Task Name: </strong>
               <br />
             </span>
-            <span className='card-title text-truncate'>{task.Task_name}</span>
+            <span className="card-title text-truncate">{task.Task_name}</span>
           </div>
 
           <div
             className={`row d-flex justify-content-${
-              task.Task_state === 'open' || task.Task_state === 'todolist'
-                ? 'end'
-                : 'between'
+              task.Task_state === "open" || task.Task_state === "todolist"
+                ? "end"
+                : "between"
             }`}
           >
             {/* {task.Task_state !== 'open' && task.Task_state !== 'closed' && (
@@ -145,37 +147,37 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
                 </div>
               )} */}
 
-            {task.Task_state === 'open' &&
+            {task.Task_state === "open" &&
               appState.user.userPermission.App_permit_Open && (
                 <div onClick={handlePromote}>
-                  <i className='fa fa-arrow-circle-right'></i>
+                  <i className="fa fa-arrow-circle-right"></i>
                 </div>
               )}
-            {task.Task_state === 'todolist' &&
+            {task.Task_state === "todolist" &&
               appState.user.userPermission.App_permit_toDoList && (
                 <div onClick={handlePromote}>
-                  <i className='fa fa-arrow-circle-right'></i>
+                  <i className="fa fa-arrow-circle-right"></i>
                 </div>
               )}
-            {task.Task_state === 'doing' &&
+            {task.Task_state === "doing" &&
               appState.user.userPermission.App_permit_Doing && (
                 <>
                   <div onClick={handleDemote}>
-                    <i className='fa fa-arrow-circle-left'></i>
+                    <i className="fa fa-arrow-circle-left"></i>
                   </div>
                   <div onClick={handlePromote}>
-                    <i className='fa fa-arrow-circle-right'></i>
+                    <i className="fa fa-arrow-circle-right"></i>
                   </div>
                 </>
               )}
-            {task.Task_state === 'done' &&
+            {task.Task_state === "done" &&
               appState.user.userPermission.App_permit_Done && (
                 <>
                   <div onClick={handleDemote}>
-                    <i className='fa fa-arrow-circle-left'></i>
+                    <i className="fa fa-arrow-circle-left"></i>
                   </div>
                   <div onClick={handlePromote}>
-                    <i className='fa fa-arrow-circle-right'></i>
+                    <i className="fa fa-arrow-circle-right"></i>
                   </div>
                 </>
               )}
