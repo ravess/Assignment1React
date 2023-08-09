@@ -14,6 +14,7 @@ export default function EditPlanModal({
   const [selectedPlan, setSelectedPlan] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState('');
   const [selectedEndDate, setSelectedEndDate] = useState('');
+  const [selectedPlanColor, setSelectedPlanColor] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,6 +30,8 @@ export default function EditPlanModal({
       setSelectedStartDate(value);
     } else if (name === 'Plan_endDate') {
       setSelectedEndDate(value);
+    } else if (name === 'Plan_color') {
+      setSelectedPlanColor(value);
     } else {
       console.log(`hi`);
     }
@@ -45,6 +48,7 @@ export default function EditPlanModal({
     const formObj = {
       Plan_startDate: selectedStartDate,
       Plan_endDate: selectedEndDate,
+      Plan_color: selectedPlanColor,
     };
     try {
       const response = await axios.put(
@@ -60,6 +64,7 @@ export default function EditPlanModal({
         setSelectedPlan('');
         setSelectedStartDate('');
         setSelectedEndDate('');
+        setSelectedPlanColor('');
         onFormSubmit();
         toggleModal();
       }
@@ -99,6 +104,7 @@ export default function EditPlanModal({
           if (response.data.data) {
             setSelectedStartDate(response.data.data[0].Plan_startDate);
             setSelectedEndDate(response.data.data[0].Plan_endDate);
+            setSelectedPlanColor(response.data.data[0].Plan_color);
           }
         }
       } catch (error) {
@@ -114,6 +120,7 @@ export default function EditPlanModal({
       setSelectedPlan('');
       setSelectedEndDate('');
       setSelectedStartDate('');
+      setSelectedPlanColor('');
     };
     // Add event listener to the modal when it's hidden (closed)
     $('#editPlanModal').on('hidden.bs.modal', handleModalHide);
@@ -203,6 +210,20 @@ export default function EditPlanModal({
                       className='form-control'
                       name='Plan_endDate'
                       value={selectedEndDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className='row'>
+                  <div className='col text-left p-3'>
+                    <label htmlFor='Plan_color' className='form-label'>
+                      <strong>Plan Color</strong>
+                    </label>
+                    <input
+                      type='color'
+                      className='form-control'
+                      name='Plan_color'
+                      value={selectedPlanColor}
                       onChange={handleChange}
                     />
                   </div>

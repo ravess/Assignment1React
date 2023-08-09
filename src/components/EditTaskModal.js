@@ -239,7 +239,6 @@ export default function EditTaskModal({
     return () => ourRequest.cancel();
   }, [selectedTaskId]);
 
-  console.log(plans);
   return (
     <>
       <div
