@@ -114,7 +114,6 @@ export default function KanbanBoard() {
           `/apps/${params.appacronym}/tasks`
         );
         if (getAllTasksResponse.data.data) {
-          console.log(getAllTasksResponse.data.data);
           appDispatch({
             type: 'setPermission',
             data: getAllTasksResponse.data.data[0].App_permissions,
