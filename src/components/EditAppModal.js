@@ -51,9 +51,7 @@ export default function EditAppModal({
   };
 
   const handleSubmit = async (e) => {
-    console.log(`you clicked me`);
     e.preventDefault();
-    console.log(`you clicked me`);
     const formObj = {
       App_startDate: selectedStartDate,
       App_endDate: selectedEndDate,

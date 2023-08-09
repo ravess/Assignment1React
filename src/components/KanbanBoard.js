@@ -49,20 +49,6 @@ export default function KanbanBoard() {
     }
   }
 
-  // const handleCreate = async () => {
-  //   const test = checkPL();
-  //   console.log(test);
-  //   if (test === false) {
-  //     setShowModal(false);
-  //     document.body.removeAttribute('class');
-  //     document.body.removeAttribute('style');
-  //     document.body.removeChild(document.querySelector('.modal-backdrop'));
-  //   }
-  //   if (appState.user.userisPl) {
-  //     setShowModal(true);
-  //   }
-  // };
-
   const [state, dispatch] = useImmerReducer(ourReducer, originalState);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [key, setKey] = useState(0);
@@ -85,6 +71,7 @@ export default function KanbanBoard() {
 
   useEffect(() => {
     const ourRequest = axios.CancelToken.source();
+
     const fetchData = async () => {
       try {
         const profileResponse = await axios.get('/user/profile');
@@ -139,12 +126,16 @@ export default function KanbanBoard() {
           });
           toggleModal();
           navigate('/');
+        } else if (
+          error.response &&
+          error.response.data.error.statusCode === 405
+        ) {
+          console.log(error, `unable to find stuff`);
         } else if (error.response && error.response.data) {
-          console.log(error);
-          // appDispatch({
-          //   type: 'flashMessageErr',
-          //   value: error.response.data.errMessage,
-          // });
+          appDispatch({
+            type: 'flashMessageErr',
+            value: error.response.data.errMessage,
+          });
         }
       }
     };
@@ -174,7 +165,7 @@ export default function KanbanBoard() {
             setIsTaskFormSubmitted(false);
           }
         }
-        if (isPlanFormSubmitted) {
+        if (isPlanFormSubmitted || isTaskFormSubmitted) {
           const getAllPlansResponse = await axios.get(
             `/apps/${params.appacronym}/plans`
           );
@@ -193,20 +184,27 @@ export default function KanbanBoard() {
             value: error.response.data.errMessage,
           });
           navigate(`/apps/${params.appacronym}`);
-        }
-        if (error.response && error.response.data.error.statusCode === 403) {
+        } else if (
+          error.response &&
+          error.response.data.error.statusCode === 403
+        ) {
           appDispatch({ type: 'logout' });
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           navigate('/');
-        }
-        if (error.response && error.response.data)
+        } else if (
+          error.response &&
+          error.response.data.error.statusCode === 405
+        ) {
+          console.log(error, `unable to find stuff`);
+        } else if (error.response && error.response.data) {
           appDispatch({
             type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
+        }
       }
     };
 
@@ -424,7 +422,7 @@ export default function KanbanBoard() {
             )}
 
             <div>
-              {showModal && appState.user.userisPl && (
+              {showModal && (
                 <CreateTaskModal
                   plans={state.plans.data}
                   onFormSubmit={() => setIsTaskFormSubmitted(true)}

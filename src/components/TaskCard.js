@@ -45,8 +45,10 @@ export default function TaskCard({
         });
 
         navigate(`/apps/${params.appacronym}`);
-      }
-      if (error.response && error.response.data.error.statusCode === 403) {
+      } else if (
+        error.response &&
+        error.response.data.error.statusCode === 403
+      ) {
         appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
@@ -54,12 +56,17 @@ export default function TaskCard({
         });
 
         navigate('/');
-      }
-      if (error.response && error.response.data)
+      } else if (
+        error.response &&
+        error.response.data.error.statusCode === 405
+      ) {
+        console.log(error, `unable to find stuff`);
+      } else if (error.response && error.response.data) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+      }
     }
   };
 
@@ -91,8 +98,10 @@ export default function TaskCard({
         });
 
         navigate(`/apps/${params.appacronym}`);
-      }
-      if (error.response && error.response.data.error.statusCode === 403) {
+      } else if (
+        error.response &&
+        error.response.data.error.statusCode === 403
+      ) {
         appDispatch({ type: 'logout' });
         appDispatch({
           type: 'flashMessageErr',
@@ -100,12 +109,17 @@ export default function TaskCard({
         });
 
         navigate('/');
-      }
-      if (error.response && error.response.data)
+      } else if (
+        error.response &&
+        error.response.data.error.statusCode === 405
+      ) {
+        console.log(error, `unable to find stuff`);
+      } else if (error.response && error.response.data) {
         appDispatch({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+      }
     }
   };
 
@@ -115,7 +129,6 @@ export default function TaskCard({
         const response = await axios.get(`/getplancolor/${task.Task_plan}`);
         if (response.data.data) {
           setColor(response.data.data);
-          console.log(response.data.data);
         }
       } catch (error) {
         console.log(error);
@@ -130,7 +143,6 @@ export default function TaskCard({
         const response = await axios.get(`/getplancolor/${task.Task_plan}`);
         if (response.data.data) {
           setColor(response.data.data);
-          console.log(response.data.data);
         }
       } catch (error) {
         console.log(error);

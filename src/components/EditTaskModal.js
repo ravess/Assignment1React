@@ -239,6 +239,7 @@ export default function EditTaskModal({
     return () => ourRequest.cancel();
   }, [selectedTaskId]);
 
+  console.log(plans);
   return (
     <>
       <div
@@ -290,37 +291,44 @@ export default function EditTaskModal({
                     readOnly
                   ></textarea>
                 </div>
-                <div className='form-group text-left'>
-                  <strong>
-                    <span>Task id: </span>
-                  </strong>
-                  {task.length > 0 && <span>{task[0].Task_id}</span>}
-                </div>
-                <div className='form-group text-left'>
-                  <strong>
-                    <span>Task State: </span>
-                  </strong>
-                  {task.length > 0 && <span>{task[0].Task_state}</span>}
-                </div>
-                {task.length > 0 && (
-                  <div className='form-group text-left'>
-                    <strong>
-                      <span>Created On: </span>
-                    </strong>
-                    {task.length > 0 && (
-                      <span>
-                        {task[0].Task_notes[0].date} <strong>by </strong>
-                        {task[0].Task_creator}
-                      </span>
-                    )}
+                <div className='row'>
+                  <div className='col'>
+                    <div className='form-group text-left'>
+                      <strong>
+                        <span>Task id: </span>
+                      </strong>
+                      {task.length > 0 && <span>{task[0].Task_id}</span>}
+                    </div>
+                    <div className='form-group text-left'>
+                      <strong>
+                        <span>Task State: </span>
+                      </strong>
+                      {task.length > 0 && <span>{task[0].Task_state}</span>}
+                    </div>
                   </div>
-                )}
-                <div className='form-group text-left'>
-                  <strong>
-                    <span>Task Owner: </span>
-                  </strong>
-                  {task.length > 0 && <span>{task[0].Task_owner}</span>}
+                  <div className='col'>
+                    {task.length > 0 && (
+                      <div className='form-group text-left'>
+                        <strong>
+                          <span>Created On: </span>
+                        </strong>
+                        {task.length > 0 && (
+                          <span>
+                            {task[0].Task_notes[0].date} <strong>by </strong>
+                            {task[0].Task_creator}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className='form-group text-left'>
+                      <strong>
+                        <span>Task Owner: </span>
+                      </strong>
+                      {task.length > 0 && <span>{task[0].Task_owner}</span>}
+                    </div>
+                  </div>
                 </div>
+                <hr className='mt-0' />
                 <div className='form-group text-left'>
                   <label htmlFor='Task_plan'>
                     <strong>Task Plan:</strong>
@@ -355,6 +363,38 @@ export default function EditTaskModal({
                     </select>
                   )}
                 </div>
+                <hr />
+                <div className='row'>
+                  {task.length > 0 && task[0].Task_plan !== null
+                    ? plans.map((plan) => {
+                        if (plan.Plan_MVP_name === task[0].Task_plan) {
+                          return (
+                            <React.Fragment key={plan.Plan_MVP_name}>
+                              <div className='col'>
+                                <div className='form-group text-left'>
+                                  <strong>
+                                    <span>Plan Start Date: </span>
+                                  </strong>
+                                  <span>{plan.Plan_startDate}</span>
+                                </div>
+                              </div>
+                              <div className='col'>
+                                <div className='form-group text-left'>
+                                  <strong>
+                                    <span>Plan End Date: </span>
+                                  </strong>
+                                  <span>{plan.Plan_endDate}</span>
+                                </div>
+                              </div>
+                            </React.Fragment>
+                          );
+                        } else {
+                          return null;
+                        }
+                      })
+                    : ''}
+                </div>
+
                 <div className='form-group text-left '>
                   <label htmlFor='Task_notes' className='form-label'>
                     <strong>Audit Trail:</strong>
