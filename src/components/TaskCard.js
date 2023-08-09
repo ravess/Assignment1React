@@ -1,14 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
 import StateContext from '../StateContext';
 
-export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
+export default function TaskCard({
+  task,
+  onTaskCardClick,
+  onFormSubmit,
+  isPlanFormSubmitted,
+  isTaskFormSubmitted,
+}) {
   const params = useParams();
   const navigate = useNavigate();
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
+  const [color, setColor] = useState({});
 
   const handlePromote = async () => {
     try {
@@ -101,12 +108,47 @@ export default function TaskCard({ task, onTaskCardClick, onFormSubmit }) {
         });
     }
   };
+
+  useEffect(() => {
+    const getPlanColors = async () => {
+      try {
+        const response = await axios.get(`/getplancolor/${task.Task_plan}`);
+        if (response.data.data) {
+          setColor(response.data.data);
+          console.log(response.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getPlanColors();
+  }, []);
+
+  useEffect(() => {
+    const getPlanColors = async () => {
+      try {
+        const response = await axios.get(`/getplancolor/${task.Task_plan}`);
+        if (response.data.data) {
+          setColor(response.data.data);
+          console.log(response.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getPlanColors();
+  }, [isPlanFormSubmitted, isTaskFormSubmitted]);
+
   return (
     <>
       <div
         className='container-fluid card mt-3'
         style={{
-          border: `2px solid ${task.plan_color ? task.plan_color : '#CED4DA'}`,
+          border: `2px solid ${
+            color.Plan_MVP_name === task.Task_plan
+              ? color.Plan_color
+              : '#CED4DA'
+          }`,
         }}
       >
         <div className='card-body'>

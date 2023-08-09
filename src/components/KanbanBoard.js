@@ -44,19 +44,8 @@ export default function KanbanBoard() {
       case 'fetchUserGroup':
         draft.usergroups.data = action.data;
         return;
-    }
-  }
-
-  async function checkPL() {
-    try {
-      const response = await axios.post('/checkgroup', { usergroup: 'pl' });
-      if (response.data.data === 1) {
-        appDispatch({ type: 'isPl', value: true });
-        return true;
-      }
-    } catch (error) {
-      appDispatch({ type: 'isPl', value: false });
-      return false;
+      case 'fetchPlanColors':
+        draft.plansColor.data = action.data;
     }
   }
 
@@ -159,7 +148,7 @@ export default function KanbanBoard() {
         }
       }
     };
-    checkPL();
+
     fetchData();
     return () => ourRequest.cancel();
   }, []);
@@ -220,7 +209,7 @@ export default function KanbanBoard() {
           });
       }
     };
-    checkPL();
+
     fetchData();
     return () => ourRequest.cancel();
   }, [isPlanFormSubmitted, isTaskFormSubmitted, params.appacronym, key]);
@@ -284,9 +273,10 @@ export default function KanbanBoard() {
                     <div className='row d-flex justify-content-end'>
                       {state.app.data[0].App_startDate ? (
                         <h5 className='mr-2'>
-                          <strong>
-                            App Start Date: {state.app.data[0].App_startDate}
-                          </strong>
+                          <strong>App Start Date: </strong>{' '}
+                          <span className='text-secondary'>
+                            {state.app.data[0].App_startDate}
+                          </span>
                         </h5>
                       ) : (
                         ''
@@ -295,9 +285,10 @@ export default function KanbanBoard() {
                     <div className='row d-flex justify-content-end'>
                       {state.app.data[0].App_endDate ? (
                         <h5 className='mr-2'>
-                          <strong>
-                            App End Date: {state.app.data[0].App_endDate}
-                          </strong>
+                          <strong>App End Date:</strong>{' '}
+                          <span className='text-secondary'>
+                            {state.app.data[0].App_endDate}
+                          </span>
                         </h5>
                       ) : (
                         ''
@@ -328,6 +319,8 @@ export default function KanbanBoard() {
                           task={task}
                           onTaskCardClick={handleTaskCardClick}
                           onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                          isPlanFormSubmitted={isPlanFormSubmitted}
+                          isTaskFormSubmitted={isTaskFormSubmitted}
                         />
                       ))}
                   </div>
@@ -349,6 +342,8 @@ export default function KanbanBoard() {
                           task={task}
                           onTaskCardClick={handleTaskCardClick}
                           onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                          isPlanFormSubmitted={isPlanFormSubmitted}
+                          isTaskFormSubmitted={isTaskFormSubmitted}
                         />
                       ))}
                   </div>
@@ -370,6 +365,8 @@ export default function KanbanBoard() {
                           task={task}
                           onTaskCardClick={handleTaskCardClick}
                           onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                          isPlanFormSubmitted={isPlanFormSubmitted}
+                          isTaskFormSubmitted={isTaskFormSubmitted}
                         />
                       ))}
                   </div>
@@ -392,6 +389,8 @@ export default function KanbanBoard() {
                           task={task}
                           onTaskCardClick={handleTaskCardClick}
                           onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                          isPlanFormSubmitted={isPlanFormSubmitted}
+                          isTaskFormSubmitted={isTaskFormSubmitted}
                         />
                       ))}
                   </div>
@@ -415,6 +414,8 @@ export default function KanbanBoard() {
                           task={task}
                           onTaskCardClick={handleTaskCardClick}
                           onFormSubmit={() => setIsTaskFormSubmitted(true)}
+                          isPlanFormSubmitted={isPlanFormSubmitted}
+                          isTaskFormSubmitted={isTaskFormSubmitted}
                         />
                       ))}
                   </div>

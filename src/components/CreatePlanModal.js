@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState, useRef } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
 
 export default function CreatePlanModal({
@@ -12,12 +12,13 @@ export default function CreatePlanModal({
     Plan_MVP_name: '',
     Plan_startDate: '',
     Plan_endDate: '',
-    // Plan_color: '#000000',
+    Plan_color: '#000000',
   };
   const [formData, setFormData] = useState(initialState);
   const params = useParams();
   const formRef = useRef(null);
   const appDispatch = useContext(DispatchContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +40,7 @@ export default function CreatePlanModal({
     try {
       const response = await axios.post(
         `/apps/${params.appacronym}/plans/create`,
-        { ...formData, usergroup: 'admin' }
+        { ...formData, usergroup: 'pm' }
       );
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {
@@ -169,7 +170,7 @@ export default function CreatePlanModal({
                     />
                   </div>
                 </div>
-                {/* <div className='row'>
+                <div className='row'>
                   <div className='col text-left p-3'>
                     <label htmlFor='Plan_color' className='form-label'>
                       <strong>Plan Color</strong>
@@ -182,7 +183,7 @@ export default function CreatePlanModal({
                       onChange={handleChange}
                     />
                   </div>
-                </div> */}
+                </div>
               </div>
               <div className='modal-footer'>
                 <button
