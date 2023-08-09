@@ -61,6 +61,7 @@ export default function CreatePlanModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+        appDispatch({ type: 'isPm', value: false });
         toggleModal();
         navigate(`/apps/${params.appacronym}`);
       }

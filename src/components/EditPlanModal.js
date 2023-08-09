@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import DispatchContext from '../DispatchContext';
 
 export default function EditPlanModal({
@@ -10,6 +10,7 @@ export default function EditPlanModal({
   plans,
 }) {
   const params = useParams();
+  const navigate = useNavigate();
   const appDispatch = useContext(DispatchContext);
   const [selectedPlan, setSelectedPlan] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState('');
@@ -74,6 +75,7 @@ export default function EditPlanModal({
           type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
+        appDispatch({ type: 'isPm', value: false });
         toggleModal();
         navigate(`/apps/${params.appacronym}`);
       }
