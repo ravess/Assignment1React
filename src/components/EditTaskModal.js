@@ -1,8 +1,8 @@
-import React, { useEffect, useContext, useState, useRef } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import DispatchContext from "../DispatchContext";
-import StateContext from "../StateContext";
+import React, { useEffect, useContext, useState, useRef } from 'react';
+import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
+import DispatchContext from '../DispatchContext';
+import StateContext from '../StateContext';
 
 export default function EditTaskModal({
   selectedTaskId,
@@ -13,8 +13,8 @@ export default function EditTaskModal({
   setShowModal,
 }) {
   const [task, setTask] = useState([]);
-  const [notes, setNotes] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState("");
+  const [notes, setNotes] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('');
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
   const params = useParams();
@@ -22,9 +22,9 @@ export default function EditTaskModal({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "Task_plan") {
+    if (name === 'Task_plan') {
       setSelectedPlan(value);
-    } else if (name === "Task_notes") {
+    } else if (name === 'Task_notes') {
       setNotes(value);
     }
   };
@@ -32,9 +32,9 @@ export default function EditTaskModal({
   const toggleModal = () => {
     setShowModal(!showModal);
     // document.body.classList.toggle("modal-open");
-    document.body.removeAttribute("class");
-    document.body.removeAttribute("style");
-    document.body.removeChild(document.querySelector(".modal-backdrop"));
+    document.body.removeAttribute('class');
+    document.body.removeAttribute('style');
+    document.body.removeChild(document.querySelector('.modal-backdrop'));
   };
 
   const handlePromote = async () => {
@@ -43,15 +43,15 @@ export default function EditTaskModal({
         `/apps/${params.appacronym}/tasks/${selectedTaskId}/edit`,
         {
           Task_state: task[0].Task_state,
-          Task_newState: "promote",
+          Task_newState: 'promote',
           Task_plan: selectedPlan,
           Task_notes: notes,
         }
       );
       if (response.data.data) {
         appDispatch({
-          type: "flashMessage",
-          value: "Task State Promoted",
+          type: 'flashMessage',
+          value: 'Task State Promoted',
         });
         onFormSubmit();
         toggleModal();
@@ -59,7 +59,7 @@ export default function EditTaskModal({
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         // toggleModal();
@@ -67,18 +67,18 @@ export default function EditTaskModal({
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
-        appDispatch({ type: "logout" });
+        appDispatch({ type: 'logout' });
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         onFormSubmit();
         toggleModal();
-        navigate("/");
+        navigate('/');
       }
       if (error.response && error.response.data)
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
     }
@@ -90,15 +90,15 @@ export default function EditTaskModal({
         `/apps/${params.appacronym}/tasks/${selectedTaskId}/edit`,
         {
           Task_state: task[0].Task_state,
-          Task_newState: "demote",
+          Task_newState: 'demote',
           Task_plan: selectedPlan,
           Task_notes: notes,
         }
       );
       if (response.data.data) {
         appDispatch({
-          type: "flashMessage",
-          value: "Task State Demoted",
+          type: 'flashMessage',
+          value: 'Task State Demoted',
         });
         onFormSubmit();
         toggleModal();
@@ -106,24 +106,24 @@ export default function EditTaskModal({
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         toggleModal();
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
-        appDispatch({ type: "logout" });
+        appDispatch({ type: 'logout' });
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         toggleModal();
-        navigate("/");
+        navigate('/');
       }
       if (error.response && error.response.data)
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
     }
@@ -147,10 +147,10 @@ export default function EditTaskModal({
       // Handle successful response, e.g., show a success message or perform other actions
       if (response.data.data) {
         appDispatch({
-          type: "flashMessage",
-          value: "Task Successfully Updated",
+          type: 'flashMessage',
+          value: 'Task Successfully Updated',
         });
-        setNotes("");
+        setNotes('');
         onFormSubmit();
         toggleModal();
         if (formRef.current) {
@@ -160,7 +160,7 @@ export default function EditTaskModal({
     } catch (error) {
       if (error.response && error.response.data.error.statusCode === 401) {
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         onFormSubmit();
@@ -168,18 +168,18 @@ export default function EditTaskModal({
         navigate(`/apps/${params.appacronym}`);
       }
       if (error.response && error.response.data.error.statusCode === 403) {
-        appDispatch({ type: "logout" });
+        appDispatch({ type: 'logout' });
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
         onFormSubmit();
         toggleModal();
-        navigate("/");
+        navigate('/');
       }
       if (error.response && error.response.data)
         appDispatch({
-          type: "flashMessageErr",
+          type: 'flashMessageErr',
           value: error.response.data.errMessage,
         });
     }
@@ -201,7 +201,7 @@ export default function EditTaskModal({
         );
         if (getTasksResponse.data.data) {
           appDispatch({
-            type: "setPermission",
+            type: 'setPermission',
             data: getTasksResponse.data.data[0].App_permissions,
           });
           setTask(getTasksResponse.data.data);
@@ -210,24 +210,24 @@ export default function EditTaskModal({
       } catch (error) {
         if (error.response && error.response.data.error.statusCode === 401) {
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           toggleModal();
           navigate(`/apps/${params.appacronym}`);
         }
         if (error.response && error.response.data.error.statusCode === 403) {
-          appDispatch({ type: "logout" });
+          appDispatch({ type: 'logout' });
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
           toggleModal();
-          navigate("/");
+          navigate('/');
         }
         if (error.response && error.response.data)
           appDispatch({
-            type: "flashMessageErr",
+            type: 'flashMessageErr',
             value: error.response.data.errMessage,
           });
       }
@@ -242,62 +242,68 @@ export default function EditTaskModal({
   return (
     <>
       <div
-        className="modal fade"
-        id="editTaskModal"
+        className='modal fade'
+        id='editTaskModal'
         key={key}
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="editTaskModalTitle"
-        aria-hidden="true"
+        tabindex='-1'
+        role='dialog'
+        aria-labelledby='editTaskModalTitle'
+        aria-hidden='true'
       >
         <div
-          className="modal-dialog modal-dialog-centered modal-lg"
-          role="document"
+          className='modal-dialog modal-dialog-centered modal-lg'
+          role='document'
         >
-          <div className="modal-content">
-            <div className="modal-header bg-dark p-5 text-white">
-              <h5 className="modal-title" id="editTaskModalTitle">
+          <div className='modal-content'>
+            <div className='modal-header bg-dark p-5 text-white'>
+              <h5 className='modal-title' id='editTaskModalTitle'>
                 Task Details
               </h5>
 
               <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
+                type='button'
+                className='close'
+                data-dismiss='modal'
+                aria-label='Close'
                 onClick={() => setShowModal(false)}
               >
-                <span aria-hidden="true" className="text-white">
+                <span aria-hidden='true' className='text-white'>
                   &times;
                 </span>
               </button>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <div className="form-group text-left">
+              <div className='modal-body'>
+                <div className='form-group text-left'>
                   <strong>
                     <span>Task Name: </span>
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_name}</span>}
                 </div>
-                <div className="form-group text-left">
+                <div className='form-group text-left'>
                   <strong>Task Description:</strong>
                   <textarea
-                    className="form-control"
-                    id="Task_description"
-                    rows="3"
+                    className='form-control'
+                    id='Task_description'
+                    rows='3'
                     value={task.length > 0 && task[0].Task_description}
                     readOnly
                   ></textarea>
                 </div>
-                <div className="form-group text-left">
+                <div className='form-group text-left'>
+                  <strong>
+                    <span>Task id: </span>
+                  </strong>
+                  {task.length > 0 && <span>{task[0].Task_id}</span>}
+                </div>
+                <div className='form-group text-left'>
                   <strong>
                     <span>Task State: </span>
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_state}</span>}
                 </div>
                 {task.length > 0 && (
-                  <div className="form-group text-left">
+                  <div className='form-group text-left'>
                     <strong>
                       <span>Created On: </span>
                     </strong>
@@ -309,35 +315,35 @@ export default function EditTaskModal({
                     )}
                   </div>
                 )}
-                <div className="form-group text-left">
+                <div className='form-group text-left'>
                   <strong>
                     <span>Task Owner: </span>
                   </strong>
                   {task.length > 0 && <span>{task[0].Task_owner}</span>}
                 </div>
-                <div className="form-group text-left">
-                  <label htmlFor="Task_plan">
+                <div className='form-group text-left'>
+                  <label htmlFor='Task_plan'>
                     <strong>Task Plan:</strong>
                   </label>
                   {(task.length > 0 &&
-                    task[0].Task_state === "open" &&
+                    task[0].Task_state === 'open' &&
                     !appState.user.userPermission.App_permit_Open) ||
-                  (task.length > 0 && task[0].Task_state === "todolist") ||
-                  (task.length > 0 && task[0].Task_state === "doing") ||
+                  (task.length > 0 && task[0].Task_state === 'todolist') ||
+                  (task.length > 0 && task[0].Task_state === 'doing') ||
                   (task.length > 0 &&
-                    task[0].Task_state === "done" &&
+                    task[0].Task_state === 'done' &&
                     !appState.user.userPermission.App_permit_Done) ||
-                  (task.length > 0 && task[0].Task_state === "closed") ? (
-                    <span>{" " + selectedPlan}</span>
+                  (task.length > 0 && task[0].Task_state === 'closed') ? (
+                    <span>{' ' + selectedPlan}</span>
                   ) : (
                     <select
-                      className="form-control"
-                      id="Task_plan"
-                      name="Task_plan"
+                      className='form-control'
+                      id='Task_plan'
+                      name='Task_plan'
                       value={selectedPlan}
                       onChange={handleChange}
                     >
-                      <option value="">Select a Plan</option>
+                      <option value=''>Select a Plan</option>
                       {plans.map((plan) => (
                         <option
                           key={plan.Plan_MVP_name}
@@ -349,15 +355,15 @@ export default function EditTaskModal({
                     </select>
                   )}
                 </div>
-                <div className="form-group text-left ">
-                  <label htmlFor="Task_notes" className="form-label">
+                <div className='form-group text-left '>
+                  <label htmlFor='Task_notes' className='form-label'>
                     <strong>Audit Trail:</strong>
                   </label>
                   <textarea
-                    className="form-control"
-                    id="Task_notes"
-                    rows="10"
-                    name="Task_notes"
+                    className='form-control'
+                    id='Task_notes'
+                    rows='10'
+                    name='Task_notes'
                     readOnly
                     value={
                       task.length > 0
@@ -366,135 +372,135 @@ export default function EditTaskModal({
                             .map((entry) => {
                               return `\n [Username: ${entry.username}, State: ${entry.currentState}, Date: ${entry.date}, ${entry.timestamp}]\n ${entry.notes}`;
                             })
-                            .join("\n")
-                        : ""
+                            .join('\n')
+                        : ''
                     }
                   ></textarea>
                 </div>
-                <div className="form-group text-left">
-                  <label htmlFor="Task_notes" className="form-label">
+                <div className='form-group text-left'>
+                  <label htmlFor='Task_notes' className='form-label'>
                     <strong>Task Notes:</strong>
                   </label>
                   <textarea
-                    className="form-control"
-                    id="Task_notes"
-                    rows="3"
-                    name="Task_notes"
+                    className='form-control'
+                    id='Task_notes'
+                    rows='3'
+                    name='Task_notes'
                     value={notes}
-                    maxLength="255"
+                    maxLength='255'
                     onChange={handleChange}
                     readOnly={
                       (task.length > 0 &&
-                        task[0].Task_state === "open" &&
+                        task[0].Task_state === 'open' &&
                         !appState.user.userPermission.App_permit_Open) ||
                       (task.length > 0 &&
-                        task[0].Task_state === "todolist" &&
+                        task[0].Task_state === 'todolist' &&
                         !appState.user.userPermission.App_permit_toDoList) ||
                       (task.length > 0 &&
-                        task[0].Task_state === "doing" &&
+                        task[0].Task_state === 'doing' &&
                         !appState.user.userPermission.App_permit_Doing) ||
                       (task.length > 0 &&
-                        task[0].Task_state === "done" &&
+                        task[0].Task_state === 'done' &&
                         !appState.user.userPermission.App_permit_Done) ||
-                      (task.length > 0 && task[0].Task_state === "closed")
+                      (task.length > 0 && task[0].Task_state === 'closed')
                     }
                   ></textarea>
                 </div>
               </div>
-              <div className="modal-footer">
+              <div className='modal-footer'>
                 <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
+                  type='button'
+                  className='btn btn-secondary'
+                  data-dismiss='modal'
                   onClick={() => setShowModal(false)}
                 >
                   Close
                 </button>
                 {task.length > 0 &&
-                task[0].Task_state === "open" &&
+                task[0].Task_state === 'open' &&
                 appState.user.userPermission.App_permit_Open ? (
                   <>
-                    <button type="submit" className="btn btn-dark">
+                    <button type='submit' className='btn btn-dark'>
                       Update
                     </button>
                     <button
-                      type="button"
-                      className="btn btn-outline-success"
+                      type='button'
+                      className='btn btn-outline-success'
                       onClick={handlePromote}
                     >
-                      {task[0].Task_state === "done" ? "Approve" : "Promote"}
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
                     </button>
                   </>
                 ) : (
-                  ""
+                  ''
                 )}
                 {task.length > 0 &&
-                task[0].Task_state === "todolist" &&
+                task[0].Task_state === 'todolist' &&
                 appState.user.userPermission.App_permit_toDoList ? (
                   <>
-                    <button type="submit" className="btn btn-dark">
+                    <button type='submit' className='btn btn-dark'>
                       Update
                     </button>
                     <button
-                      type="button"
-                      className="btn btn-outline-success"
+                      type='button'
+                      className='btn btn-outline-success'
                       onClick={handlePromote}
                     >
-                      {task[0].Task_state === "done" ? "Approve" : "Promote"}
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
                     </button>
                   </>
                 ) : (
-                  ""
+                  ''
                 )}
                 {task.length > 0 &&
-                task[0].Task_state === "doing" &&
+                task[0].Task_state === 'doing' &&
                 appState.user.userPermission.App_permit_Doing ? (
                   <>
                     <button
-                      type="button"
-                      className="btn btn-outline-danger"
+                      type='button'
+                      className='btn btn-outline-danger'
                       onClick={handleDemote}
                     >
-                      {task[0].Task_state === "done" ? "Reject" : "Demote"}
+                      {task[0].Task_state === 'done' ? 'Reject' : 'Demote'}
                     </button>
-                    <button type="submit" className="btn btn-dark">
+                    <button type='submit' className='btn btn-dark'>
                       Update
                     </button>
                     <button
-                      type="button"
-                      className="btn btn-outline-success"
+                      type='button'
+                      className='btn btn-outline-success'
                       onClick={handlePromote}
                     >
-                      {task[0].Task_state === "done" ? "Approve" : "Promote"}
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
                     </button>
                   </>
                 ) : (
-                  ""
+                  ''
                 )}
                 {task.length > 0 &&
-                task[0].Task_state === "done" &&
+                task[0].Task_state === 'done' &&
                 appState.user.userPermission.App_permit_Done ? (
                   <>
                     <button
-                      type="button"
-                      className="btn btn-outline-danger"
+                      type='button'
+                      className='btn btn-outline-danger'
                       onClick={handleDemote}
                     >
-                      {task[0].Task_state === "done" ? "Reject" : "Demote"}
+                      {task[0].Task_state === 'done' ? 'Reject' : 'Demote'}
                     </button>
-                    <button type="submit" className="btn btn-dark">
+                    <button type='submit' className='btn btn-dark'>
                       Update
                     </button>
                     <button
-                      type="button"
-                      className="btn btn-outline-success"
+                      type='button'
+                      className='btn btn-outline-success'
                       onClick={handlePromote}
                     >
-                      {task[0].Task_state === "done" ? "Approve" : "Promote"}
+                      {task[0].Task_state === 'done' ? 'Approve' : 'Promote'}
                     </button>
                   </>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </form>
